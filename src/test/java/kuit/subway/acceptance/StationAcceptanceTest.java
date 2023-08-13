@@ -4,7 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import kuit.subway.AcceptanceTest;
 import kuit.subway.dto.station.request.StationCreateRequestDto;
-import kuit.subway.entity.Station;
+import kuit.subway.fixture.SubwayFixtures;
 import kuit.subway.repository.StationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,9 +23,7 @@ public class StationAcceptanceTest extends AcceptanceTest{
     @Test
     void createStationTest() {
         String path = "/stations";
-        StationCreateRequestDto requestDto = StationCreateRequestDto.builder()
-                .name("강남역")
-                .build();
+        StationCreateRequestDto requestDto = SubwayFixtures.createStationRequestDto("강남역");
 
         RestAssured
                 .given().log().all().body(requestDto)
@@ -39,8 +37,8 @@ public class StationAcceptanceTest extends AcceptanceTest{
     @Test
     void showStationsTest(){
         String path = "/stations";
-        stationRepository.save(Station.builder().name("강남역").build());
-        stationRepository.save(Station.builder().name("성수역").build());
+        stationRepository.save(SubwayFixtures.createStation("강남역"));
+        stationRepository.save(SubwayFixtures.createStation("성수역"));
 
         RestAssured
                 .given().log().all()
@@ -54,7 +52,7 @@ public class StationAcceptanceTest extends AcceptanceTest{
     @Test
     void deleteStationTest(){
         String path = "/stations/{stationId}";
-        stationRepository.save(Station.builder().name("강남역").build());
+        stationRepository.save(SubwayFixtures.createStation("강남역"));
 
         RestAssured
                 .given().log().all()
