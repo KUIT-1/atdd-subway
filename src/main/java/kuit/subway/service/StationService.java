@@ -30,4 +30,13 @@ public class StationService {
         Station station = stationRepository.save(requestDto.toEntity());
         return StationCreateResponseDto.of(station);
     }
+
+    public List<StationResponseDto> showStations() {
+        List<Station> stations = stationRepository.findAll();
+        List<StationResponseDto> responseDtos = stations.stream()
+                .map(StationResponseDto::of)
+                .collect(Collectors.toList());
+
+        return responseDtos;
+    }
 }
