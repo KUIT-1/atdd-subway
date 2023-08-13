@@ -30,4 +30,7 @@ public class SubwayService {
         ).collect(Collectors.toList());
     }
 
+    public void deleteStation(Long id) {
+        subwayRepository.deleteById(id);
+    }
 }
