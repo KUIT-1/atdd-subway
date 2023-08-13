@@ -49,4 +49,18 @@ public class StationAcceptanceTest extends AcceptanceTest{
                 .then().log().all()
                 .statusCode(200);
     }
+
+    @DisplayName("지하철역 하나를 삭제한다.")
+    @Test
+    void deleteStationTest(){
+        String path = "/stations/{stationId}";
+        stationRepository.save(Station.builder().name("강남역").build());
+
+        RestAssured
+                .given().log().all()
+                .contentType(ContentType.JSON)
+                .when().delete(path, 1L)
+                .then().log().all()
+                .statusCode(204);
+    }
 }
