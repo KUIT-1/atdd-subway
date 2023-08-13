@@ -1,6 +1,7 @@
 package kuit.subway.controller;
 
 import kuit.subway.request.PostStationRequest;
+import kuit.subway.response.GetStationsResponse;
 import kuit.subway.response.PostStationsResponse;
 import kuit.subway.service.SubwayService;
 import lombok.RequiredArgsConstructor;
@@ -20,4 +21,10 @@ public class SubwayController {
         Long id = subwayService.createStation(postStationRequest.getName()).getId();
         return new PostStationsResponse(id);
     }
+
+    @GetMapping("/stations")
+    public List<GetStationsResponse> createStation(){
+        return subwayService.getStations();
+    }
+
 }
