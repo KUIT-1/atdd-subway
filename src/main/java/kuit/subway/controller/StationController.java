@@ -14,20 +14,21 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequestMapping("/stations")
 public class StationController {
     private final StationService stationService;
 
-    @PostMapping("/stations")
+    @PostMapping
     public PostStationResponse createStation(@RequestBody PostStationRequest postStationRequest){
         return stationService.createStation(postStationRequest.getName());
     }
 
-    @GetMapping("/stations")
+    @GetMapping
     public List<GetStationsResponse> createStation(){
         return stationService.getStations();
     }
 
-    @DeleteMapping("/stations/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteStation(@PathVariable("id") Long id){
         stationService.deleteStation(id);
