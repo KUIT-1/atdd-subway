@@ -7,9 +7,7 @@ import kuit.subway.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,5 +25,11 @@ public class StationController {
     public ResponseEntity<StationCreateResponseDto> createStation(@RequestBody StationCreateRequestDto requestDto) {
         StationCreateResponseDto responseDto = stationService.createStation(requestDto);
         return ResponseEntity.ok(responseDto);
+    }
+
+    @GetMapping("/stations")
+    public ResponseEntity<List<StationResponseDto>> showStations() {
+        List<StationResponseDto> responseDtos = stationService.showStations();
+        return ResponseEntity.ok(responseDtos);
     }
 }
