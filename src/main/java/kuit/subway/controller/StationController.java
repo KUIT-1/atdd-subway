@@ -7,6 +7,7 @@ import kuit.subway.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class StationController {
     private final StationService stationService;
 
     @PostMapping
-    public PostStationResponse createStation(@RequestBody PostStationRequest postStationRequest){
+    public PostStationResponse createStation(@Validated @RequestBody PostStationRequest postStationRequest){
         return stationService.createStation(postStationRequest.getName());
     }
 
