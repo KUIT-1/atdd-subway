@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @Getter
 public class Subway {
+public class Station {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,6 +20,7 @@ public class Subway {
     private String name;
 
     public Subway(String name) {
+    public Station(String name) {
         super();
         this.name = name;
     }

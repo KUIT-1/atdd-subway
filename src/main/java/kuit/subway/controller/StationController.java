@@ -4,6 +4,7 @@ import kuit.subway.request.PostStationRequest;
 import kuit.subway.response.GetStationsResponse;
 import kuit.subway.response.PostStationsResponse;
 import kuit.subway.service.SubwayService;
+import kuit.subway.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,8 @@ import java.util.List;
 @Slf4j
 public class SubwayController {
     private final SubwayService subwayService;
+public class StationController {
+    private final StationService stationService;
 
     @PostMapping("/stations")
     public PostStationsResponse createStation(@RequestBody PostStationRequest postStationRequest){
@@ -26,12 +29,14 @@ public class SubwayController {
     @GetMapping("/stations")
     public List<GetStationsResponse> createStation(){
         return subwayService.getStations();
+        return stationService.getStations();
     }
 
     @DeleteMapping("/stations/{id}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void deleteStation(@PathVariable("id") Long id){
         subwayService.deleteStation(id);
+        stationService.deleteStation(id);
     }
 
 }

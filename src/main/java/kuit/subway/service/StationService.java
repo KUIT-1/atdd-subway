@@ -2,6 +2,9 @@ package kuit.subway.service;
 
 import kuit.subway.domain.Subway;
 import kuit.subway.repository.SubwayRepository;
+import jakarta.persistence.EntityExistsException;
+import kuit.subway.domain.Station;
+import kuit.subway.repository.StationRepository;
 import kuit.subway.response.GetStationsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +19,8 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SubwayService {
     private final SubwayRepository subwayRepository;
+public class StationService {
+    private final StationRepository stationRepository;
 
     @Transactional
     public Subway createStation(String name) {
@@ -26,6 +31,8 @@ public class SubwayService {
         return subwayRepository.findAll().stream().map(
                 subway -> {
                     return new GetStationsResponse(subway.getId(), subway.getName());
+                station -> {
+                    return new GetStationsResponse(station.getId(), station.getName());
                 }
         ).collect(Collectors.toList());
     }
