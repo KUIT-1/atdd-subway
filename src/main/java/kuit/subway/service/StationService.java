@@ -39,4 +39,12 @@ public class StationService {
 
         return responseDtos;
     }
+
+    @Transactional
+    public void deleteStation(Long stationId) {
+        Station station = stationRepository.findById(stationId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 역입니다. id=" + stationId));
+
+        stationRepository.delete(station);
+    }
 }
