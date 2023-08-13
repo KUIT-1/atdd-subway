@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 @Getter
-public class Subway {
 public class Station {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +18,6 @@ public class Station {
     @Column(length = 20, nullable = false)
     private String name;
 
-    public Subway(String name) {
     public Station(String name) {
         super();
         this.name = name;

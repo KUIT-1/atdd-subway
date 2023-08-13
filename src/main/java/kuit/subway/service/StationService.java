@@ -1,11 +1,10 @@
 package kuit.subway.service;
 
-import kuit.subway.domain.Subway;
-import kuit.subway.repository.SubwayRepository;
 import jakarta.persistence.EntityExistsException;
 import kuit.subway.domain.Station;
 import kuit.subway.repository.StationRepository;
 import kuit.subway.response.GetStationsResponse;
+import kuit.subway.response.PostStationsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,20 +16,17 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class SubwayService {
-    private final SubwayRepository subwayRepository;
 public class StationService {
     private final StationRepository stationRepository;
 
     @Transactional
-    public Subway createStation(String name) {
-        return subwayRepository.save(new Subway(name));
+    public PostStationsResponse createStation(String name) {
+        Long id = stationRepository.save(new Station(name)).getId();
+        return new PostStationsResponse(id);
     }
 
     public List<GetStationsResponse> getStations() {
-        return subwayRepository.findAll().stream().map(
-                subway -> {
-                    return new GetStationsResponse(subway.getId(), subway.getName());
+        return stationRepository.findAll().stream().map(
                 station -> {
                     return new GetStationsResponse(station.getId(), station.getName());
                 }
@@ -38,6 +34,6 @@ public class StationService {
     }
 
     public void deleteStation(Long id) {
-        subwayRepository.deleteById(id);
+        stationRepository.deleteById(id);
     }
 }
