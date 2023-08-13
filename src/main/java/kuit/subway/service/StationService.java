@@ -23,11 +23,10 @@ public class StationService {
 
     @Transactional
     public StationCreateResponseDto createStation(StationCreateRequestDto requestDto) {
-        if(stationRepository.existsByName(requestDto.getName())){
-            throw new IllegalArgumentException("이미 존재하는 역입니다. station=" + requestDto.getName());
-        };
+        validateDuplicatedName(requestDto);
 
         Station station = stationRepository.save(requestDto.toEntity());
+
         return StationCreateResponseDto.of(station);
     }
 
@@ -46,5 +45,11 @@ public class StationService {
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 역입니다. id=" + stationId));
 
         stationRepository.delete(station);
+    }
+
+    private void validateDuplicatedName(StationCreateRequestDto requestDto) {
+        if(stationRepository.existsByName(requestDto.getName())){
+            throw new IllegalArgumentException("이미 존재하는 역입니다. station=" + requestDto.getName());
+        }
     }
 }
