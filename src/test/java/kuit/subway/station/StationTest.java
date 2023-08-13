@@ -23,6 +23,7 @@ public class StationTest extends AcceptanceTest {
                 .then().log().all()
                 .extract();
 
+        Assertions.assertEquals(1, (Integer) extract.path("id"));
         Assertions.assertEquals(200, extract.statusCode());
     }
 
