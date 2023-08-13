@@ -1,8 +1,8 @@
 package kuit.subway.controller;
 
-import kuit.subway.request.PostStationRequest;
-import kuit.subway.response.GetStationsResponse;
-import kuit.subway.response.PostStationResponse;
+import kuit.subway.request.station.PostStationRequest;
+import kuit.subway.response.station.GetStationsResponse;
+import kuit.subway.response.station.PostStationResponse;
 import kuit.subway.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

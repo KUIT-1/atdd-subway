@@ -1,4 +1,4 @@
-package kuit.subway.response;
+package kuit.subway.response.station;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetStationsResponse {
+public class PostStationResponse {
     Long id;
-    String name;
 }
