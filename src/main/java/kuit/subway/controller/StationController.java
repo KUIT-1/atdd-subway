@@ -2,7 +2,7 @@ package kuit.subway.controller;
 
 import kuit.subway.request.PostStationRequest;
 import kuit.subway.response.GetStationsResponse;
-import kuit.subway.response.PostStationsResponse;
+import kuit.subway.response.PostStationResponse;
 import kuit.subway.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class StationController {
     private final StationService stationService;
 
     @PostMapping("/stations")
-    public PostStationsResponse createStation(@RequestBody PostStationRequest postStationRequest){
+    public PostStationResponse createStation(@RequestBody PostStationRequest postStationRequest){
         return stationService.createStation(postStationRequest.getName());
     }
 

@@ -9,6 +9,6 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostStationsResponse {
+public class PostStationResponse {
     Long id;
 }

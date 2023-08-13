@@ -4,7 +4,7 @@ import jakarta.persistence.EntityExistsException;
 import kuit.subway.domain.Station;
 import kuit.subway.repository.StationRepository;
 import kuit.subway.response.GetStationsResponse;
-import kuit.subway.response.PostStationsResponse;
+import kuit.subway.response.PostStationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,11 +20,11 @@ public class StationService {
     private final StationRepository stationRepository;
 
     @Transactional
-    public PostStationsResponse createStation(String name) {
+    public PostStationResponse createStation(String name) {
         if(stationRepository.findByName(name).isPresent())
             throw new EntityExistsException(name + "은 이미 존재합니다.");
         Long id = stationRepository.save(new Station(name)).getId();
-        return new PostStationsResponse(id);
+        return new PostStationResponse(id);
     }
 
     public List<GetStationsResponse> getStations() {
