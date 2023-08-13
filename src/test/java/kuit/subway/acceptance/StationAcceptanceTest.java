@@ -2,7 +2,6 @@ package kuit.subway.acceptance;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import kuit.subway.AcceptanceTest;
 import kuit.subway.dto.station.request.StationCreateRequestDto;
 import kuit.subway.acceptance.fixture.SubwayFixtures;
 import org.junit.jupiter.api.DisplayName;
