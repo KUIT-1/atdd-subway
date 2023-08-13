@@ -1,14 +1,18 @@
 package kuit.subway.fixture;
 
+import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import kuit.subway.dto.station.request.StationCreateRequestDto;
-import kuit.subway.entity.Station;
 
 public class SubwayFixtures {
 
-    public static Station createStation(String name) {
-        return Station.builder()
-                .name(name)
-                .build();
+    public static void createStation(String name) {
+        StationCreateRequestDto requestDto = createStationRequestDto(name);
+        RestAssured
+                .given().log().all().body(requestDto)
+                .contentType(ContentType.JSON)
+                .when().post("/stations")
+                .then().log().all();
     }
 
     public static StationCreateRequestDto createStationRequestDto(String name) {

@@ -5,26 +5,19 @@ import io.restassured.http.ContentType;
 import kuit.subway.AcceptanceTest;
 import kuit.subway.dto.station.request.StationCreateRequestDto;
 import kuit.subway.fixture.SubwayFixtures;
-import kuit.subway.repository.StationRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class StationAcceptanceTest extends AcceptanceTest{
-
-    private final StationRepository stationRepository;
-
-    @Autowired
-    public StationAcceptanceTest(StationRepository stationRepository) {
-        this.stationRepository = stationRepository;
-    }
 
     @DisplayName("지하철 역을 생성한다.")
     @Test
     void createStationTest() {
+        //given
         String path = "/stations";
         StationCreateRequestDto requestDto = SubwayFixtures.createStationRequestDto("강남역");
 
+        //when & then
         RestAssured
                 .given().log().all().body(requestDto)
                 .contentType(ContentType.JSON)
@@ -35,11 +28,13 @@ public class StationAcceptanceTest extends AcceptanceTest{
 
     @DisplayName("지하철역 목록을 조회한다.")
     @Test
-    void showStationsTest(){
+    void showStationsTest() {
+        //given
         String path = "/stations";
-        stationRepository.save(SubwayFixtures.createStation("강남역"));
-        stationRepository.save(SubwayFixtures.createStation("성수역"));
+        SubwayFixtures.createStation("강남역");
+        SubwayFixtures.createStation("성수역");
 
+        //when & then
         RestAssured
                 .given().log().all()
                 .contentType(ContentType.JSON)
@@ -50,10 +45,12 @@ public class StationAcceptanceTest extends AcceptanceTest{
 
     @DisplayName("지하철역 하나를 삭제한다.")
     @Test
-    void deleteStationTest(){
+    void deleteStationTest() {
+        //given
         String path = "/stations/{stationId}";
-        stationRepository.save(SubwayFixtures.createStation("강남역"));
+        SubwayFixtures.createStation("강남역");
 
+        //when & then
         RestAssured
                 .given().log().all()
                 .contentType(ContentType.JSON)
