@@ -4,7 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import kuit.subway.AcceptanceTest;
 import kuit.subway.dto.station.request.StationCreateRequestDto;
-import kuit.subway.fixture.SubwayFixtures;
+import kuit.subway.acceptance.fixture.SubwayFixtures;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
