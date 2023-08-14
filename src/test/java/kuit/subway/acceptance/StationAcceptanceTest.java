@@ -6,6 +6,7 @@ import kuit.subway.acceptance.fixture.SubwayFixtures;
 import kuit.subway.dto.station.request.StationCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 public class StationAcceptanceTest extends AcceptanceTest{
 
@@ -23,6 +24,23 @@ public class StationAcceptanceTest extends AcceptanceTest{
                 .when().post(path)
                 .then().log().all()
                 .statusCode(200);
+    }
+
+    @DisplayName("지하철 역의 이름이 2-20글자가 아니라면 예외를 발생한다.")
+    @Test
+    void createStationTest_Throw_Exception_If_Invalid_Station_Name() {
+        //given
+        String path = "/stations";
+        String stationName = "A".repeat(21);
+        StationCreateRequest requestDto = SubwayFixtures.createStationRequestDto(stationName);
+
+        //when & then
+        RestAssured
+                .given().log().all().body(requestDto)
+                .contentType(ContentType.JSON)
+                .when().post(path)
+                .then().log().all()
+                .statusCode(HttpStatus.BAD_REQUEST.value());
     }
 
     @DisplayName("지하철역 목록을 조회한다.")
