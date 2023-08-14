@@ -23,7 +23,6 @@ public class StationAcceptanceTest extends AcceptanceTest {
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
-
     }
 
     @DisplayName("지하철 역의 이름이 2-20글자가 아니라면 예외를 발생한다.")
@@ -57,19 +56,6 @@ public class StationAcceptanceTest extends AcceptanceTest {
     @DisplayName("지하철역 하나를 삭제한다.")
     @Test
     void deleteStation() {
-        //given
-        지하철역_생성(지하철역_생성_요청("강남역"));
-
-        //when
-        ExtractableResponse<Response> response = 지하철역_삭제(1L);
-
-        //then
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
-    }
-
-    @DisplayName("지하철역 하나를 삭제한다.")
-    @Test
-    void deleteStationTest_() {
         //given
         지하철역_생성(지하철역_생성_요청("강남역"));
 
