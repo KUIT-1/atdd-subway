@@ -1,81 +1,98 @@
 package kuit.subway.station;
 
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kuit.subway.AcceptanceTest;
-import net.minidev.json.JSONObject;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import static kuit.subway.station.StationStep.PATH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StationTest extends AcceptanceTest {
+
     @Test
     void createStation() {
-        JSONObject jsonObj = new JSONObject();
-        jsonObj.put("name", "강남역");
+        Map<String, String> body = new HashMap<>();
+        body.put("name", "강남역");
 
-        ExtractableResponse<Response> extract = RestAssured.given().log().all()
-                .contentType("application/json")
-                .body(jsonObj.toString())
-                .when().post("/stations")
+        ExtractableResponse<Response> response = RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when().post(PATH)
                 .then().log().all()
                 .extract();
 
-        Assertions.assertEquals(1, (Integer) extract.path("id"));
-        Assertions.assertEquals(200, extract.statusCode());
+        assertEquals(1L, response.jsonPath().getLong("id"));
+        assertEquals(201, response.statusCode());
+    }
+
     }
 
     @Test
     void getStations() {
-        JSONObject jsonObj = new JSONObject();
-        jsonObj.put("name", "강남역");
+        // given
+        Map<String, String> body = new HashMap<>();
+        body.put("name", "강남역");
 
-        RestAssured.given().contentType("application/json")
-                .body(jsonObj.toString())
-                .post("/stations");
+        RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when().post(PATH)
+                .then().log().all();
 
-        jsonObj.put("name", "건대입구역");
+        body.put("name", "성수역");
 
-        RestAssured.given().contentType("application/json")
-                .body(jsonObj.toString())
-                .post("/stations");
+        RestAssured.given().log().all()
+                .contentType(ContentType.JSON)
+                .body(body)
+                .when().post("/stations")
+                .then().log().all();
 
-        ExtractableResponse<Response> extract = RestAssured.given().log().all()
+        // when
+        ExtractableResponse<Response> response = RestAssured.given().log().all()
                 .when().get("/stations")
                 .then().log().all()
                 .extract();
 
-        Assertions.assertEquals(200, extract.statusCode());
 
-        List<String> stationNames = extract.jsonPath().getList("name");
-        List<Integer> stationId = extract.jsonPath().getList("id");
+        // then
+        assertEquals(200, response.statusCode());
 
-        Assertions.assertEquals(1, stationId.get(0));
-        Assertions.assertEquals("강남역", stationNames.get(0));
+        List<String> stationNames = response.jsonPath().getList("name");
+        List<Integer> stationId = response.jsonPath().getList("id");
 
-        Assertions.assertEquals(2, stationId.get(1));
-        Assertions.assertEquals("건대입구역", stationNames.get(1));
+        assertEquals(1, stationId.get(0));
+        assertEquals("강남역", stationNames.get(0));
+
+        assertEquals(2, stationId.get(1));
+        assertEquals("성수역", stationNames.get(1));
 
     }
 
     @Test
     void deleteSubway() {
-        JSONObject jsonObj = new JSONObject();
-        jsonObj.put("name", "강남역");
+        // given
+        Map<String, String> body = new HashMap<>();
+        body.put("name", "강남역");
 
         RestAssured.given().log().all()
-                .contentType("application/json")
-                .body(jsonObj.toString())
+                .contentType(ContentType.JSON)
+                .body(body)
                 .post("/stations");
 
-        ExtractableResponse<Response> extract = RestAssured.given().log().all()
+        // when
+        ExtractableResponse<Response> response = RestAssured.given().log().all()
                 .when().delete("/stations/1")
                 .then().log().all()
                 .extract();
 
-        extract.statusCode();
-        Assertions.assertEquals(204, extract.statusCode());
+        // then
+        assertEquals(204, response.statusCode());
     }
 }
