@@ -12,14 +12,15 @@ import static io.restassured.RestAssured.post;
 
 public class StationStep {
     public static final String PATH = "/stations";
+    public static final String NAME = "name";
 
     public static ExtractableResponse<Response> 지하철_역_생성_요청(String name) {
         Map<String, String> body = new HashMap<>();
-        body.put("name", name);
+        body.put(NAME, name);
 
         return RestAssured.given().log().all()
                 .body(body).contentType(ContentType.JSON)
-                .when().post("/stations")
+                .when().post(PATH)
                 .then().log().all()
                 .extract();
     }
