@@ -1,13 +1,13 @@
-package kuit.subway.station.acceptance.fixture;
+package kuit.subway.acceptance.fixtures;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kuit.subway.station.dto.request.StationCreateRequest;
 
-import static kuit.subway.station.acceptance.fixture.SubwayFixture.지하철역_생성_요청;
+import static kuit.subway.utils.fixtures.StationFixtures.지하철역_생성_요청;
 import static kuit.subway.utils.RestAssuredUtils.*;
 
-public class SubwayStep {
+public class StationAcceptanceFixtures {
 
     private static final String BASE_PATH = "/stations";
 
