@@ -6,10 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class GetStationsResponse {
-    Long id;
-    String name;
+    private Long id;
+    private String name;
 }
