@@ -1,8 +1,8 @@
 package kuit.subway.controller;
 
-import kuit.subway.dto.station.request.StationCreateRequestDto;
-import kuit.subway.dto.station.response.StationCreateResponseDto;
-import kuit.subway.dto.station.response.StationResponseDto;
+import kuit.subway.dto.station.request.StationCreateRequest;
+import kuit.subway.dto.station.response.StationCreateResponse;
+import kuit.subway.dto.station.response.StationResponse;
 import kuit.subway.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +24,14 @@ public class StationController {
     private final StationService stationService;
 
     @PostMapping("/stations")
-    public ResponseEntity<StationCreateResponseDto> createStation(@RequestBody StationCreateRequestDto requestDto) {
-        StationCreateResponseDto responseDto = stationService.createStation(requestDto);
+    public ResponseEntity<StationCreateResponse> createStation(@RequestBody StationCreateRequest requestDto) {
+        StationCreateResponse responseDto = stationService.createStation(requestDto);
         return ResponseEntity.ok(responseDto);
     }
 
     @GetMapping("/stations")
-    public ResponseEntity<List<StationResponseDto>> showStations() {
-        List<StationResponseDto> responseDtos = stationService.showStations();
+    public ResponseEntity<List<StationResponse>> showStations() {
+        List<StationResponse> responseDtos = stationService.showStations();
         return ResponseEntity.ok(responseDtos);
     }
 

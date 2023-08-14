@@ -6,13 +6,15 @@ import lombok.Getter;
 
 @Builder
 @Getter
-public class StationCreateResponseDto {
+public class StationResponse {
 
     private Long id;
+    private String name;
 
-    public static StationCreateResponseDto of(Station station) {
-        return StationCreateResponseDto.builder()
+    public static StationResponse of(Station station) {
+        return StationResponse.builder()
                 .id(station.getId())
+                .name(station.getName())
                 .build();
     }
 }

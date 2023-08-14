@@ -2,8 +2,8 @@ package kuit.subway.acceptance;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
-import kuit.subway.dto.station.request.StationCreateRequestDto;
 import kuit.subway.acceptance.fixture.SubwayFixtures;
+import kuit.subway.dto.station.request.StationCreateRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +14,7 @@ public class StationAcceptanceTest extends AcceptanceTest{
     void createStationTest() {
         //given
         String path = "/stations";
-        StationCreateRequestDto requestDto = SubwayFixtures.createStationRequestDto("강남역");
+        StationCreateRequest requestDto = SubwayFixtures.createStationRequestDto("강남역");
 
         //when & then
         RestAssured
