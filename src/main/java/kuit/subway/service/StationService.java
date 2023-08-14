@@ -33,6 +33,7 @@ public class StationService {
                     return new GetStationsResponse(station.getId(), station.getName());
                 }
         ).collect(Collectors.toList());
+        ).toList();
     }
 
     public void deleteStation(Long id) {
