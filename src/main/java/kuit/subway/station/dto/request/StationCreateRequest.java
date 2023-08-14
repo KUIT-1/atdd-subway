@@ -1,7 +1,7 @@
-package kuit.subway.dto.station.request;
+package kuit.subway.station.dto.request;
 
 import jakarta.validation.constraints.Size;
-import kuit.subway.entity.Station;
+import kuit.subway.station.domain.Station;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

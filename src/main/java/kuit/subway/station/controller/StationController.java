@@ -1,10 +1,10 @@
-package kuit.subway.controller;
+package kuit.subway.station.controller;
 
 import jakarta.validation.Valid;
-import kuit.subway.dto.station.request.StationCreateRequest;
-import kuit.subway.dto.station.response.StationCreateResponse;
-import kuit.subway.dto.station.response.StationResponse;
-import kuit.subway.service.StationService;
+import kuit.subway.station.dto.request.StationCreateRequest;
+import kuit.subway.station.dto.response.StationCreateResponse;
+import kuit.subway.station.dto.response.StationResponse;
+import kuit.subway.station.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

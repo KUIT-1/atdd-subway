@@ -1,4 +1,4 @@
-package kuit.subway.exception;
+package kuit.subway.global.exception;
 
 import org.springframework.http.HttpStatus;
 

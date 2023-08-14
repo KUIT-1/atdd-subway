@@ -1,11 +1,11 @@
-package kuit.subway.service;
+package kuit.subway.station.service;
 
-import kuit.subway.dto.station.request.StationCreateRequest;
-import kuit.subway.dto.station.response.StationCreateResponse;
-import kuit.subway.dto.station.response.StationResponse;
-import kuit.subway.entity.Station;
-import kuit.subway.exception.SubwayException;
-import kuit.subway.repository.StationRepository;
+import kuit.subway.station.dto.request.StationCreateRequest;
+import kuit.subway.station.dto.response.StationCreateResponse;
+import kuit.subway.station.dto.response.StationResponse;
+import kuit.subway.station.domain.Station;
+import kuit.subway.global.exception.SubwayException;
+import kuit.subway.station.repository.StationRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,8 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static kuit.subway.exception.CustomExceptionStatus.DUPLICATED_STATION;
-import static kuit.subway.exception.CustomExceptionStatus.NOT_EXISTED_STATION;
+import static kuit.subway.global.exception.CustomExceptionStatus.DUPLICATED_STATION;
+import static kuit.subway.global.exception.CustomExceptionStatus.NOT_EXISTED_STATION;
 
 @Service
 @Transactional(readOnly = true)

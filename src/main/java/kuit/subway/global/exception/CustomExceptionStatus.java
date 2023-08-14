@@ -1,4 +1,4 @@
-package kuit.subway.exception;
+package kuit.subway.global.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

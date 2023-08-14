@@ -1,4 +1,4 @@
-package kuit.subway.entity;
+package kuit.subway.station.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

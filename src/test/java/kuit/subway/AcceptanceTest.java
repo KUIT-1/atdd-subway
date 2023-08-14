@@ -1,4 +1,4 @@
-package kuit.subway.acceptance;
+package kuit.subway;
 
 import io.restassured.RestAssured;
 import kuit.subway.utils.DatabaseCleanup;

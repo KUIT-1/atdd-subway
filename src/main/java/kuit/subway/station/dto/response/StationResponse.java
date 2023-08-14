@@ -1,6 +1,6 @@
-package kuit.subway.dto.station.response;
+package kuit.subway.station.dto.response;
 
-import kuit.subway.entity.Station;
+import kuit.subway.station.domain.Station;
 import lombok.Builder;
 import lombok.Getter;
 

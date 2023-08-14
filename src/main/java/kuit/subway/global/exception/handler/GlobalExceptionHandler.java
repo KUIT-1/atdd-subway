@@ -1,13 +1,13 @@
-package kuit.subway.exception.handler;
+package kuit.subway.global.exception.handler;
 
-import kuit.subway.exception.ExceptionStatus;
-import kuit.subway.exception.SubwayException;
+import kuit.subway.global.exception.ExceptionStatus;
+import kuit.subway.global.exception.SubwayException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import static kuit.subway.exception.CustomExceptionStatus.INVALID_PARAMETER;
+import static kuit.subway.global.exception.CustomExceptionStatus.INVALID_PARAMETER;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
