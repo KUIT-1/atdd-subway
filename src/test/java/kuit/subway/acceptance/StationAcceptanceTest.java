@@ -15,7 +15,7 @@ public class StationAcceptanceTest extends AcceptanceTest{
     void createStationTest() {
         //given
         String path = "/stations";
-        StationCreateRequest requestDto = SubwayFixtures.createStationRequestDto("강남역");
+        StationCreateRequest requestDto = SubwayFixtures.지하철역_생성_요청("강남역");
 
         //when & then
         RestAssured
@@ -32,7 +32,7 @@ public class StationAcceptanceTest extends AcceptanceTest{
         //given
         String path = "/stations";
         String stationName = "A".repeat(21);
-        StationCreateRequest requestDto = SubwayFixtures.createStationRequestDto(stationName);
+        StationCreateRequest requestDto = SubwayFixtures.지하철역_생성_요청(stationName);
 
         //when & then
         RestAssured
@@ -48,8 +48,8 @@ public class StationAcceptanceTest extends AcceptanceTest{
     void showStationsTest() {
         //given
         String path = "/stations";
-        SubwayFixtures.createStation("강남역");
-        SubwayFixtures.createStation("성수역");
+        SubwayFixtures.지하철역_생성("강남역");
+        SubwayFixtures.지하철역_생성("성수역");
 
         //when & then
         RestAssured
@@ -65,7 +65,7 @@ public class StationAcceptanceTest extends AcceptanceTest{
     void deleteStationTest() {
         //given
         String path = "/stations/{stationId}";
-        SubwayFixtures.createStation("강남역");
+        SubwayFixtures.지하철역_생성("강남역");
 
         //when & then
         RestAssured

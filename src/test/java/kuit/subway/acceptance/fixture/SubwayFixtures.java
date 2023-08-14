@@ -6,8 +6,8 @@ import kuit.subway.dto.station.request.StationCreateRequest;
 
 public class SubwayFixtures {
 
-    public static void createStation(String name) {
-        StationCreateRequest requestDto = createStationRequestDto(name);
+    public static void 지하철역_생성(String name) {
+        StationCreateRequest requestDto = 지하철역_생성_요청(name);
         RestAssured
                 .given().log().all().body(requestDto)
                 .contentType(ContentType.JSON)
@@ -15,7 +15,7 @@ public class SubwayFixtures {
                 .then().log().all();
     }
 
-    public static StationCreateRequest createStationRequestDto(String name) {
+    public static StationCreateRequest 지하철역_생성_요청(String name) {
         return StationCreateRequest.builder()
                 .name(name)
                 .build();
