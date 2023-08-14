@@ -1,5 +1,6 @@
 package kuit.subway.controller;
 
+import jakarta.validation.Valid;
 import kuit.subway.dto.station.request.StationCreateRequest;
 import kuit.subway.dto.station.response.StationCreateResponse;
 import kuit.subway.dto.station.response.StationResponse;
@@ -24,7 +25,7 @@ public class StationController {
     private final StationService stationService;
 
     @PostMapping("/stations")
-    public ResponseEntity<StationCreateResponse> createStation(@RequestBody StationCreateRequest requestDto) {
+    public ResponseEntity<StationCreateResponse> createStation(@Valid @RequestBody StationCreateRequest requestDto) {
         StationCreateResponse responseDto = stationService.createStation(requestDto);
         return ResponseEntity.ok(responseDto);
     }
