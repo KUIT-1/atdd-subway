@@ -17,7 +17,7 @@ public class StationAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("지하철 역을 생성한다.")
     @Test
-    void createStationTest() {
+    void createStation() {
         //when
         ExtractableResponse<Response> response = 지하철역_생성(지하철역_생성_요청("강남역"));
 
@@ -28,7 +28,7 @@ public class StationAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("지하철 역의 이름이 2-20글자가 아니라면 예외를 발생한다.")
     @Test
-    void createStationTest_Throw_Exception_If_Invalid_Station_Name() {
+    void createStation_Throw_Exception_If_Invalid_Station_Name() {
         //when
         ExtractableResponse<Response> response = 지하철역_생성(지하철역_생성_요청("A".repeat(21)));
 
@@ -38,7 +38,7 @@ public class StationAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("지하철역 목록을 조회한다.")
     @Test
-    void showStationsTest() {
+    void showStations() {
         //given
         지하철역_생성(지하철역_생성_요청("강남역"));
         지하철역_생성(지하철역_생성_요청("성수역"));
@@ -56,7 +56,7 @@ public class StationAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("지하철역 하나를 삭제한다.")
     @Test
-    void deleteStationTest() {
+    void deleteStation() {
         //given
         지하철역_생성(지하철역_생성_요청("강남역"));
 
