@@ -61,7 +61,20 @@ public class StationAcceptanceTest extends AcceptanceTest {
         지하철역_생성(지하철역_생성_요청("강남역"));
 
         //when
-        ExtractableResponse<Response> response = 지하철역_삭제();
+        ExtractableResponse<Response> response = 지하철역_삭제(1L);
+
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
+    }
+
+    @DisplayName("지하철역 하나를 삭제한다.")
+    @Test
+    void deleteStationTest_() {
+        //given
+        지하철역_생성(지하철역_생성_요청("강남역"));
+
+        //when
+        ExtractableResponse<Response> response = 지하철역_삭제(1L);
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());

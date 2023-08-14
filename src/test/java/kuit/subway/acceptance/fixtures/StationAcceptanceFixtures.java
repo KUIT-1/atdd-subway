@@ -18,7 +18,7 @@ public class StationAcceptanceFixtures {
         return get(BASE_PATH);
     }
 
-    public static ExtractableResponse<Response> 지하철역_삭제() {
-        return delete(BASE_PATH + "/{stationId}", 1L);
+    public static ExtractableResponse<Response> 지하철역_삭제(Long stationId) {
+        return delete(BASE_PATH + "/{stationId}", stationId);
     }
 }
