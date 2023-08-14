@@ -9,7 +9,8 @@ import org.springframework.http.HttpStatus;
 public enum CustomExceptionStatus implements ExceptionStatus {
 
     // common exception
-    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "잘못된 파라미터로 요청이 들어왔습니다."),
+    INVALID_PARAMETER(HttpStatus.BAD_REQUEST, "검증조건을 만족하지 못하는 요청이 들어왔습니다."),
+    TYPE_MISS_MATCH(HttpStatus.BAD_REQUEST, "잘못된 타입으로 요청이 들어왔습니다."),
     INVALID_URL(HttpStatus.NOT_FOUND, "잘못된 URL 요청입니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류입니다."),
 
