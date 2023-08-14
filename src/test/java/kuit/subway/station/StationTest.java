@@ -42,6 +42,13 @@ public class StationTest extends AcceptanceTest {
     }
 
     @Test
+    void createStation_With_NullValue(){
+        ExtractableResponse<Response> response = 지하철_역_생성_요청("");
+
+        assertEquals(400, response.statusCode());
+    }
+
+    @Test
     void getStations() {
         // given
         지하철_역_생성_요청("강남역");
