@@ -1,78 +1,69 @@
 package kuit.subway.acceptance;
 
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import kuit.subway.acceptance.fixture.SubwayFixtures;
-import kuit.subway.dto.station.request.StationCreateRequest;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-public class StationAcceptanceTest extends AcceptanceTest{
+import java.util.List;
+
+import static kuit.subway.acceptance.fixtures.StationAcceptanceFixtures.*;
+import static kuit.subway.utils.fixtures.StationFixtures.지하철역_생성_요청;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+
+public class StationAcceptanceTest extends AcceptanceTest {
 
     @DisplayName("지하철 역을 생성한다.")
     @Test
     void createStationTest() {
-        //given
-        String path = "/stations";
-        StationCreateRequest requestDto = SubwayFixtures.지하철역_생성_요청("강남역");
+        //when
+        ExtractableResponse<Response> response = 지하철역_생성(지하철역_생성_요청("강남역"));
 
-        //when & then
-        RestAssured
-                .given().log().all().body(requestDto)
-                .contentType(ContentType.JSON)
-                .when().post(path)
-                .then().log().all()
-                .statusCode(200);
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+
     }
 
     @DisplayName("지하철 역의 이름이 2-20글자가 아니라면 예외를 발생한다.")
     @Test
     void createStationTest_Throw_Exception_If_Invalid_Station_Name() {
-        //given
-        String path = "/stations";
-        String stationName = "A".repeat(21);
-        StationCreateRequest requestDto = SubwayFixtures.지하철역_생성_요청(stationName);
+        //when
+        ExtractableResponse<Response> response = 지하철역_생성(지하철역_생성_요청("A".repeat(21)));
 
-        //when & then
-        RestAssured
-                .given().log().all().body(requestDto)
-                .contentType(ContentType.JSON)
-                .when().post(path)
-                .then().log().all()
-                .statusCode(HttpStatus.BAD_REQUEST.value());
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
     @DisplayName("지하철역 목록을 조회한다.")
     @Test
     void showStationsTest() {
         //given
-        String path = "/stations";
-        SubwayFixtures.지하철역_생성("강남역");
-        SubwayFixtures.지하철역_생성("성수역");
+        지하철역_생성(지하철역_생성_요청("강남역"));
+        지하철역_생성(지하철역_생성_요청("성수역"));
 
-        //when & then
-        RestAssured
-                .given().log().all()
-                .contentType(ContentType.JSON)
-                .when().get(path)
-                .then().log().all()
-                .statusCode(200);
+        //when
+        ExtractableResponse<Response> response = 지하철역_조회();
+        List<Object> results = response.jsonPath().getList(".");
+
+        //then
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(results).hasSize(2)
+        );
     }
 
     @DisplayName("지하철역 하나를 삭제한다.")
     @Test
     void deleteStationTest() {
         //given
-        String path = "/stations/{stationId}";
-        SubwayFixtures.지하철역_생성("강남역");
+        지하철역_생성(지하철역_생성_요청("강남역"));
 
-        //when & then
-        RestAssured
-                .given().log().all()
-                .contentType(ContentType.JSON)
-                .when().delete(path, 1L)
-                .then().log().all()
-                .statusCode(204);
+        //when
+        ExtractableResponse<Response> response = 지하철역_삭제();
+
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NO_CONTENT.value());
     }
 }
