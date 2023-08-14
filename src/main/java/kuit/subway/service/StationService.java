@@ -22,17 +22,16 @@ public class StationService {
     @Transactional
     public PostStationResponse createStation(String name) {
         if(stationRepository.findByName(name).isPresent())
-            throw new EntityExistsException(name + "은 이미 존재합니다.");
+            throw new EntityExistsException(name);
+
         Long id = stationRepository.save(new Station(name)).getId();
         return new PostStationResponse(id);
     }
 
     public List<GetStationsResponse> getStations() {
         return stationRepository.findAll().stream().map(
-                station -> {
-                    return new GetStationsResponse(station.getId(), station.getName());
-                }
-        ).collect(Collectors.toList());
+                station -> new GetStationsResponse(station.getId(), station.getName())
+        ).toList();
     }
 
     public void deleteStation(Long id) {

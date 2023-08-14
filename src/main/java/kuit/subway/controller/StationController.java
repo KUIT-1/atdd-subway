@@ -7,6 +7,7 @@ import kuit.subway.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +21,16 @@ public class StationController {
     private final StationService stationService;
 
     @PostMapping
-    public PostStationResponse createStation(@Validated @RequestBody PostStationRequest postStationRequest){
-        return stationService.createStation(postStationRequest.getName());
+    public ResponseEntity<PostStationResponse> createStation(
+            @Validated @RequestBody PostStationRequest postStationRequest){
+        PostStationResponse postStationResponse = stationService.createStation(postStationRequest.getName());
+        return new ResponseEntity<>(postStationResponse, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public List<GetStationsResponse> createStation(){
-        return stationService.getStations();
+    public ResponseEntity<List<GetStationsResponse>> getStations(){
+        List<GetStationsResponse> response = stationService.getStations();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
