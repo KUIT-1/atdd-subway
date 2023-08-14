@@ -4,16 +4,14 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kuit.subway.station.dto.request.StationCreateRequest;
 
-import static kuit.subway.utils.fixtures.StationFixtures.지하철역_생성_요청;
 import static kuit.subway.utils.RestAssuredUtils.*;
 
 public class StationAcceptanceFixtures {
 
     private static final String BASE_PATH = "/stations";
 
-    public static ExtractableResponse<Response> 지하철역_생성(String name) {
-        StationCreateRequest requestDto = 지하철역_생성_요청(name);
-        return post(BASE_PATH, requestDto);
+    public static ExtractableResponse<Response> 지하철역_생성(StationCreateRequest request) {
+        return post(BASE_PATH, request);
     }
 
     public static ExtractableResponse<Response> 지하철역_조회() {
