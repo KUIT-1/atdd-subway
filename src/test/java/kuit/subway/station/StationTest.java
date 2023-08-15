@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StationTest extends AcceptanceTest {
 
+    private final String ID_PATH = "result.id";
+    private final String NAME_PATH = "result.name";
     @Test
     void createStation() {
         Map<String, String> body = new HashMap<>();
@@ -29,7 +31,7 @@ public class StationTest extends AcceptanceTest {
                 .then().log().all()
                 .extract();
 
-        assertEquals(1L, response.jsonPath().getLong("id"));
+        assertEquals(1L, response.jsonPath().getLong(ID_PATH));
         assertEquals(201, response.statusCode());
     }
 
@@ -37,7 +39,7 @@ public class StationTest extends AcceptanceTest {
     void createStation_Using_StationStep(){
         ExtractableResponse<Response> response = 지하철_역_생성_요청("강남역");
 
-        assertEquals(1L, response.jsonPath().getLong("id"));
+        assertEquals(1L, response.jsonPath().getLong(ID_PATH));
         assertEquals(201, response.statusCode());
     }
 
@@ -47,6 +49,15 @@ public class StationTest extends AcceptanceTest {
 
         assertEquals(400, response.statusCode());
     }
+
+    @Test
+    void create_Duplicated_Station(){
+        지하철_역_생성_요청("강남역");
+        ExtractableResponse<Response> response = 지하철_역_생성_요청("강남역");
+
+        assertEquals(409, response.statusCode());
+    }
+
 
     @Test
     void getStations() {
@@ -60,15 +71,16 @@ public class StationTest extends AcceptanceTest {
                 .then().log().all()
                 .extract();
 
-
         // then
-        List<String> stationNames = response.jsonPath().getList("name");
-        List<Integer> stationId = response.jsonPath().getList("id");
+        List<String> stationNames = response.jsonPath().getList(NAME_PATH);
+        List<Long> stationIds = response.jsonPath().getList(ID_PATH)
+                                        .stream().map(id -> Long.valueOf(id.toString()))
+                                        .toList();
 
         assertEquals(200, response.statusCode());
-        assertEquals(1, stationId.get(0));
+        assertEquals(1L, stationIds.get(0));
         assertEquals("강남역", stationNames.get(0));
-        assertEquals(2, stationId.get(1));
+        assertEquals(2L, stationIds.get(1));
         assertEquals("성수역", stationNames.get(1));
 
     }

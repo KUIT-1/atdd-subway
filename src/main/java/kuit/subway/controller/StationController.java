@@ -4,14 +4,16 @@ import kuit.subway.request.station.PostStationRequest;
 import kuit.subway.response.station.GetStationsResponse;
 import kuit.subway.response.station.PostStationResponse;
 import kuit.subway.service.StationService;
+import kuit.subway.utils.BaseResponseEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static kuit.subway.utils.BaseResponseStatus.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,22 +23,22 @@ public class StationController {
     private final StationService stationService;
 
     @PostMapping
-    public ResponseEntity<PostStationResponse> createStation(
+    public BaseResponseEntity<PostStationResponse> createStation(
             @Validated @RequestBody PostStationRequest postStationRequest){
         PostStationResponse postStationResponse = stationService.createStation(postStationRequest.getName());
-        return new ResponseEntity<>(postStationResponse, HttpStatus.CREATED);
+        return new BaseResponseEntity<>(CREATED_SUCCESS, postStationResponse);
     }
 
     @GetMapping
-    public ResponseEntity<List<GetStationsResponse>> getStations(){
+    public BaseResponseEntity<List<GetStationsResponse>> getStations(){
         List<GetStationsResponse> response = stationService.getStations();
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        return new BaseResponseEntity<>(response);
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void deleteStation(@PathVariable("id") Long id){
+    public BaseResponseEntity<?> deleteStation(@PathVariable("id") Long id){
         stationService.deleteStation(id);
+        return new BaseResponseEntity<>(DELETED_SUCCESS);
     }
 
 }
