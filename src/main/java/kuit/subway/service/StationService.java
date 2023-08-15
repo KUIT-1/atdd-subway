@@ -21,7 +21,7 @@ public class StationService {
 
     @Transactional
     public PostStationResponse createStation(String name) {
-        if(stationRepository.findByName(name).isPresent())
+        if(stationRepository.existsByName(name))
             throw new EntityExistsException(name);
 
         Long id = stationRepository.save(new Station(name)).getId();
