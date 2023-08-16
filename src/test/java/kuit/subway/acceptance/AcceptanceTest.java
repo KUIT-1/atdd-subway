@@ -1,4 +1,4 @@
-package kuit.subway;
+package kuit.subway.acceptance;
 
 import io.restassured.RestAssured;
 import kuit.subway.utils.DatabaseCleanup;
@@ -10,7 +10,8 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class AcceptanceTest {
+public abstract class AcceptanceTest {
+
     @Autowired
     private DatabaseCleanup databaseCleanup;
 
@@ -19,7 +20,7 @@ public class AcceptanceTest {
 
     @BeforeEach
     public void setUp() {
-        RestAssured.port = 443;
+        RestAssured.port = port;
         databaseCleanup.execute();
     }
 }
