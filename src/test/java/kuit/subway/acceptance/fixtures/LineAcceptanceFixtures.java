@@ -18,4 +18,8 @@ public class LineAcceptanceFixtures {
     public static ExtractableResponse<Response> 노선_조회(Long lineId) {
         return get(BASE_PATH+"/{lineId}", lineId);
     }
+
+    public static ExtractableResponse<Response> 노선_변경(Long lineId, LineRequest request) {
+        return post(request, BASE_PATH + "/{lineId}", lineId);
+    }
 }
