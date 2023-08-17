@@ -1,5 +1,7 @@
 package kuit.subway.line.dto.request;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import kuit.subway.line.domain.Line;
 import lombok.AccessLevel;
@@ -18,6 +20,8 @@ public class LineCreateRequest {
     private String name;
     @Size(min = 2, max = 10)
     private String color;
+    @NotNull
+    @Min(1)
     private Long distance;
 
     private Long downStationId;
