@@ -17,6 +17,9 @@ public enum CustomExceptionStatus implements ExceptionStatus {
     // station exception
     DUPLICATED_STATION(HttpStatus.BAD_REQUEST, "중복된 이름의 역이 존재합니다."),
     NOT_EXISTED_STATION(HttpStatus.BAD_REQUEST, "존재하지 않는 역입니다."),
+
+    // line exception
+    NOT_EXISTED_LINE(HttpStatus.BAD_REQUEST, "존재하지 않는 노선입니다."),
     ;
 
     private final HttpStatus httpStatus;
