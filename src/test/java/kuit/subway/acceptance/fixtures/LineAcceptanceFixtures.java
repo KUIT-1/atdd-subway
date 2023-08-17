@@ -12,7 +12,7 @@ public class LineAcceptanceFixtures {
     private static final String BASE_PATH = "/lines";
 
     public static ExtractableResponse<Response> 노선_생성(LineRequest request) {
-        return post(BASE_PATH, request);
+        return post(request, BASE_PATH);
     }
 
     public static ExtractableResponse<Response> 노선_조회(Long lineId) {
