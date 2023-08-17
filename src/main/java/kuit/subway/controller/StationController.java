@@ -1,13 +1,12 @@
 package kuit.subway.controller;
 
-import kuit.subway.request.station.PostStationRequest;
-import kuit.subway.response.station.GetStationsResponse;
-import kuit.subway.response.station.PostStationResponse;
+import kuit.subway.request.station.StationRequest;
+import kuit.subway.response.station.CreateStationResponse;
+import kuit.subway.response.station.ShowStationResponse;
 import kuit.subway.service.StationService;
 import kuit.subway.utils.BaseResponseEntity;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,15 +22,15 @@ public class StationController {
     private final StationService stationService;
 
     @PostMapping
-    public BaseResponseEntity<PostStationResponse> createStation(
-            @Validated @RequestBody PostStationRequest postStationRequest){
-        PostStationResponse postStationResponse = stationService.createStation(postStationRequest.getName());
-        return new BaseResponseEntity<>(CREATED_SUCCESS, postStationResponse);
+    public BaseResponseEntity<CreateStationResponse> createStation(
+            @Validated @RequestBody StationRequest request){
+        CreateStationResponse response = stationService.createStation(request);
+        return new BaseResponseEntity<>(CREATED_SUCCESS, response);
     }
 
     @GetMapping
-    public BaseResponseEntity<List<GetStationsResponse>> getStations(){
-        List<GetStationsResponse> response = stationService.getStations();
+    public BaseResponseEntity<List<ShowStationResponse>> getStations(){
+        List<ShowStationResponse> response = stationService.getStations();
         return new BaseResponseEntity<>(response);
     }
 

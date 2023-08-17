@@ -1,11 +1,11 @@
 package kuit.subway.service;
 
-import jakarta.persistence.EntityExistsException;
 import kuit.subway.domain.Station;
 import kuit.subway.repository.StationRepository;
-import kuit.subway.response.station.GetStationsResponse;
-import kuit.subway.response.station.PostStationResponse;
 import kuit.subway.utils.exception.StationException;
+import kuit.subway.request.station.StationRequest;
+import kuit.subway.response.station.CreateStationResponse;
+import kuit.subway.response.station.ShowStationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,20 +22,23 @@ public class StationService {
     private final StationRepository stationRepository;
 
     @Transactional
-    public PostStationResponse createStation(String name) {
-        if(stationRepository.findByName(name).isPresent())
+    public CreateStationResponse createStation(StationRequest request) {
+        String name = request.getName();
+
+        if(stationRepository.existsByName(name))
             throw new StationException(DUPLICATED_STATION);
 
-        Long id = stationRepository.save(new Station(name)).getId();
-        return new PostStationResponse(id);
+        Station station = stationRepository.save(new Station(name));
+
+        return CreateStationResponse.from(station);
     }
 
-    public List<GetStationsResponse> getStations() {
-        return stationRepository.findAll().stream().map(
-                station -> new GetStationsResponse(station.getId(), station.getName())
-        ).toList();
+    public List<ShowStationResponse> getStations() {
+        return stationRepository.findAll().stream()
+                .map(ShowStationResponse::from).toList();
     }
 
+    @Transactional
     public void deleteStation(Long id) {
         stationRepository.deleteById(id);
     }
