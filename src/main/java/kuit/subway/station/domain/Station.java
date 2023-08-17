@@ -35,6 +35,5 @@ public class Station {
 
     public void addLine(Line line) {
         this.line = line;
-        line.getStations().add(this);
     }
 }

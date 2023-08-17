@@ -15,7 +15,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -40,13 +39,17 @@ public class Line extends BaseTimeEntity {
     public List<Station> stations = new ArrayList<>();
 
     @Builder
-    public Line(String name, String color, Long distance) {
+    public Line(String name, String color, Long distance, List<Station> stations) {
         this.name = name;
         this.color = color;
         this.distance = distance;
+        if (stations != null) {
+            this.stations = stations;
+            addStations(stations);
+        }
     }
 
-    public void addStations(Station... stations) {
-        Arrays.stream(stations).forEach(station -> station.addLine(this));
+    private void addStations(List<Station> stations) {
+        stations.forEach(station -> station.addLine(this));
     }
 }
