@@ -48,6 +48,21 @@ public class LineAcceptanceTest extends AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
+    @DisplayName("상행종점역과 하행종점역이 같은 노선 생성 요청의 경우, 예외를 발생한다.")
+    @Test
+    void createLine_Throw_Exception_If_Duplicated_Stations_Request(){
+        //given
+        지하철역_생성(지하철역_생성_요청("강남역"));
+        지하철역_생성(지하철역_생성_요청("성수역"));
+
+        //when
+        ExtractableResponse<Response> response =
+                노선_생성(노선_생성_요청("경춘선","grean" , 10L, 1L, 1L));
+
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
     @DisplayName("지하철 노선을 조회한다.")
     @Test
     void showLines(){
