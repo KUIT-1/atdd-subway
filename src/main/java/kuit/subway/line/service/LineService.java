@@ -1,8 +1,9 @@
 package kuit.subway.line.service;
 
+import kuit.subway.global.exception.CustomExceptionStatus;
 import kuit.subway.global.exception.SubwayException;
 import kuit.subway.line.domain.Line;
-import kuit.subway.line.dto.request.LineCreateRequest;
+import kuit.subway.line.dto.request.LineRequest;
 import kuit.subway.line.dto.response.LineCreateResponse;
 import kuit.subway.line.dto.response.LineResponse;
 import kuit.subway.line.repository.LineRepository;
@@ -29,15 +30,11 @@ public class LineService {
     private final StationRepository stationRepository;
 
     @Transactional
-    public LineCreateResponse createLine(LineCreateRequest request) {
-        Station upStation = stationRepository.findById(request.getUpStationId())
-                .orElseThrow(() -> new SubwayException(NOT_EXISTED_STATION));
+    public LineCreateResponse createLine(LineRequest request) {
+        validateDuplicatedStations(request);
+        List<Station> stations = extractStationsFrom(request);
 
-        Station downStation = stationRepository.findById(request.getDownStationId())
-                .orElseThrow(() -> new SubwayException(NOT_EXISTED_STATION));
-
-        Line line = request.toEntity();
-        line.addStations(upStation, downStation);
+        Line line = request.toEntity(stations);
 
         lineRepository.save(line);
         return LineCreateResponse.of(line);
@@ -47,10 +44,26 @@ public class LineService {
         Line line = lineRepository.findById(lineId)
                 .orElseThrow(() -> new SubwayException(NOT_EXISTED_LINE));
 
-        List<StationResponse> stations = line.getStations().stream()
+        List<StationResponse> stationResponses = line.getStations().stream()
                 .map(StationResponse::of)
                 .toList();
 
-        return LineResponse.of(line, stations);
+        return LineResponse.of(line, stationResponses);
+    }
+
+    private void validateDuplicatedStations(LineRequest request) {
+        if (request.getUpStationId().equals(request.getDownStationId())) {
+            throw new SubwayException(CustomExceptionStatus.DUPLICATED_UP_STATION_AND_DOWN_STATION);
+        }
+    }
+
+    private List<Station> extractStationsFrom(LineRequest request) {
+        Station upStation = stationRepository.findById(request.getUpStationId())
+                .orElseThrow(() -> new SubwayException(NOT_EXISTED_STATION));
+
+        Station downStation = stationRepository.findById(request.getDownStationId())
+                .orElseThrow(() -> new SubwayException(NOT_EXISTED_STATION));
+
+        return List.of(upStation, downStation);
     }
 }
