@@ -51,6 +51,22 @@ public class LineService {
         return LineResponse.of(line, stationResponses);
     }
 
+    @Transactional
+    public LineResponse updateLine(Long lineId, LineRequest request) {
+        Line line = lineRepository.findById(lineId)
+                .orElseThrow(() -> new SubwayException(NOT_EXISTED_LINE));
+
+        validateDuplicatedStations(request);
+        List<Station> stations = extractStationsFrom(request);
+
+        line.updateInfo(request.getName(), request.getColor(), request.getDistance());
+        line.updateStations(stations);
+
+        List<StationResponse> stationResponses = stations.stream().map(StationResponse::of).toList();
+
+        return LineResponse.of(line, stationResponses);
+    }
+
     private void validateDuplicatedStations(LineRequest request) {
         if (request.getUpStationId().equals(request.getDownStationId())) {
             throw new SubwayException(CustomExceptionStatus.DUPLICATED_UP_STATION_AND_DOWN_STATION);
