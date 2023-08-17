@@ -61,7 +61,8 @@ public class Line extends BaseTimeEntity {
     }
 
     public void updateStations(List<Station> stations) {
-        this.stations = stations;
+        this.stations.clear();
+        this.stations.addAll(stations);
         addStations(stations);
     }
 }
