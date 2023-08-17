@@ -35,4 +35,11 @@ public class LineController {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);
     }
+
+    @PostMapping("/lines/{lineId}")
+    public ResponseEntity<LineResponse> updateLine(@PathVariable Long lineId,
+                                                   @Valid @RequestBody LineRequest request) {
+        LineResponse response = lineService.updateLine(lineId, request);
+        return ResponseEntity.ok(response);
+    }
 }
