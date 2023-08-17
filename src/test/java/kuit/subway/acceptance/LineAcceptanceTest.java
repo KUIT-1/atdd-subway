@@ -25,8 +25,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
         지하철역_생성(지하철역_생성_요청("성수역"));
 
         //when
-        ExtractableResponse<Response> response =
-                노선_생성(노선_요청("경춘선", "grean", 10L, 2L, 1L));
+        ExtractableResponse<Response> response = 노선_생성(노선_요청("경춘선", "grean", 10L, 2L, 1L));
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
