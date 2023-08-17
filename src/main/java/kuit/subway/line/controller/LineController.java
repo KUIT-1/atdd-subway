@@ -1,7 +1,7 @@
 package kuit.subway.line.controller;
 
 import jakarta.validation.Valid;
-import kuit.subway.line.dto.request.LineCreateRequest;
+import kuit.subway.line.dto.request.LineRequest;
 import kuit.subway.line.dto.response.LineCreateResponse;
 import kuit.subway.line.dto.response.LineResponse;
 import kuit.subway.line.service.LineService;
@@ -23,7 +23,7 @@ public class LineController {
     private final LineService lineService;
 
     @PostMapping("/lines")
-    public ResponseEntity<LineCreateResponse> createLine(@Valid @RequestBody LineCreateRequest request) {
+    public ResponseEntity<LineCreateResponse> createLine(@Valid @RequestBody LineRequest request) {
         LineCreateResponse response = lineService.createLine(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);
