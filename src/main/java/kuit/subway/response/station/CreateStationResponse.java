@@ -1,4 +1,4 @@
-package kuit.subway.response;
+package kuit.subway.response.station;
 
 import kuit.subway.domain.Station;
 import lombok.Getter;
