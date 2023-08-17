@@ -1,6 +1,5 @@
 package kuit.subway.line.service;
 
-import kuit.subway.global.exception.CustomExceptionStatus;
 import kuit.subway.global.exception.SubwayException;
 import kuit.subway.line.domain.Line;
 import kuit.subway.line.dto.request.LineRequest;
@@ -17,8 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static kuit.subway.global.exception.CustomExceptionStatus.NOT_EXISTED_LINE;
-import static kuit.subway.global.exception.CustomExceptionStatus.NOT_EXISTED_STATION;
+import static kuit.subway.global.exception.CustomExceptionStatus.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -67,9 +65,17 @@ public class LineService {
         return LineResponse.of(line, stationResponses);
     }
 
+    @Transactional
+    public void deleteLine(Long lineId) {
+        Line line = lineRepository.findById(lineId)
+                .orElseThrow(() -> new SubwayException(NOT_EXISTED_LINE));
+
+        lineRepository.delete(line);
+    }
+
     private void validateDuplicatedStations(LineRequest request) {
         if (request.getUpStationId().equals(request.getDownStationId())) {
-            throw new SubwayException(CustomExceptionStatus.DUPLICATED_UP_STATION_AND_DOWN_STATION);
+            throw new SubwayException(DUPLICATED_UP_STATION_AND_DOWN_STATION);
         }
     }
 
