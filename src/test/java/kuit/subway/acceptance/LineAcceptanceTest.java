@@ -11,7 +11,7 @@ import java.util.List;
 import static kuit.subway.acceptance.fixtures.LineAcceptanceFixtures.노선_생성;
 import static kuit.subway.acceptance.fixtures.LineAcceptanceFixtures.노선_조회;
 import static kuit.subway.acceptance.fixtures.StationAcceptanceFixtures.지하철역_생성;
-import static kuit.subway.utils.fixtures.LineFixtures.노선_생성_요청;
+import static kuit.subway.utils.fixtures.LineFixtures.노선_요청;
 import static kuit.subway.utils.fixtures.StationFixtures.지하철역_생성_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -27,7 +27,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
 
         //when
         ExtractableResponse<Response> response =
-                노선_생성(노선_생성_요청("경춘선", "grean", 10L, 2L, 1L));
+                노선_생성(노선_요청("경춘선", "grean", 10L, 2L, 1L));
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
@@ -42,7 +42,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
 
         //when
         ExtractableResponse<Response> response =
-                노선_생성(노선_생성_요청("A".repeat(11),"G".repeat(11) , -1L, 2L, 1L));
+                노선_생성(노선_요청("A".repeat(11),"G".repeat(11) , -1L, 2L, 1L));
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -57,7 +57,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
 
         //when
         ExtractableResponse<Response> response =
-                노선_생성(노선_생성_요청("경춘선","grean" , 10L, 1L, 1L));
+                노선_생성(노선_요청("경춘선","grean" , 10L, 1L, 1L));
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -69,7 +69,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
         //given
         지하철역_생성(지하철역_생성_요청("강남역"));
         지하철역_생성(지하철역_생성_요청("성수역"));
-        노선_생성(노선_생성_요청("경춘선", "green", 10L, 1L, 2L));
+        노선_생성(노선_요청("경춘선", "green", 10L, 1L, 2L));
 
         //when
         ExtractableResponse<Response> response = 노선_조회(1L);
@@ -88,7 +88,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
         //given
         지하철역_생성(지하철역_생성_요청("강남역"));
         지하철역_생성(지하철역_생성_요청("성수역"));
-        노선_생성(노선_생성_요청("경춘선", "green", 10L, 1L, 2L));
+        노선_생성(노선_요청("경춘선", "green", 10L, 1L, 2L));
 
         //when
         ExtractableResponse<Response> response = 노선_조회(2L);
