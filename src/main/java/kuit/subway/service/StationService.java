@@ -3,15 +3,15 @@ package kuit.subway.service;
 import jakarta.persistence.EntityExistsException;
 import kuit.subway.domain.Station;
 import kuit.subway.repository.StationRepository;
-import kuit.subway.response.GetStationsResponse;
-import kuit.subway.response.PostStationResponse;
+import kuit.subway.request.StationRequest;
+import kuit.subway.response.CreateStationResponse;
+import kuit.subway.response.ShowStationResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,20 +20,23 @@ public class StationService {
     private final StationRepository stationRepository;
 
     @Transactional
-    public PostStationResponse createStation(String name) {
+    public CreateStationResponse createStation(StationRequest request) {
+        String name = request.getName();
+
         if(stationRepository.existsByName(name))
             throw new EntityExistsException(name);
 
-        Long id = stationRepository.save(new Station(name)).getId();
-        return new PostStationResponse(id);
+        Station station = stationRepository.save(new Station(name));
+
+        return CreateStationResponse.from(station);
     }
 
-    public List<GetStationsResponse> getStations() {
-        return stationRepository.findAll().stream().map(
-                station -> new GetStationsResponse(station.getId(), station.getName())
-        ).toList();
+    public List<ShowStationResponse> getStations() {
+        return stationRepository.findAll().stream()
+                .map(ShowStationResponse::from).toList();
     }
 
+    @Transactional
     public void deleteStation(Long id) {
         stationRepository.deleteById(id);
     }
