@@ -75,6 +75,13 @@ public class Line extends BaseTimeEntity {
         return stations;
     }
 
+    public void removeSection() {
+        if (sections.size() == 1) {
+            throw new SubwayException(CANNOT_REMOVE_SECTION);
+        }
+        sections.remove(sections.size() - 1);
+    }
+
     private void validateAvailableSection(Section section) {
         // 처음 역을 만드는 경우
         if (sections.size() == 0) {
