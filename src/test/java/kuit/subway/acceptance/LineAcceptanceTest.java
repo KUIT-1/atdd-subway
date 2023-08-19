@@ -68,7 +68,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
 
         //then
         assertAll(
-                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(stations).hasSize(2)
         );
     }

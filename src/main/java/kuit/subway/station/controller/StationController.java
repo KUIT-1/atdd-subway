@@ -7,7 +7,6 @@ import kuit.subway.station.dto.response.StationResponse;
 import kuit.subway.station.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,6 +41,6 @@ public class StationController {
     @DeleteMapping("/{stationId}")
     public ResponseEntity<Void> deleteStation(@PathVariable Long stationId) {
         stationService.deleteStation(stationId);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.noContent().build();
     }
 }
