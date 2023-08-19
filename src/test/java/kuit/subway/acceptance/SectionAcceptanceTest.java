@@ -11,6 +11,7 @@ import java.util.List;
 
 import static kuit.subway.acceptance.fixtures.LineAcceptanceFixtures.노선_생성;
 import static kuit.subway.acceptance.fixtures.SectionAcceptanceFixtures.구간_생성;
+import static kuit.subway.acceptance.fixtures.SectionAcceptanceFixtures.구간_제거;
 import static kuit.subway.acceptance.fixtures.StationAcceptanceFixtures.지하철역_생성;
 import static kuit.subway.utils.fixtures.LineFixtures.노선_요청;
 import static kuit.subway.utils.fixtures.SectionFixtures.구간_생성_요청;
@@ -65,6 +66,34 @@ public class SectionAcceptanceTest extends AcceptanceTest {
 
         //when
         ExtractableResponse<Response> response = 구간_생성(1L, 구간_생성_요청(10L, 1L, 2L));
+
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @DisplayName("노선에 등록된 하행 종점역을 제거한다.")
+    @Test
+    void deleteSection(){
+        //given
+        지하철역_생성(지하철역_생성_요청("건대입구역"));
+        구간_생성(1L, 구간_생성_요청(10L, 3L, 2L));
+
+        //when
+        ExtractableResponse<Response> response = 구간_제거(1L);
+        List<Object> stations = response.jsonPath().getList("stations.");
+
+        //then
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(stations).hasSize(2)
+        );
+    }
+
+    @DisplayName("노선에 구간이 1개인 경우 구간을 삭제하면, 예외가 발생한다.")
+    @Test
+    void deleteSection_Throw_Exception_If_Section_Size_Equal_One(){
+        //when
+        ExtractableResponse<Response> response = 구간_제거(1L);
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
