@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import kuit.subway.BaseTimeEntity;
 import kuit.subway.global.exception.SubwayException;
+import kuit.subway.station.domain.Station;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,8 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 
-import static kuit.subway.global.exception.CustomExceptionStatus.INVALID_SECTION_CANNOT_CYCLE;
-import static kuit.subway.global.exception.CustomExceptionStatus.INVALID_SECTION_NOT_EXISTED_DOWN_STATION;
+import static kuit.subway.global.exception.CustomExceptionStatus.*;
 
 @Entity
 @Getter
@@ -57,6 +57,22 @@ public class Line extends BaseTimeEntity {
     public void addSection(Section section) {
         validateAvailableSection(section);
         this.sections.add(section);
+    }
+
+    // TODO 리팩토링 필수
+    public List<Station> getStations() {
+        List<Station> stations = new ArrayList<>();
+        boolean isFirst = true;
+        for (Section section : sections) {
+            if (isFirst) {
+                stations.add(section.getUpStation());
+                stations.add(section.getDownStation());
+            } else {
+                stations.add(section.getDownStation());
+            }
+            isFirst = false;
+        }
+        return stations;
     }
 
     private void validateAvailableSection(Section section) {
