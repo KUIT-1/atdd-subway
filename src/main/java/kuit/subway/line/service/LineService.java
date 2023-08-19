@@ -84,6 +84,16 @@ public class LineService {
         return LineResponse.of(line);
     }
 
+    @Transactional
+    public LineResponse deleteSection(Long lineId) {
+        Line line = lineRepository.findById(lineId)
+                .orElseThrow(() -> new SubwayException(NOT_EXISTED_LINE));
+
+        line.removeSection();
+
+        return LineResponse.of(line);
+    }
+
     private void validateDuplicatedStations(LineRequest request) {
         if (request.getUpStationId().equals(request.getDownStationId())) {
             throw new SubwayException(DUPLICATED_UP_STATION_AND_DOWN_STATION);
