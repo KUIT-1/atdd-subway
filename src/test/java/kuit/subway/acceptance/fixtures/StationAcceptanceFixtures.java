@@ -11,7 +11,7 @@ public class StationAcceptanceFixtures {
     private static final String BASE_PATH = "/stations";
 
     public static ExtractableResponse<Response> 지하철역_생성(StationCreateRequest request) {
-        return post(BASE_PATH, request);
+        return post(request, BASE_PATH);
     }
 
     public static ExtractableResponse<Response> 지하철역_조회() {

@@ -7,7 +7,7 @@ import io.restassured.response.Response;
 
 public class RestAssuredUtils {
 
-    public static ExtractableResponse<Response> post(String path, Object requestBody) {
+    public static ExtractableResponse<Response> post(Object requestBody, String path) {
         return RestAssured
                 .given().log().all().body(requestBody)
                 .contentType(ContentType.JSON)
@@ -16,7 +16,7 @@ public class RestAssuredUtils {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> post(String path, Object requestBody, Object... pathParams) {
+    public static ExtractableResponse<Response> post(Object requestBody, String path, Object... pathParams) {
         return RestAssured
                 .given().log().all().body(requestBody)
                 .contentType(ContentType.JSON)
@@ -43,7 +43,7 @@ public class RestAssuredUtils {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> patch(String path, Object requestBody) {
+    public static ExtractableResponse<Response> patch(Object requestBody, String path) {
         return RestAssured
                 .given().log().all().body(requestBody)
                 .contentType(ContentType.JSON)
@@ -52,7 +52,7 @@ public class RestAssuredUtils {
                 .extract();
     }
 
-    public static ExtractableResponse<Response> patch(String path, Object requestBody, Object... pathParams) {
+    public static ExtractableResponse<Response> patch(Object requestBody, String path, Object... pathParams) {
         return RestAssured
                 .given().log().all().body(requestBody)
                 .contentType(ContentType.JSON)
