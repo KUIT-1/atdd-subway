@@ -8,12 +8,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import kuit.subway.BaseTimeEntity;
-import kuit.subway.station.domain.Station;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,7 @@ import java.util.List;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Slf4j
 public class Line extends BaseTimeEntity {
 
     @Id
@@ -35,35 +36,17 @@ public class Line extends BaseTimeEntity {
     @Column(length = 10, nullable = false)
     private String color;
 
-    private Long distance;
-
-    @OneToMany(mappedBy = "line", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    public List<Station> stations = new ArrayList<>();
+    @OneToMany(mappedBy = "line", cascade = CascadeType.ALL, orphanRemoval = true)
+    public List<Section> sections = new ArrayList<>();
 
     @Builder
-    public Line(String name, String color, Long distance, List<Station> stations) {
+    public Line(String name, String color) {
         this.name = name;
         this.color = color;
-        this.distance = distance;
-        if (stations != null) {
-            this.stations = stations;
-            addStations(stations);
-        }
     }
 
-    private void addStations(List<Station> stations) {
-        stations.forEach(station -> station.addLine(this));
-    }
-
-    public void updateInfo(String name, String color, Long distance) {
+    public void update(String name, String color) {
         this.name = name;
         this.color = color;
-        this.distance = distance;
-    }
-
-    public void updateStations(List<Station> stations) {
-        this.stations.clear();
-        this.stations.addAll(stations);
-        addStations(stations);
     }
 }
