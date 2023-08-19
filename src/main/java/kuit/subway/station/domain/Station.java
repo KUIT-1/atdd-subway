@@ -24,6 +24,7 @@ public class Station {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "station_id")
     private Long id;
 
     @Column(length = 20, nullable = false)

@@ -26,6 +26,7 @@ public class Line extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "line_id")
     private Long id;
 
     @Column(length = 10, nullable = false)
