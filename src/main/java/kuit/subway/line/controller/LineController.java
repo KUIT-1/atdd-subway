@@ -14,37 +14,39 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/lines")
 @RequiredArgsConstructor
 @Slf4j
 public class LineController {
 
     private final LineService lineService;
 
-    @PostMapping("/lines")
+    @PostMapping
     public ResponseEntity<LineCreateResponse> createLine(@Valid @RequestBody LineRequest request) {
         LineCreateResponse response = lineService.createLine(request);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);
     }
 
-    @GetMapping("/lines/{lineId}")
+    @GetMapping("/{lineId}")
     public ResponseEntity<LineResponse> showLine(@PathVariable Long lineId) {
         LineResponse response = lineService.showLine(lineId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(response);
     }
 
-    @PostMapping("/lines/{lineId}")
+    @PostMapping("/{lineId}")
     public ResponseEntity<LineResponse> updateLine(@PathVariable Long lineId,
                                                    @Valid @RequestBody LineRequest request) {
         LineResponse response = lineService.updateLine(lineId, request);
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/lines/{lineId}")
+    @DeleteMapping("/{lineId}")
     public ResponseEntity<Void> deleteLine(@PathVariable Long lineId) {
         lineService.deleteLine(lineId);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
