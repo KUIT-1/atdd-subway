@@ -19,12 +19,12 @@ public class LineResponse {
     private LocalDateTime createdDate;
     private LocalDateTime modifiedDate;
 
-    public static LineResponse of(Line line, List<StationResponse> stations) {
+    public static LineResponse of(Line line) {
         return LineResponse.builder()
                 .id(line.getId())
                 .name(line.getName())
                 .color(line.getColor())
-                .stations(stations)
+                .stations(line.getStations().stream().map(StationResponse::of).toList())
                 .createdDate(line.getCreatedDate())
                 .modifiedDate(line.getModifiedDate())
                 .build();
