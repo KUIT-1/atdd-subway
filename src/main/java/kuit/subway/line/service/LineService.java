@@ -4,6 +4,7 @@ import kuit.subway.global.exception.SubwayException;
 import kuit.subway.line.domain.Line;
 import kuit.subway.line.domain.Section;
 import kuit.subway.line.dto.request.LineRequest;
+import kuit.subway.line.dto.request.SectionRequest;
 import kuit.subway.line.dto.response.LineCreateResponse;
 import kuit.subway.line.dto.response.LineResponse;
 import kuit.subway.line.repository.LineRepository;
@@ -65,6 +66,22 @@ public class LineService {
                 .orElseThrow(() -> new SubwayException(NOT_EXISTED_LINE));
 
         lineRepository.delete(line);
+    }
+
+    @Transactional
+    public LineResponse createSection(Long lineId, SectionRequest request) {
+        Line line = lineRepository.findById(lineId)
+                .orElseThrow(() -> new SubwayException(NOT_EXISTED_LINE));
+
+        Station upStation = stationRepository.findById(request.getUpStationId())
+                .orElseThrow(() -> new SubwayException(NOT_EXISTED_STATION));
+        Station downStation = stationRepository.findById(request.getDownStationId())
+                .orElseThrow(() -> new SubwayException(NOT_EXISTED_STATION));
+
+        Section section = Section.createSection(request.getDistance(), line, upStation, downStation);
+        line.addSection(section);
+
+        return LineResponse.of(line);
     }
 
     private void validateDuplicatedStations(LineRequest request) {
