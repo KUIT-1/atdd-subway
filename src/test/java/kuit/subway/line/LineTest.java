@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static kuit.subway.line.LineStep.지하철_노선_바디_생성;
-import static kuit.subway.line.LineStep.지하철_노선_생성_요청;
 import static kuit.subway.line.LineFixture.지하철_2호선_생성;
 import static kuit.subway.line.LineStep.*;
 import static kuit.subway.station.StationStep.지하철_역_생성_요청;
@@ -127,4 +125,20 @@ public class LineTest extends AcceptanceTest {
     }
 
 
+    @Test
+    void 지하철_노선_삭제_테스트() {
+        // given
+        지하철_2호선_생성();
+
+        // when
+        ExtractableResponse<Response> response = RestAssured
+                .given().log().all()
+                .pathParam("id", "1")
+                .when().delete(LineStep.PATH + "/{id}")
+                .then().log().all().extract();
+
+        // then
+        assertEquals(204, response.statusCode());
+
+    }
 }
