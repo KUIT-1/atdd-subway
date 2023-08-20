@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static kuit.subway.utils.BaseResponseStatus.DUPLICATED_STATION;
+import static kuit.subway.utils.BaseResponseStatus.NONE_STATION;
 
 @Service
 @RequiredArgsConstructor
@@ -41,5 +42,10 @@ public class StationService {
     @Transactional
     public void deleteStation(Long id) {
         stationRepository.deleteById(id);
+    }
+
+    public Station findById(Long stationId) {
+        return stationRepository.findById(stationId)
+                .orElseThrow(() -> new StationException(NONE_STATION));
     }
 }
