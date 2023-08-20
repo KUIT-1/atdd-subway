@@ -35,5 +35,4 @@ public class GlobalControllerAdvice {
         return new BaseResponseEntity<>(ex.getStatus());
     }
 
-
 }

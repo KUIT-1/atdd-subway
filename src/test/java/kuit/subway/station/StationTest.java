@@ -16,9 +16,9 @@ import static kuit.subway.station.StationStep.지하철_역_생성_요청;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StationTest extends AcceptanceTest {
-
     private final String ID_PATH = "result.id";
     private final String NAME_PATH = "result.name";
+  
     @Test
     void createStation() {
         Map<String, String> body = new HashMap<>();
@@ -71,7 +71,6 @@ public class StationTest extends AcceptanceTest {
                 .then().log().all()
                 .extract();
 
-        // then
         List<String> stationNames = response.jsonPath().getList(NAME_PATH);
         List<Long> stationIds = response.jsonPath().getList(ID_PATH)
                                         .stream().map(id -> Long.valueOf(id.toString()))
