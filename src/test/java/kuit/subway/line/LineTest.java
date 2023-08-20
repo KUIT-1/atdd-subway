@@ -1,5 +1,6 @@
 package kuit.subway.line;
 
+import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kuit.subway.AcceptanceTest;
@@ -9,8 +10,10 @@ import java.util.Map;
 
 import static kuit.subway.line.LineStep.지하철_노선_바디_생성;
 import static kuit.subway.line.LineStep.지하철_노선_생성_요청;
+import static kuit.subway.line.LineFixture.지하철_2호선_생성;
 import static kuit.subway.line.LineStep.*;
 import static kuit.subway.station.StationStep.지하철_역_생성_요청;
+import static kuit.subway.utils.RestAssuredUtil.get요청;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LineTest extends AcceptanceTest {
@@ -53,6 +56,33 @@ public class LineTest extends AcceptanceTest {
 
         // then
         assertEquals(400, response.statusCode());
+    }
+
+    @Test
+    void 지하철_노선_목록_조회_테스트() {
+        // given
+        지하철_2호선_생성();
+
+        지하철_역_생성_요청("건대역");
+        지하철_역_생성_요청("어린이대공원역");
+        Map<String, String> body = 지하철_노선_바디_생성("green", "10", "7호선", "4", "3");
+        지하철_노선_생성_요청(body);
+
+        // when
+        ExtractableResponse<Response> response = get요청(LineStep.PATH);
+
+        // then
+        assertEquals(200, response.statusCode());
+    }
+
+    @Test
+    void 지하철_노선_빈목록_조회_테스트() {
+        // given
+        // when
+        ExtractableResponse<Response> response = get요청(LineStep.PATH);
+
+        // then
+        assertEquals(200, response.statusCode());
     }
 
 }
