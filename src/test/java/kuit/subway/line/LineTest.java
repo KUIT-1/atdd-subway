@@ -112,4 +112,19 @@ public class LineTest extends AcceptanceTest {
         assertEquals(400, response.statusCode());
     }
 
+    @Test
+    void 지하철_노선_없는_역으로_수정_테스트(){
+        // given
+        지하철_2호선_생성();
+
+        Map<String, String> body = 지하철_노선_바디_생성("green", "10", "신분당선", "3", "1");
+
+        // when
+        ExtractableResponse<Response> response = 지하철_노선_수정_요청("1", body);
+
+        // then
+        assertEquals(400, response.statusCode());
+    }
+
+
 }
