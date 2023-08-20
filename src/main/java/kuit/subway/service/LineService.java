@@ -66,6 +66,12 @@ public class LineService {
 
         return ShowLineResponse.from(line);
     }
+
+    @Transactional
+    public void deleteLine(Long id) {
+        lineRepository.deleteById(id);
+    }
+
     private Line findById(Long id) {
         return lineRepository.findById(id)
                 .orElseThrow(() -> new LineException(NONE_LINE));

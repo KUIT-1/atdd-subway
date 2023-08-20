@@ -15,7 +15,6 @@ public enum BaseResponseStatus{
 
     // 2000 : STATION EXCEPTION
     DUPLICATED_STATION(HttpStatus.CONFLICT,2000, "이미 존재하는 역입니다."),
-    NONE_STATION(HttpStatus.BAD_REQUEST,2001, "존재하지 않는 역입니다.");
     NONE_STATION(HttpStatus.BAD_REQUEST,2001, "존재하지 않는 역입니다."),
 
     // 2100 : Line Exception
