@@ -1,4 +1,5 @@
 package kuit.subway.controller;
+import kuit.subway.service.LineService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 @RestController
@@ -6,4 +7,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/lines")
 public class LineController {
+    private final LineService lineService;
+
 }
