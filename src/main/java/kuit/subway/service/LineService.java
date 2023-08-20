@@ -5,6 +5,7 @@ import kuit.subway.domain.Station;
 import kuit.subway.repository.LineRepository;
 import kuit.subway.request.line.LineRequest;
 import kuit.subway.response.line.CreateLineResponse;
+import kuit.subway.response.line.ShowLineResponse;
 import kuit.subway.utils.exception.LineException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,12 @@ public class LineService {
 
         return CreateLineResponse.from(line);
     }
+
+    public ShowLineResponse getLine(Long id) {
+        Line line = findById(id);
+        return ShowLineResponse.from(line);
+    }
+
     private void checkDuplicateName(String name) {
         if(lineRepository.existsLineByName(name))
             throw new LineException(DUPLICATED_LINE);
