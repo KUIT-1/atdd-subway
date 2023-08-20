@@ -11,6 +11,7 @@ public enum BaseResponseStatus{
     SUCCESS(HttpStatus.OK,1000, "요청에 성공하였습니다."),
     CREATED_SUCCESS(HttpStatus.CREATED,1001, "생성에 성공하였습니다."),
     DELETED_SUCCESS(HttpStatus.NO_CONTENT,1002, "삭제에 성공하였습니다."),
+    EMPTY_INFO(HttpStatus.OK, 1003, "아무런 정보가 존재하지 않습니다."),
 
     // 2000 : STATION EXCEPTION
     DUPLICATED_STATION(HttpStatus.CONFLICT,2000, "이미 존재하는 역입니다."),

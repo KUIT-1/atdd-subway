@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static kuit.subway.utils.BaseResponseStatus.*;
 
 @Service
@@ -42,6 +44,14 @@ public class LineService {
     public ShowLineResponse getLine(Long id) {
         Line line = findById(id);
         return ShowLineResponse.from(line);
+    }
+
+    public List<ShowLineResponse> getLines() {
+        List<Line> lines = lineRepository.findAll();
+
+        if(lines.isEmpty()) throw new LineException(EMPTY_INFO);
+
+        return lines.stream().map(ShowLineResponse::from).toList();
     }
 
     private void checkDuplicateName(String name) {
