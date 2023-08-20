@@ -23,6 +23,13 @@ public class LineStep {
         return post요청(PATH, body);
     }
 
+    public static ExtractableResponse<Response> 지하철_노선_조회_요청(String id){
+        return RestAssured
+                .given().log().all().pathParam("id", id)
+                .when().get(LineStep.PATH + "/{id}")
+                .then().log().all().extract();
+    }
+
     public static Map<String, String> 지하철_노선_바디_생성
             (String color, String distance, String name, String downStationId, String upStationId){
         Map<String, String> body =  new HashMap<>();

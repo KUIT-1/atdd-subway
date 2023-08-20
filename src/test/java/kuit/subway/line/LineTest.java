@@ -9,11 +9,14 @@ import java.util.Map;
 
 import static kuit.subway.line.LineStep.지하철_노선_바디_생성;
 import static kuit.subway.line.LineStep.지하철_노선_생성_요청;
+import static kuit.subway.line.LineStep.*;
 import static kuit.subway.station.StationStep.지하철_역_생성_요청;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LineTest extends AcceptanceTest {
     private final String ID_PATH = "result.id";
+    private final String NAME_PATH = "result.name";
+
     @Test
     void 지하철_노선_생성_요청_테스트() {
         // given
@@ -28,4 +31,28 @@ public class LineTest extends AcceptanceTest {
         assertEquals(1L, response.jsonPath().getLong(ID_PATH));
         assertEquals(201, response.statusCode());
     }
+
+    @Test
+    void 지하철_노선_조회_테스트() {
+        // given
+        지하철_2호선_생성();
+
+        // when
+        ExtractableResponse<Response> response = 지하철_노선_조회_요청("1");
+
+        // then
+        assertEquals(200, response.statusCode());
+        assertEquals("2호선", response.jsonPath().get(NAME_PATH));
+    }
+
+    @Test
+    void 없는_지하철_노선_조회_테스트() {
+        // given
+        // when
+        ExtractableResponse<Response> response = 지하철_노선_조회_요청("1");
+
+        // then
+        assertEquals(400, response.statusCode());
+    }
+
 }
