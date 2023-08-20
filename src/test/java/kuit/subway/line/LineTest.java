@@ -85,4 +85,31 @@ public class LineTest extends AcceptanceTest {
         assertEquals(200, response.statusCode());
     }
 
+    @Test
+    void 지하철_노선_수정_테스트(){
+        // given
+        지하철_2호선_생성();
+
+        지하철_역_생성_요청("건대역");
+        Map<String, String> body = 지하철_노선_바디_생성("green", "10", "신분당선", "3", "1");
+
+        // when
+        ExtractableResponse<Response> response = 지하철_노선_수정_요청("1", body);
+
+        // then
+        assertEquals(200, response.statusCode());
+        assertEquals("신분당선", response.jsonPath().get(NAME_PATH));
+    }
+
+    @Test
+    void 없는_지하철_노선_수정_테스트(){
+        Map<String, String> body = 지하철_노선_바디_생성("green", "10", "신분당선", "3", "1");
+
+        // when
+        ExtractableResponse<Response> response = 지하철_노선_수정_요청("1", body);
+
+        // then
+        assertEquals(400, response.statusCode());
+    }
+
 }
