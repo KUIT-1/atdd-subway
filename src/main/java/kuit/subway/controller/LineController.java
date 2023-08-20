@@ -41,4 +41,12 @@ public class LineController {
         return new BaseResponseEntity<>(SUCCESS, response);
     }
 
+    @PostMapping("/{id}")
+    public BaseResponseEntity<ShowLineResponse> updateLine(
+            @PathVariable("id") Long id,
+            @Validated @RequestBody LineRequest request){
+        ShowLineResponse response = lineService.updateLine(id, request);
+        return new BaseResponseEntity<>(SUCCESS, response);
+    }
+
 }

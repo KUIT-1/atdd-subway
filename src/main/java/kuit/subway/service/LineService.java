@@ -54,6 +54,23 @@ public class LineService {
         return lines.stream().map(ShowLineResponse::from).toList();
     }
 
+    @Transactional
+    public ShowLineResponse updateLine(Long id, LineRequest request) {
+        Line line = findById(id);
+        Station downStation = stationService.findById(request.getDownStationId());
+        Station upStation = stationService.findById(request.getUpStationId());
+
+        checkDuplicateName(request.getName());
+
+        line.update(request, upStation, downStation);
+
+        return ShowLineResponse.from(line);
+    }
+    private Line findById(Long id) {
+        return lineRepository.findById(id)
+                .orElseThrow(() -> new LineException(NONE_LINE));
+    }
+
     private void checkDuplicateName(String name) {
         if(lineRepository.existsLineByName(name))
             throw new LineException(DUPLICATED_LINE);
