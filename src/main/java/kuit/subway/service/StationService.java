@@ -43,7 +43,6 @@ public class StationService {
     public void deleteStation(Long id) {
         stationRepository.deleteById(id);
     }
-
     public Station findById(Long stationId) {
         return stationRepository.findById(stationId)
                 .orElseThrow(() -> new StationException(NONE_STATION));
