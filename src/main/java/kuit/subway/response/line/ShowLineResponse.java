@@ -11,10 +11,10 @@ import java.util.List;
 
 @Getter
 public class ShowLineResponse {
-    Long id;
-    String name;
-    String color;
-    List<ShowStationResponse> stations = new ArrayList<>();
+    private Long id;
+    private String name;
+    private String color;
+    private List<ShowStationResponse> stations = new ArrayList<>();
     private ShowLineResponse(Long id, String name, Station upStation, Station downStation, String color){
         this.id = id;
         this.name = name;
