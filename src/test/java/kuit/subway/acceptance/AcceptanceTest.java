@@ -1,4 +1,4 @@
-package kuit.subway;
+package kuit.subway.acceptance;
 
 import io.restassured.RestAssured;
 import kuit.subway.utils.DatabaseCleanup;
@@ -19,7 +19,7 @@ public class AcceptanceTest {
 
     @BeforeEach
     public void setUp() {
-        RestAssured.port = 443;
+        RestAssured.port = port;
         databaseCleanup.execute();
     }
 }
