@@ -34,6 +34,7 @@ public class StationService {
         return CreateStationResponse.from(station);
     }
 
+    @Transactional(readOnly = true)
     public List<ShowStationResponse> getStations() {
         return stationRepository.findAll().stream()
                 .map(ShowStationResponse::from).toList();

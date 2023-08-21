@@ -41,11 +41,13 @@ public class LineService {
         return CreateLineResponse.from(line);
     }
 
+    @Transactional(readOnly = true)
     public ShowLineResponse getLine(Long id) {
         Line line = findById(id);
         return ShowLineResponse.from(line);
     }
 
+    @Transactional(readOnly = true)
     public List<ShowLineResponse> getLines() {
         List<Line> lines = lineRepository.findAll();
 
