@@ -8,8 +8,6 @@ import io.restassured.response.Response;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.restassured.RestAssured.post;
-
 public class StationStep {
     public static final String PATH = "/stations";
     public static final String NAME = "name";
