@@ -29,8 +29,7 @@ public class LineService {
     @Transactional
     public LineCreateResponse createLine(LineRequest request) {
         validateDuplicatedStations(request);
-        Line line = request.toEntity();
-        lineRepository.save(line);
+        Line line = lineRepository.save(request.toEntity());
 
         Station upStation = stationRepository.findById(request.getUpStationId())
                 .orElseThrow(() -> new SubwayException(NOT_EXISTED_STATION));
