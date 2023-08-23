@@ -21,6 +21,11 @@ public enum CustomExceptionStatus implements ExceptionStatus {
     // line exception
     NOT_EXISTED_LINE(HttpStatus.BAD_REQUEST, "존재하지 않는 노선입니다."),
     DUPLICATED_UP_STATION_AND_DOWN_STATION(HttpStatus.BAD_REQUEST, "상행종점역과 하행종점역이 중복됩니다."),
+
+    // section exception
+    INVALID_SECTION_NOT_EXISTED_DOWN_STATION(HttpStatus.BAD_REQUEST, "새로운 구간의 상행역은 해당 노선에 등록되어있는 하행 종점역이여야 합니다."),
+    INVALID_SECTION_CANNOT_CYCLE(HttpStatus.BAD_REQUEST, "새로운 구간의 하행역은 해당 노선에 등록되어있을 수 없습니다."),
+    CANNOT_REMOVE_SECTION(HttpStatus.BAD_REQUEST, "상행 종점역과 하행 종점역만 있는 경우, 구간을 삭제할 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;
