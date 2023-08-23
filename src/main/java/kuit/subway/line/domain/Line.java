@@ -39,7 +39,8 @@ public class Line extends BaseTimeEntity {
     public Sections sections = new Sections();
 
     @Builder
-    public Line(String name, String color) {
+    public Line(Long id, String name, String color) {
+        this.id = id;
         this.name = name;
         this.color = color;
     }
