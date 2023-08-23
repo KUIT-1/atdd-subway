@@ -40,16 +40,16 @@ class LineServiceTest {
     @Test
     void createLine(){
         //given
-        Station 강남역 = Station.builder().id(1L).name("강남역").build();
-        Station 성수역 = Station.builder().id(2L).name("성수역").build();
-        Line 경춘선 = Line.builder().id(1L).name("경춘선").color("green").build();
+        Station gangnamStation = Station.builder().id(1L).name("강남역").build();
+        Station sungsuStation = Station.builder().id(2L).name("성수역").build();
+        Line line = Line.builder().id(1L).name("경춘선").color("green").build();
 
         given(lineRepository.save(any(Line.class)))
-                .willReturn(경춘선);
+                .willReturn(line);
         given(stationRepository.findById(1L))
-                .willReturn(Optional.ofNullable(강남역));
+                .willReturn(Optional.ofNullable(gangnamStation));
         given(stationRepository.findById(2L))
-                .willReturn(Optional.ofNullable(성수역));
+                .willReturn(Optional.ofNullable(sungsuStation));
 
         //when
         LineCreateResponse result =
@@ -58,7 +58,7 @@ class LineServiceTest {
         //then
         verify(stationRepository, times(2)).findById(anyLong());
         verify(lineRepository, times((1))).save(any(Line.class));
-        assertThat(result.getId()).isEqualTo(경춘선.getId());
+        assertThat(result.getId()).isEqualTo(line.getId());
     }
 
     @DisplayName("라인을 조회한다.")
