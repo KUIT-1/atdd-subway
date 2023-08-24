@@ -32,6 +32,9 @@ dependencies {
     implementation 'org.hibernate.validator:hibernate-validator:7.0.1.Final'
 
     implementation 'com.google.guava:guava:31.1-jre'
+
+    // jgraph
+    implementation 'org.jgrapht:jgrapht-core:1.0.1'
 }
 
 tasks.named('test') {
