@@ -1,9 +1,12 @@
 package kuit.subway.service;
 
 import kuit.subway.domain.Line;
+import kuit.subway.domain.Section;
 import kuit.subway.domain.Station;
 import kuit.subway.repository.LineRepository;
-import kuit.subway.request.line.LineRequest;
+import kuit.subway.request.line.CreateLineRequest;
+import kuit.subway.request.line.UpdateLineRequest;
+import kuit.subway.request.section.SectionRequest;
 import kuit.subway.response.line.CreateLineResponse;
 import kuit.subway.response.line.ShowLineResponse;
 import kuit.subway.utils.exception.LineException;
@@ -20,23 +23,20 @@ import static kuit.subway.utils.BaseResponseStatus.*;
 public class LineService {
     private final LineRepository lineRepository;
     private final StationService stationService;
-
+    private final SectionService sectionService;
     @Transactional
-    public CreateLineResponse createLine(LineRequest request) {
+    public CreateLineResponse createLine(CreateLineRequest request) {
         Station downStation = stationService.findById(request.getDownStationId());
         Station upStation = stationService.findById(request.getUpStationId());
-
-        checkDuplicateName(request.getName());
+        checkDuplicateName(request.getName(), null);
 
         Line line = Line.builder()
-                .downStation(downStation)
-                .upStation(upStation)
-                .distance(request.getDistance())
                 .name(request.getName())
                 .color(request.getColor())
                 .build();
 
         lineRepository.save(line);
+        sectionService.createSection(line, downStation, upStation, request.getDistance());
 
         return CreateLineResponse.from(line);
     }
@@ -57,8 +57,14 @@ public class LineService {
     }
 
     @Transactional
-    public ShowLineResponse updateLine(Long id, LineRequest request) {
+    public ShowLineResponse updateLine(Long id, UpdateLineRequest request) {
         Line line = findById(id);
+        checkDuplicateName(request.getName(), id);
+        checkDuplicateColor(request.getColor(), id);
+        line.update(request);
+
+        return ShowLineResponse.from(line);
+    }
     // requestBody를 바탕으로 Section을 생성한 후 Line에 추가한다.
     @Transactional
     public ShowLineResponse addSectionToLine(Long line_id, SectionRequest request) {
@@ -66,10 +72,8 @@ public class LineService {
         Station downStation = stationService.findById(request.getDownStationId());
         Station upStation = stationService.findById(request.getUpStationId());
 
-        checkDuplicateName(request.getName());
         line.isSectionRegistrable(request.getUpStationId(), request.getDownStationId());
 
-        line.update(request, upStation, downStation);
         sectionService.createSection(line, downStation, upStation, request.getDistance());
 
         return ShowLineResponse.from(line);
@@ -85,10 +89,20 @@ public class LineService {
                 .orElseThrow(() -> new LineException(NONE_LINE));
     }
 
-    private void checkDuplicateName(String name) {
-        if(lineRepository.existsLineByName(name))
-            throw new LineException(DUPLICATED_LINE);
+    private void checkDuplicateName(String name, Long line_id) {
+        if(!lineRepository.existsLineByName(name)) return;
+        if(line_id == null)
+            throw new LineException(DUPLICATED_LINENAME);
+        if(!lineRepository.findLineByName(name).getId().equals(line_id))
+            throw new LineException(DUPLICATED_LINENAME);
     }
 
+    private void checkDuplicateColor(String color, Long line_id) {
+        if(!lineRepository.existsLineByColor(color)) return;
+        if(line_id == null)
+            throw new LineException(DUPLICATED_LINECOLOR);
+        if(!lineRepository.findLineByColor(color).getId().equals(line_id))
+            throw new LineException(DUPLICATED_LINECOLOR);
+    }
 
 }
