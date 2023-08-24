@@ -5,6 +5,7 @@ import io.restassured.response.Response;
 import kuit.subway.AcceptanceTest;
 import kuit.subway.request.line.CreateLineRequest;
 import kuit.subway.request.line.UpdateLineRequest;
+
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -21,7 +22,6 @@ public class LineTest extends AcceptanceTest {
     private static final String ID_PATH = "result.id";
     private static final String NAME_PATH = "result.name";
     private static final String RESPONSECODE = "responseCode";
-
 
     @Test
     void 지하철_노선_생성_요청_테스트() {

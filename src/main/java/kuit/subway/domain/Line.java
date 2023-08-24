@@ -82,4 +82,5 @@ public class Line {
         boolean isExist = sections.hasStation(downStationId);
         if(isExist) throw new LineException(ALREADY_REGISTERED_STATION);
     }
+
 }

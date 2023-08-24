@@ -20,13 +20,13 @@ public class RestAssuredUtil {
                 .when().post(path, pathParam)
                 .then().log().all().extract();
     }
-
+  
     public static ExtractableResponse<Response> get요청(String path){
         return RestAssured.given().log().all()
                 .when().get(path)
                 .then().log().all().extract();
     }
-
+  
     public static ExtractableResponse<Response> get요청(String path, Map<String, String> pathParam){
         return RestAssured.given().log().all()
                 .when().get(path, pathParam)

@@ -21,6 +21,7 @@ public class LineStep {
     public static Map<String, String> pathParam = new HashMap<>();
 
     public static ExtractableResponse<Response> 지하철_노선_생성_요청(Object body) {
+
         return post요청(PATH, body);
     }
 

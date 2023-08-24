@@ -17,7 +17,7 @@ public class ShowLineResponse {
     private String name;
     private String color;
     private List<ShowStationResponse> stations = new ArrayList<>();
-
+  
     private ShowLineResponse(Long id, String name, Sections sectionList, String color){
         this.id = id;
         this.name = name;

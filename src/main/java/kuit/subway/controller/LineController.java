@@ -1,5 +1,6 @@
 package kuit.subway.controller;
 
+
 import kuit.subway.request.line.CreateLineRequest;
 import kuit.subway.request.line.UpdateLineRequest;
 import kuit.subway.request.section.DeleteSectionRequest;
@@ -57,7 +58,6 @@ public class LineController {
         lineService.deleteLine(id);
         return new BaseResponseEntity<>(DELETED_SUCCESS);
     }
-
     @PostMapping("/{id}/sections")
     public BaseResponseEntity<ShowLineResponse> addSectionToLine(
             @PathVariable("id") Long lineId,
@@ -73,5 +73,4 @@ public class LineController {
         lineService.deleteSection(id, request);
         return new BaseResponseEntity<>(DELETED_SUCCESS);
     }
-
 }
