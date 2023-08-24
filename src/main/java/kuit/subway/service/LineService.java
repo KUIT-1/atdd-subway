@@ -59,12 +59,18 @@ public class LineService {
     @Transactional
     public ShowLineResponse updateLine(Long id, LineRequest request) {
         Line line = findById(id);
+    // requestBody를 바탕으로 Section을 생성한 후 Line에 추가한다.
+    @Transactional
+    public ShowLineResponse addSectionToLine(Long line_id, SectionRequest request) {
+        Line line = findById(line_id);
         Station downStation = stationService.findById(request.getDownStationId());
         Station upStation = stationService.findById(request.getUpStationId());
 
         checkDuplicateName(request.getName());
+        line.isSectionRegistrable(request.getUpStationId(), request.getDownStationId());
 
         line.update(request, upStation, downStation);
+        sectionService.createSection(line, downStation, upStation, request.getDistance());
 
         return ShowLineResponse.from(line);
     }
