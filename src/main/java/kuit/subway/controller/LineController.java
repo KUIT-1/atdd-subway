@@ -1,6 +1,8 @@
 package kuit.subway.controller;
 
 import kuit.subway.request.line.LineRequest;
+import kuit.subway.request.line.CreateLineRequest;
+import kuit.subway.request.line.UpdateLineRequest;
 import kuit.subway.request.section.SectionRequest;
 import kuit.subway.response.line.CreateLineResponse;
 import kuit.subway.response.line.ShowLineResponse;
@@ -25,6 +27,7 @@ public class LineController {
     @PostMapping
     public BaseResponseEntity<CreateLineResponse> createLine(
                 @Validated @RequestBody LineRequest request){
+                @Validated @RequestBody CreateLineRequest request){
         CreateLineResponse response = lineService.createLine(request);
         return new BaseResponseEntity<>(CREATED_SUCCESS, response);
     }
@@ -46,6 +49,7 @@ public class LineController {
     public BaseResponseEntity<ShowLineResponse> updateLine(
             @PathVariable("id") Long id,
             @Validated @RequestBody LineRequest request){
+            @Validated @RequestBody UpdateLineRequest request){
         ShowLineResponse response = lineService.updateLine(id, request);
         return new BaseResponseEntity<>(SUCCESS, response);
     }
