@@ -6,8 +6,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @Getter
@@ -25,12 +27,11 @@ public class Line {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "up_station_id")
-    private Station upStation;
-
-    @ManyToOne
     @JoinColumn(name = "down_station_id")
     private Station downStation;
+    @Builder.Default
+    @Embedded
+    private Sections sections = new Sections();
 
 
     public void update(LineRequest request, Station upStation, Station downStation){
