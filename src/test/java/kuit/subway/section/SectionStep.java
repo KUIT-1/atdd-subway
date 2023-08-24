@@ -17,6 +17,12 @@ public class SectionStep {
         makePathParamById(line_id);
         return RestAssuredUtil.post요청(PATH, pathParam, body);
     }
+
+    public static ExtractableResponse<Response> 지하철_구간_삭제_요청(String line_id, Object body){
+        makePathParamById(line_id);
+        return RestAssuredUtil.delete요청(PATH, pathParam, body);
+    }
+
     private static void makePathParamById(String id) {
         if(!pathParam.isEmpty())
             pathParam.clear();
