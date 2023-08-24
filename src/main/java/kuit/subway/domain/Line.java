@@ -1,9 +1,13 @@
 package kuit.subway.domain;
 
 import jakarta.persistence.*;
+import kuit.subway.request.line.UpdateLineRequest;
+import kuit.subway.utils.exception.LineException;
 import lombok.*;
 
 import java.util.Objects;
+
+import static kuit.subway.utils.BaseResponseStatus.*;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -33,6 +37,15 @@ public class Line {
         this.sections.add(section);
     }
 
+    public Station getLastDownStation() {
+        return this.sections.getLastDownStation();
+    }
+
+    public void deleteSection(Section section) {
+        this.sections.remove(section);
+    }
+
+
     private final static String DOWN = "down";
     private final static String UP = "up";
 
@@ -40,6 +53,18 @@ public class Line {
         checkStationIsLastDownStation(upStationId, UP);
         checkDownStationIsNonexistent(downStationId);
     }
+
+    public void isSectionDeletable(Long downStationId){
+        checkStationIsLastDownStation(downStationId, DOWN);
+        isSingleSection();
+    }
+
+    private void isSingleSection() {
+        if(sections.size() <= 1){
+            throw new LineException(CANNOT_DELETE_SECTION);
+        }
+    }
+
     private void checkStationIsLastDownStation(Long stationId, String direction) {
         Station lastDownStation = getLastDownStation();
 

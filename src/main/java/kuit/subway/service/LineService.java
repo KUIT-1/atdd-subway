@@ -4,8 +4,10 @@ import kuit.subway.domain.Line;
 import kuit.subway.domain.Section;
 import kuit.subway.domain.Station;
 import kuit.subway.repository.LineRepository;
+import kuit.subway.repository.SectionRepository;
 import kuit.subway.request.line.CreateLineRequest;
 import kuit.subway.request.line.UpdateLineRequest;
+import kuit.subway.request.section.DeleteSectionRequest;
 import kuit.subway.request.section.SectionRequest;
 import kuit.subway.response.line.CreateLineResponse;
 import kuit.subway.response.line.ShowLineResponse;
@@ -22,6 +24,7 @@ import static kuit.subway.utils.BaseResponseStatus.*;
 @RequiredArgsConstructor
 public class LineService {
     private final LineRepository lineRepository;
+    private final SectionRepository sectionRepository;
     private final StationService stationService;
     private final SectionService sectionService;
     @Transactional
@@ -82,6 +85,14 @@ public class LineService {
     @Transactional
     public void deleteLine(Long id) {
         lineRepository.deleteById(id);
+    public void deleteSection(Long line_id, DeleteSectionRequest request) {
+        Line line = findById(line_id);
+
+        line.isSectionDeletable(request.getDownStationId());
+
+        Section section = sectionRepository.findByLineIdAndStationsId(line_id, request.getUpStationId(), request.getDownStationId());
+        line.deleteSection(section);
+        sectionRepository.deleteById(section.getId());
     }
 
     private Line findById(Long id) {

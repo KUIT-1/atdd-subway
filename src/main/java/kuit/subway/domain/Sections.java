@@ -23,6 +23,16 @@ public class Sections {
     public void add(Section section) {
         this.sections.add(section);
     }
+
+    public void remove(Section section) {
+        this.sections.remove(section);
+    }
+
+    public int size(){
+        return this.sections.size();
+    }
+
+
     public Station getLastDownStation() {
         if(this.sections.isEmpty()){
             throw new StationException(BaseResponseStatus.NONE_STATION);
@@ -40,4 +50,12 @@ public class Sections {
         stations.add(getLastDownStation());
         return stations;
     }
+
+    public boolean hasStation(Long stationId) {
+        return sections.stream()
+                .anyMatch(section -> section.getUpStation().getId().equals(stationId)
+                        || section.getDownStation().getId().equals(stationId)
+        );
+    }
+
 }

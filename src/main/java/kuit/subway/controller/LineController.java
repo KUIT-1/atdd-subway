@@ -2,6 +2,7 @@ package kuit.subway.controller;
 
 import kuit.subway.request.line.CreateLineRequest;
 import kuit.subway.request.line.UpdateLineRequest;
+import kuit.subway.request.section.DeleteSectionRequest;
 import kuit.subway.request.section.SectionRequest;
 import kuit.subway.response.line.CreateLineResponse;
 import kuit.subway.response.line.ShowLineResponse;
@@ -63,6 +64,14 @@ public class LineController {
             @Validated @RequestBody SectionRequest request){
         ShowLineResponse response = lineService.addSectionToLine(lineId, request);
         return new BaseResponseEntity<>(REGISTERED_SUCCESS, response);
+    }
+
+    @DeleteMapping("/{id}/sections")
+    public BaseResponseEntity<?> deleteSection(
+            @PathVariable("id") Long id,
+            @Validated @RequestBody DeleteSectionRequest request){
+        lineService.deleteSection(id, request);
+        return new BaseResponseEntity<>(DELETED_SUCCESS);
     }
 
 }
