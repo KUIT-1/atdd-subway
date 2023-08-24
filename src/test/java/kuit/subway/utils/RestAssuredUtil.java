@@ -9,7 +9,6 @@ import java.util.Map;
 
 public class RestAssuredUtil {
 
-    public static ExtractableResponse<Response> post요청(String path, Map<String,String> body){
     public static ExtractableResponse<Response> post요청(String path, Object body){
         return RestAssured.given().log().all().contentType(ContentType.JSON).body(body)
                 .when().post(path)
@@ -31,6 +30,19 @@ public class RestAssuredUtil {
     public static ExtractableResponse<Response> get요청(String path, Map<String, String> pathParam){
         return RestAssured.given().log().all()
                 .when().get(path, pathParam)
+                .then().log().all().extract();
+    }
+
+    public static ExtractableResponse<Response> delete요청(String path, Map<String, String> pathParam, Object body){
+        return RestAssured.given().log().all()
+                .contentType(ContentType.JSON).body(body)
+                .when().delete(path, pathParam)
+                .then().log().all().extract();
+    }
+
+    public static ExtractableResponse<Response> delete요청(String path, Map<String, String> pathParam){
+        return RestAssured.given().log().all()
+                .when().delete(path, pathParam)
                 .then().log().all().extract();
     }
 

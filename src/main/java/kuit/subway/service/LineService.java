@@ -68,6 +68,14 @@ public class LineService {
 
         return ShowLineResponse.from(line);
     }
+
+    @Transactional
+    public void deleteLine(Long id) {
+        if(!lineRepository.existsLineById(id))
+            throw new LineException(NONE_LINE);
+        lineRepository.deleteById(id);
+    }
+
     // requestBody를 바탕으로 Section을 생성한 후 Line에 추가한다.
     @Transactional
     public ShowLineResponse addSectionToLine(Long line_id, SectionRequest request) {
@@ -83,8 +91,6 @@ public class LineService {
     }
 
     @Transactional
-    public void deleteLine(Long id) {
-        lineRepository.deleteById(id);
     public void deleteSection(Long line_id, DeleteSectionRequest request) {
         Line line = findById(line_id);
 
