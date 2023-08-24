@@ -2,10 +2,11 @@ package kuit.subway.dto.response.station;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @AllArgsConstructor
-public class CreateStationResponse {
+public class StationDeleteResponse {
     private String message;
     private Long id;
 }

@@ -14,7 +14,9 @@ import static jakarta.persistence.FetchType.*;
 
 @Entity
 @Getter
-@NoArgsConstructor
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
 public class Line extends BaseTimeEntity {
 
     @Id
@@ -22,43 +24,31 @@ public class Line extends BaseTimeEntity {
     @Column(name = "line_id")
     private Long id;
 
+    private String name;
+
     private String color;
 
     private int distance;
 
-    private String name;
+    @Embedded
+    private Sections sections;
 
-    @OneToMany(mappedBy = "line", cascade = CascadeType.ALL)
-    private List<Station> stations = new ArrayList<>();
-
-    @Builder
-    public Line(String color, int distance, String name, LocalDateTime createdDate, LocalDateTime modifiedDate) {
-        super(createdDate, modifiedDate);
-        this.color = color;
-        this.distance = distance;
-        this.name = name;
+    public static Line createLine(String name, String color, int distance) {
+        return Line.builder()
+                .name(name)
+                .color(color)
+                .distance(distance)
+                .build();
     }
-
     // 연관관계 메서드
-    public void addStations(List<Station> stations) {
-        stations.forEach(station -> station.addLine(this));
+    public void addSection(Sections sections) {
+        this.sections = sections;
     }
-
-    public void updateLine(String color, int distance, String name, LocalDateTime modifiedDate) {
+    public void updateLine(String name, String color, int distance, Station upStation, Station downStation) {
+        this.name = name;
         this.color = color;
         this.distance = distance;
-        this.name = name;
-        this.setModifiedDate(modifiedDate);
-    }
-
-    public void updateStations(List<Station> stations) {
-        // Remove the existing stations from the line's list
-        this.stations.forEach(station -> station.removeLine(this));
-        // Clear the existing stations list
-        this.stations.clear();
-
-        this.stations = new ArrayList<>(stations);
-        addStations(stations);
+        this.sections.updateSections(upStation, downStation);
     }
 
 }

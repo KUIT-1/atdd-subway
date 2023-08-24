@@ -3,11 +3,9 @@ package kuit.subway.study.station;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kuit.subway.AcceptanceTest;
-import kuit.subway.dto.request.station.CreateStationRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static kuit.subway.study.common.CommonRestAssured.*;
 import static kuit.subway.utils.fixtures.StationFixtures.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -35,7 +33,7 @@ public class StationAcceptanceTest extends AcceptanceTest {
         지하철_역_등록("성수역");
 
         // when
-        ExtractableResponse<Response> 지하철_역_조회_결과 = 지하철_역_조회();
+        ExtractableResponse<Response> 지하철_역_조회_결과 = 지하철_역_전체_조회();
 
         // then
         assertAll(
@@ -49,8 +47,7 @@ public class StationAcceptanceTest extends AcceptanceTest {
     void deleteStation() {
 
         // given
-        ExtractableResponse<Response> res = 지하철_역_등록("강남역");
-        Long id = res.jsonPath().getLong("id");
+        Long id = 지하철_역_등록("강남역").jsonPath().getLong("id");
 
         // when
         ExtractableResponse<Response> 지하철_역_삭제_결과 = 지하철_역_삭제(id);
