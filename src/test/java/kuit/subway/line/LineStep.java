@@ -8,7 +8,6 @@ import io.restassured.response.Response;
 import java.util.HashMap;
 import java.util.Map;
 
-import static kuit.subway.utils.RestAssuredUtil.post요청;
 import static kuit.subway.utils.RestAssuredUtil.*;
 
 public class LineStep {
@@ -21,32 +20,20 @@ public class LineStep {
 
     public static Map<String, String> pathParam = new HashMap<>();
 
-    public static ExtractableResponse<Response> 지하철_노선_생성_요청(Map<String, String> body) {
     public static ExtractableResponse<Response> 지하철_노선_생성_요청(Object body) {
         return post요청(PATH, body);
     }
 
     public static ExtractableResponse<Response> 지하철_노선_조회_요청(String id){
-        return RestAssured
-                .given().log().all().pathParam("id", id)
-                .when().get(LineStep.PATH + "/{id}")
-                .then().log().all().extract();
         makePathParamById(id);
         return get요청(LineStep.PATH + "/{id}", pathParam);
     }
-    
+
     public static ExtractableResponse<Response> 지하철_노선_수정_요청(String id, Object body){
         makePathParamById(id);
         return post요청(LineStep.PATH + "/{id}", pathParam, body);
     }
 
-    public static ExtractableResponse<Response> 지하철_노선_수정_요청(String id, Map<String, String> body){
-        return RestAssured
-                .given().log().all()
-                .pathParam("id", id)
-                .contentType(ContentType.JSON).body(body)
-                .when().post(LineStep.PATH + "/{id}")
-                .then().log().all().extract();
     public static ExtractableResponse<Response> 지하철_노선_삭제_요청(String id){
         makePathParamById(id);
         return delete요청(LineStep.PATH + "/{id}", pathParam);
