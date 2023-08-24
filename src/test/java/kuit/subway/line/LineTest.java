@@ -40,6 +40,7 @@ public class LineTest extends AcceptanceTest {
         // then
         assertEquals(1L, response.jsonPath().getLong(ID_PATH));
         assertEquals(201, response.statusCode());
+        assertEquals(CREATED_SUCCESS.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
     }
 
     @Test
@@ -53,6 +54,7 @@ public class LineTest extends AcceptanceTest {
         // then
         assertEquals(200, response.statusCode());
         assertEquals("2호선", response.jsonPath().get(NAME_PATH));
+        assertEquals(SUCCESS.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
     }
 
     @Test
@@ -63,6 +65,7 @@ public class LineTest extends AcceptanceTest {
 
         // then
         assertEquals(400, response.statusCode());
+        assertEquals(NONE_LINE.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
     }
 
     @Test
@@ -90,6 +93,7 @@ public class LineTest extends AcceptanceTest {
 
         // then
         assertEquals(200, response.statusCode());
+        assertEquals(EMPTY_INFO.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
     }
 
     @Test

@@ -10,8 +10,12 @@ import static kuit.subway.line.LineFixture.지하철_2호선_생성_Fixture;
 import static kuit.subway.section.SectionStep.지하철_구간_등록_요청;
 import static kuit.subway.station.StationFixture.*;
 import static kuit.subway.station.StationStep.지하철_역_생성_요청;
+import static kuit.subway.utils.BaseResponseStatus.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 public class SectionTest extends AcceptanceTest {
     private static final String ID_PATH = "result.id";
+    private static final String RESPONSECODE = "responseCode";
     @Test
     void 노선에_구간_등록_요청_테스트() {
         // given
@@ -25,6 +29,7 @@ public class SectionTest extends AcceptanceTest {
         // then
         assertEquals(1L, response.jsonPath().getLong(ID_PATH));
         assertEquals(200, response.statusCode());
+        assertEquals(REGISTERED_SUCCESS.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
     }
 
     @Test
@@ -41,6 +46,7 @@ public class SectionTest extends AcceptanceTest {
 
         // then
         assertEquals(400, response.statusCode());
+        assertEquals(ONLY_LAST_DOWNSTATION_REGISTER_ALLOWED.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
     }
 
     @Test
@@ -56,6 +62,7 @@ public class SectionTest extends AcceptanceTest {
 
         // then
         assertEquals(400, response.statusCode());
+        assertEquals(ALREADY_REGISTERED_STATION.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
     }
 
 }
