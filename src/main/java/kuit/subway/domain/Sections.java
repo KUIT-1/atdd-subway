@@ -3,6 +3,8 @@ package kuit.subway.domain;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
+import kuit.subway.utils.BaseResponseStatus;
+import kuit.subway.utils.exception.StationException;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -20,5 +22,22 @@ public class Sections {
 
     public void add(Section section) {
         this.sections.add(section);
+    }
+    public Station getLastDownStation() {
+        if(this.sections.isEmpty()){
+            throw new StationException(BaseResponseStatus.NONE_STATION);
+        }
+        int lastIdx = this.sections.size() - 1;
+        return this.sections.get(lastIdx).getDownStation();
+    }
+
+    public List<Station> getStationList() {
+        List<Station> stations = new ArrayList<>();
+
+        sections.stream().map(
+                section -> stations.add(section.getUpStation()));
+
+        stations.add(getLastDownStation());
+        return stations;
     }
 }
