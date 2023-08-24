@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import lombok.*;
 
 @NoArgsConstructor
+import java.util.Objects;
+
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
@@ -40,6 +42,10 @@ public class Line {
         this.color = request.getColor();
         this.upStation = upStation;
         this.downStation = downStation;
+    }
+
+    public void addSection(Section section) {
+        this.sections.add(section);
     }
 
     private final static String DOWN = "down";

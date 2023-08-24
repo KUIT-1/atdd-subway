@@ -17,4 +17,8 @@ public class Sections {
     @Builder.Default
     @OneToMany(mappedBy = "line", cascade = CascadeType.REMOVE, orphanRemoval = false)
     private List<Section> sections = new ArrayList<>();
+
+    public void add(Section section) {
+        this.sections.add(section);
+    }
 }
