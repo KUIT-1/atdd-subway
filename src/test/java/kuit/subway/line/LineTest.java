@@ -2,7 +2,7 @@ package kuit.subway.line;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kuit.subway.AcceptanceTest;
+import kuit.subway.acceptance.AcceptanceTest;
 import kuit.subway.request.line.CreateLineRequest;
 import kuit.subway.request.line.UpdateLineRequest;
 
