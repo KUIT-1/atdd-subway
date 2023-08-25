@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DeleteSectionRequest {
     @Positive
-    Long downStationId;
+    private Long downStationId;
 
     @Positive
-    Long upStationId;
+    private Long upStationId;
 }

@@ -12,11 +12,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SectionRequest {
     @Positive
-    Long distance;
+    private Long distance;
 
     @Positive
-    Long downStationId;
+    private Long downStationId;
 
     @Positive
-    Long upStationId;
+    private Long upStationId;
 }

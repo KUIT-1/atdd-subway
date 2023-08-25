@@ -13,9 +13,9 @@ import org.hibernate.validator.constraints.Length;
 @AllArgsConstructor
 public class UpdateLineRequest {
     @Pattern(regexp = "[a-zA-Z]+", message = "영문")
-    String color;
+    private String color;
 
     @Pattern(regexp = "[a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣1-9]+", message = "영문, 한글, 숫자만 가능")
     @Length(min = 1, max = 20, message = "1 ~ 20자리 이내")
-    String name;
+    private String name;
 }
