@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static kuit.subway.global.exception.CustomExceptionStatus.*;
 
@@ -67,6 +68,28 @@ public class Sections {
                 });
     }
 
+    public List<Station> getStations() {
+        List<Station> stations = new ArrayList<>();
+        Station upStation = findFirstUpStation();
+        Station downStation = null;
+        stations.add(upStation);
+
+        Optional<Section> section = findSection(upStation);
+
+        while (section.isPresent()) {
+            downStation = section.get().getDownStation();
+            stations.add(downStation);
+            section = findSection(downStation);
+        }
+
+        return stations;
+    }
+
+    private Optional<Section> findSection(Station station) {
+        return sections.stream()
+                .filter(section -> section.getUpStation().equals(station))
+                .findFirst();
+    }
 
     public void removeSection() {
         if (sections.size() == 1) {
