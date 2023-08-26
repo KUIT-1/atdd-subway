@@ -1,11 +1,13 @@
 package kuit.subway.line.service;
 
 import kuit.subway.line.domain.Line;
+import kuit.subway.line.domain.Section;
 import kuit.subway.line.dto.response.LineCreateResponse;
 import kuit.subway.line.dto.response.LineResponse;
 import kuit.subway.line.repository.LineRepository;
 import kuit.subway.station.domain.Station;
 import kuit.subway.station.repository.StationRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,7 +17,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static kuit.subway.utils.fixtures.LineFixtures.노선_요청;
+import static kuit.subway.utils.fixtures.LineFixtures.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
@@ -36,20 +38,27 @@ class LineServiceTest {
     @InjectMocks
     private LineService lineService;
 
+    private Station upStation;
+    private Station downStation;
+    private Line line;
+
+    @BeforeEach
+    void init() {
+        upStation = Station.builder().id(1L).name("강남역").build();
+        downStation = Station.builder().id(2L).name("성수역").build();
+        line = Line.builder().id(1L).name("경춘선").color("green").build();
+    }
+
     @DisplayName("라인을 생성한다.")
     @Test
     void createLine(){
         //given
-        Station gangnamStation = Station.builder().id(1L).name("강남역").build();
-        Station sungsuStation = Station.builder().id(2L).name("성수역").build();
-        Line line = Line.builder().id(1L).name("경춘선").color("green").build();
-
         given(lineRepository.save(any(Line.class)))
                 .willReturn(line);
         given(stationRepository.findById(1L))
-                .willReturn(Optional.ofNullable(gangnamStation));
+                .willReturn(Optional.ofNullable(upStation));
         given(stationRepository.findById(2L))
-                .willReturn(Optional.ofNullable(sungsuStation));
+                .willReturn(Optional.ofNullable(downStation));
 
         //when
         LineCreateResponse result =
@@ -65,7 +74,7 @@ class LineServiceTest {
     @Test
     void showLine(){
         //given
-        Line line = Line.builder().id(1L).name("경춘선").color("green").build();
+        line.addSection(Section.createSection(10L, line , upStation, downStation));
 
         given(lineRepository.findById(1L))
                 .willReturn(Optional.ofNullable(line));
@@ -79,6 +88,27 @@ class LineServiceTest {
                 () -> assertThat(response.getId()).isEqualTo(1L),
                 () -> assertThat(response.getName()).isEqualTo(line.getName()),
                 () -> assertThat(response.getColor()).isEqualTo(line.getColor())
+        );
+    }
+
+    @DisplayName("라인을 변경한다.")
+    @Test
+    void updateLine() {
+        //given
+        line.addSection(Section.createSection(10L, line , upStation, downStation));
+
+        given(lineRepository.findById(1L))
+                .willReturn(Optional.ofNullable(line));
+
+        //when
+        LineResponse response = lineService.updateLine(1L, 노선_변경_요청("신분당선", "yellow"));
+
+        //then
+        verify(lineRepository, times(1)).findById(anyLong());
+        assertAll(
+                () -> assertThat(response.getId()).isEqualTo(1L),
+                () -> assertThat(line.getName()).isEqualTo("신분당선"),
+                () -> assertThat(line.getColor()).isEqualTo("yellow")
         );
     }
 }
