@@ -69,7 +69,7 @@ class LineServiceTest {
 
         //when
         LineCreateResponse result =
-                lineService.createLine(노선_요청("경춘선", "green", 10L, 2L, 1L));
+                lineService.createLine(노선_요청("경춘선", "green", 10L, 1L, 2L));
 
         //then
         verify(stationRepository, times(2)).findById(anyLong());
@@ -148,7 +148,7 @@ class LineServiceTest {
                     .willReturn(Optional.ofNullable(newDownStation));
 
             //when
-            LineResponse response = lineService.createSection(1L, 구간_생성_요청(5L, 4L, 2L));
+            LineResponse response = lineService.createSection(1L, 구간_생성_요청(5L, 2L, 4L));
 
             //then
             verify(lineRepository, times(1)).findById(anyLong());
@@ -173,7 +173,7 @@ class LineServiceTest {
                     .willReturn(Optional.ofNullable(newDownStation));
 
             //when
-            LineResponse response = lineService.createSection(1L, 구간_생성_요청(5L, 1L, 4L));
+            LineResponse response = lineService.createSection(1L, 구간_생성_요청(5L, 4L, 1L));
 
             //then
             verify(lineRepository, times(1)).findById(anyLong());
@@ -198,7 +198,7 @@ class LineServiceTest {
                     .willReturn(Optional.ofNullable(newDownStation));
 
             //when
-            LineResponse response = lineService.createSection(1L, 구간_생성_요청(5L, 4L, 3L));
+            LineResponse response = lineService.createSection(1L, 구간_생성_요청(5L, 3L, 4L));
 
             //then
             verify(lineRepository, times(1)).findById(anyLong());
@@ -222,7 +222,7 @@ class LineServiceTest {
                     .willReturn(Optional.ofNullable(newDownStation));
 
             //when & then
-            assertThatThrownBy(() -> lineService.createSection(1L, 구간_생성_요청(5L, 2L, 3L)))
+            assertThatThrownBy(() -> lineService.createSection(1L, 구간_생성_요청(5L, 3L, 2L)))
                     .isInstanceOf(SubwayException.class)
                     .extracting("status")
                     .isEqualTo(EXISTED_STATION_IN_SECTIONS);
@@ -242,7 +242,7 @@ class LineServiceTest {
                     .willReturn(Optional.ofNullable(newDownStation));
 
             //when
-            assertThatThrownBy(() -> lineService.createSection(1L, 구간_생성_요청(10L, 4L, 2L)))
+            assertThatThrownBy(() -> lineService.createSection(1L, 구간_생성_요청(10L, 2L, 4L)))
                     .isInstanceOf(SubwayException.class)
                     .extracting("status")
                     .isEqualTo(EXCEED_DISTANCE);

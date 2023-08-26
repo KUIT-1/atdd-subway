@@ -25,7 +25,7 @@ public class SectionAcceptanceTest extends AcceptanceTest {
     void init() {
         지하철역_생성(지하철역_생성_요청("강남역"));
         지하철역_생성(지하철역_생성_요청("성수역"));
-        노선_생성(노선_요청("경춘선", "grean", 10L, 2L, 1L));
+        노선_생성(노선_요청("경춘선", "grean", 10L, 1L, 2L));
     }
 
     @DisplayName("노선에 구간을 등록한다.")
@@ -35,7 +35,7 @@ public class SectionAcceptanceTest extends AcceptanceTest {
         지하철역_생성(지하철역_생성_요청("건대입구역"));
 
         //when
-        ExtractableResponse<Response> response = 구간_생성(1L, 구간_생성_요청(10L, 3L, 2L));
+        ExtractableResponse<Response> response = 구간_생성(1L, 구간_생성_요청(10L, 2L, 3L));
         List<Object> stations = response.jsonPath().getList("stations.");
 
         //then
@@ -52,7 +52,7 @@ public class SectionAcceptanceTest extends AcceptanceTest {
         지하철역_생성(지하철역_생성_요청("건대입구역"));
 
         //when
-        ExtractableResponse<Response> response = 구간_생성(1L, 구간_생성_요청(11L, 3L, 1L));
+        ExtractableResponse<Response> response = 구간_생성(1L, 구간_생성_요청(11L, 1L, 3L));
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
@@ -73,7 +73,7 @@ public class SectionAcceptanceTest extends AcceptanceTest {
     void deleteSection(){
         //given
         지하철역_생성(지하철역_생성_요청("건대입구역"));
-        구간_생성(1L, 구간_생성_요청(10L, 3L, 2L));
+        구간_생성(1L, 구간_생성_요청(10L, 2L, 3L));
 
         //when
         ExtractableResponse<Response> response = 구간_제거(1L);

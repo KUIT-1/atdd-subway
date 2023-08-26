@@ -23,8 +23,8 @@ public class LineRequest {
     @NotNull
     @Min(1)
     private Long distance;
-    private Long downStationId;
     private Long upStationId;
+    private Long downStationId;
 
     public Line toEntity() {
         return Line.builder()
