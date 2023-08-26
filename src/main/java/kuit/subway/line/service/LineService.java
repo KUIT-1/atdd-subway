@@ -4,6 +4,7 @@ import kuit.subway.global.exception.SubwayException;
 import kuit.subway.line.domain.Line;
 import kuit.subway.line.domain.Section;
 import kuit.subway.line.dto.request.LineRequest;
+import kuit.subway.line.dto.request.LineUpdateRequest;
 import kuit.subway.line.dto.request.SectionRequest;
 import kuit.subway.line.dto.response.LineCreateResponse;
 import kuit.subway.line.dto.response.LineResponse;
@@ -50,7 +51,7 @@ public class LineService {
     }
 
     @Transactional
-    public LineResponse updateLine(Long lineId, LineRequest request) {
+    public LineResponse updateLine(Long lineId, LineUpdateRequest request) {
         Line line = lineRepository.findById(lineId)
                 .orElseThrow(() -> new SubwayException(NOT_EXISTED_LINE));
 
