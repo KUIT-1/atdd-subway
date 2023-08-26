@@ -49,5 +49,9 @@ public class Section {
                 .downStation(downStation)
                 .build();
     }
+
+    public void changeUpStation(Station station) {
+        this.upStation = station;
+    }
 }
 
