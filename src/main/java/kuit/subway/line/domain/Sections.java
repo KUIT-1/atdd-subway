@@ -5,6 +5,7 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
 import kuit.subway.global.exception.SubwayException;
 import kuit.subway.station.domain.Station;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.List;
 import static kuit.subway.global.exception.CustomExceptionStatus.*;
 
 @Embeddable
+@Slf4j
 public class Sections {
 
     @OneToMany(mappedBy = "line", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -19,24 +21,52 @@ public class Sections {
 
     public void addSection(Section section) {
         validateAvailableSection(section);
+
+        if (!isFirstOrLastStation(section)) {
+            changeSection(section);
+        }
         this.sections.add(section);
     }
 
-    // TODO 리팩토링 필수
-    public List<Station> getStations() {
-        List<Station> stations = new ArrayList<>();
-        boolean isFirst = true;
-        for (Section section : sections) {
-            if (isFirst) {
-                stations.add(section.getUpStation());
-                stations.add(section.getDownStation());
-            } else {
-                stations.add(section.getDownStation());
-            }
-            isFirst = false;
+    private boolean isFirstOrLastStation(Section section) {
+        if (!sections.isEmpty()) {
+            return section.getUpStation().equals(findLastDownStation()) || section.getDownStation().equals(findFirstUpStation());
         }
-        return stations;
+        return true;
     }
+
+    private Station findFirstUpStation() {
+        Station station = sections.get(0).getUpStation();
+
+        for (Section section : sections) {
+            if (section.getDownStation().equals(station)) {
+                station = section.getUpStation();
+            }
+        }
+        return station;
+    }
+
+    private Station findLastDownStation() {
+        Station station = sections.get(0).getDownStation();
+
+        for (Section section : sections) {
+            if (section.getUpStation().equals(station)) {
+                station = section.getDownStation();
+            }
+        }
+        return station;
+    }
+
+    // 역 사이에 낀 경우
+    private void changeSection(Section section) {
+        sections.stream().filter(existedSection -> existedSection.getUpStation().equals(section.getUpStation()))
+                .findFirst()
+                .ifPresent(existedSection -> {
+                        validateSectionDistance(section, existedSection);
+                        existedSection.changeUpStation(section.getDownStation());
+                });
+    }
+
 
     public void removeSection() {
         if (sections.size() == 1) {
@@ -46,29 +76,33 @@ public class Sections {
     }
 
     private void validateAvailableSection(Section section) {
-        // 처음 역을 만드는 경우
-        if (sections.size() == 0) {
+        if (sections.isEmpty()) {
             return;
         }
-        validateExistedDownStation(section);
-        validateCycleInDownStation(section);
-    }
-
-    // 새로운 구간의 상행역은 등록되어있는 하행 종점역이어야 한다.
-    private void validateExistedDownStation(Section section) {
-        Section lastSection = sections.get(sections.size() - 1);
-        if (!lastSection.getDownStation().equals(section.getUpStation())) {
-            throw new SubwayException(INVALID_SECTION_NOT_EXISTED_DOWN_STATION);
-        }
+        validateLastDownStation(section);
+        validateDuplicatedSection(section);
     }
 
     // 새로운 구간의 하행역은 해당 노선에 등록되어있는 역일 수 없다.
-    private void validateCycleInDownStation(Section section) {
-        boolean hasCycle = sections.stream().anyMatch(existedSection ->
-                existedSection.getUpStation().equals(section.getDownStation()) || existedSection.getDownStation().equals(section.getDownStation()));
+    private void validateLastDownStation(Section section) {
+        if (section.getDownStation().equals(findLastDownStation())) {
+            throw new SubwayException(INVALID_DOWN_STATION);
+        }
+    }
 
-        if (hasCycle) {
-            throw new SubwayException(INVALID_SECTION_CANNOT_CYCLE);
+    // 상행역과 하행역이 이미 노선에 모두 등록되어 있다면 추가 불가
+    private void validateDuplicatedSection(Section section) {
+        sections.stream().filter(existedSection ->
+                existedSection.getUpStation().equals(section.getUpStation()) && existedSection.getDownStation().equals(section.getDownStation()))
+                .findFirst()
+                .ifPresent(existedSection -> {
+                    throw new SubwayException(DUPLICATED_SECTION);
+                });
+    }
+
+    private void validateSectionDistance(Section section, Section existedSection) {
+        if (section.getDistance() >= existedSection.getDistance()) {
+            throw new SubwayException(EXCEED_DISTANCE);
         }
     }
 }
