@@ -123,8 +123,8 @@ class LineServiceTest {
     @Nested
     class SectionTest {
 
-        Station newUpStation;
-        Station newDownStation;
+        private Station newUpStation;
+        private Station newDownStation;
 
         @BeforeEach
         void init() {
