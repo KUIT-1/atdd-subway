@@ -2,6 +2,7 @@ package kuit.subway.line.controller;
 
 import jakarta.validation.Valid;
 import kuit.subway.line.dto.request.LineRequest;
+import kuit.subway.line.dto.request.LineUpdateRequest;
 import kuit.subway.line.dto.request.SectionRequest;
 import kuit.subway.line.dto.response.LineCreateResponse;
 import kuit.subway.line.dto.response.LineResponse;
@@ -42,7 +43,7 @@ public class LineController {
 
     @PostMapping("/{lineId}")
     public ResponseEntity<LineResponse> updateLine(@PathVariable Long lineId,
-                                                   @Valid @RequestBody LineRequest request) {
+                                                   @Valid @RequestBody LineUpdateRequest request) {
         LineResponse response = lineService.updateLine(lineId, request);
         return ResponseEntity.ok(response);
     }
