@@ -113,12 +113,12 @@ public class Sections {
 
     private boolean isExistedUpStation(Section section) {
         return sections.stream().anyMatch(existedSection ->
-                existedSection.getUpStation().equals(section.getUpStation()) || existedSection.getUpStation().equals(section.getDownStation()));
+                section.getUpStation().equals(existedSection.getUpStation()) || section.getUpStation().equals(existedSection.getDownStation()));
     }
 
     private boolean isExistedDownStation(Section section) {
         return sections.stream().anyMatch(existedSection ->
-                existedSection.getDownStation().equals(section.getUpStation()) || existedSection.getDownStation().equals(section.getDownStation()));
+                section.getDownStation().equals(existedSection.getUpStation()) || section.getDownStation().equals(existedSection.getDownStation()));
     }
 
     private void validateSectionDistance(Section section, Section existedSection) {
