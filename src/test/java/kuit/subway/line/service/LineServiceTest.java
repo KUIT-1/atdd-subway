@@ -1,5 +1,6 @@
 package kuit.subway.line.service;
 
+import kuit.subway.global.exception.SubwayException;
 import kuit.subway.line.domain.Line;
 import kuit.subway.line.domain.Section;
 import kuit.subway.line.dto.response.LineCreateResponse;
@@ -9,6 +10,7 @@ import kuit.subway.station.domain.Station;
 import kuit.subway.station.repository.StationRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,8 +19,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static kuit.subway.utils.fixtures.LineFixtures.*;
+import static kuit.subway.global.exception.CustomExceptionStatus.EXCEED_DISTANCE;
+import static kuit.subway.global.exception.CustomExceptionStatus.EXISTED_STATION_IN_SECTIONS;
+import static kuit.subway.utils.fixtures.LineFixtures.노선_변경_요청;
+import static kuit.subway.utils.fixtures.LineFixtures.노선_요청;
+import static kuit.subway.utils.fixtures.SectionFixtures.구간_생성_요청;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -66,7 +73,7 @@ class LineServiceTest {
 
         //then
         verify(stationRepository, times(2)).findById(anyLong());
-        verify(lineRepository, times((1))).save(any(Line.class));
+        verify(lineRepository, times(1)).save(any(Line.class));
         assertThat(result.getId()).isEqualTo(line.getId());
     }
 
@@ -110,5 +117,135 @@ class LineServiceTest {
                 () -> assertThat(line.getName()).isEqualTo("신분당선"),
                 () -> assertThat(line.getColor()).isEqualTo("yellow")
         );
+    }
+
+    @DisplayName("Section Test")
+    @Nested
+    class SectionTest {
+
+        Station newUpStation;
+        Station newDownStation;
+
+        @BeforeEach
+        void init() {
+            line.addSection(Section.createSection(10L, line, upStation, downStation));
+            newUpStation = downStation;
+            newDownStation = Station.builder().id(3L).name("잠실역").build();
+            line.addSection(Section.createSection(9L, line, newUpStation, newDownStation));
+        }
+
+        @DisplayName("기존의 구간 사이에 새로운 구간을 추가한다.")
+        @Test
+        void createSection() {
+            //given
+            newDownStation = Station.builder().id(4L).name("잠실새내역").build();
+
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(2L))
+                    .willReturn(Optional.ofNullable(newUpStation));
+            given(stationRepository.findById(4L))
+                    .willReturn(Optional.ofNullable(newDownStation));
+
+            //when
+            LineResponse response = lineService.createSection(1L, 구간_생성_요청(5L, 4L, 2L));
+
+            //then
+            verify(lineRepository, times(1)).findById(anyLong());
+            verify(stationRepository, times(2)).findById(anyLong());
+            assertThat(response.getStations()).hasSize(4)
+                    .extracting("name")
+                    .containsExactly("강남역", "성수역", "잠실새내역" ,"잠실역");
+        }
+
+        @DisplayName("상행 종점으로 새로운 구간을 추가한다.")
+        @Test
+        void createSection_At_Up_Station() {
+            //given
+            newDownStation = upStation;
+            newUpStation = Station.builder().id(4L).name("잠실새내역").build();
+
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(4L))
+                    .willReturn(Optional.ofNullable(newUpStation));
+            given(stationRepository.findById(1L))
+                    .willReturn(Optional.ofNullable(newDownStation));
+
+            //when
+            LineResponse response = lineService.createSection(1L, 구간_생성_요청(5L, 1L, 4L));
+
+            //then
+            verify(lineRepository, times(1)).findById(anyLong());
+            verify(stationRepository, times(2)).findById(anyLong());
+            assertThat(response.getStations()).hasSize(4)
+                    .extracting("name")
+                    .containsExactly("잠실새내역", "강남역", "성수역", "잠실역");
+        }
+
+        @DisplayName("하행 종점으로 새로운 구간을 추가한다.")
+        @Test
+        void createSection_At_Down_Station() {
+            //given
+            newUpStation = newDownStation;
+            newDownStation = Station.builder().id(4L).name("잠실새내역").build();
+
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(3L))
+                    .willReturn(Optional.ofNullable(newUpStation));
+            given(stationRepository.findById(4L))
+                    .willReturn(Optional.ofNullable(newDownStation));
+
+            //when
+            LineResponse response = lineService.createSection(1L, 구간_생성_요청(5L, 4L, 3L));
+
+            //then
+            verify(lineRepository, times(1)).findById(anyLong());
+            verify(stationRepository, times(2)).findById(anyLong());
+            assertThat(response.getStations()).hasSize(4)
+                    .extracting("name")
+                    .containsExactly("강남역", "성수역", "잠실역", "잠실새내역");
+        }
+
+        @DisplayName("상행역과 하행역이 모두 노선에 등록된 경우, 예외가 발생한다.")
+        @Test
+        void createSection_Throw_Exception_If_Existed_Station() {
+            //given
+            newDownStation = downStation;
+
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(3L))
+                    .willReturn(Optional.ofNullable(newUpStation));
+            given(stationRepository.findById(2L))
+                    .willReturn(Optional.ofNullable(newDownStation));
+
+            //when & then
+            assertThatThrownBy(() -> lineService.createSection(1L, 구간_생성_요청(5L, 2L, 3L)))
+                    .isInstanceOf(SubwayException.class)
+                    .extracting("status")
+                    .isEqualTo(EXISTED_STATION_IN_SECTIONS);
+        }
+
+        @DisplayName("역 사이에 새로운 역을 등록하는 경우, 기존 역 사이 길이보다 크거나 같으면 예외가 발생한다.")
+        @Test
+        void createSection_Throw_Exception_If_Exceed_Distance() {
+            //given
+            newDownStation = Station.builder().id(4L).name("잠실새내역").build();
+
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(2L))
+                    .willReturn(Optional.ofNullable(newUpStation));
+            given(stationRepository.findById(4L))
+                    .willReturn(Optional.ofNullable(newDownStation));
+
+            //when
+            assertThatThrownBy(() -> lineService.createSection(1L, 구간_생성_요청(10L, 4L, 2L)))
+                    .isInstanceOf(SubwayException.class)
+                    .extracting("status")
+                    .isEqualTo(EXCEED_DISTANCE);
+        }
     }
 }
