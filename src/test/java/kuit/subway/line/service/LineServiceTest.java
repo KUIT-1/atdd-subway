@@ -247,5 +247,65 @@ class LineServiceTest {
                     .extracting("status")
                     .isEqualTo(EXCEED_DISTANCE);
         }
+
+        @DisplayName("구간 삭제중, 중간역이 제거될 경우 재배치한다.")
+        @Test
+        void removeSection(){
+            //given
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(downStation));
+
+            //when
+            LineResponse response = lineService.deleteSection(1L, 2L);
+
+            //then
+            verify(lineRepository, times(1)).findById(anyLong());
+            verify(stationRepository, times(1)).findById(anyLong());
+            assertThat(response.getStations()).hasSize(2)
+                            .extracting("name")
+                            .containsExactly("강남역","잠실역");
+        }
+
+        @DisplayName("구간 삭제중, 상행 종점이 제거될 경우 다음 역이 종점이 된다.")
+        @Test
+        void removeSection_If_Remove_First_Up_Station(){
+            //given
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(upStation));
+
+            //when
+            LineResponse response = lineService.deleteSection(1L, 1L);
+
+            //then
+            verify(lineRepository, times(1)).findById(anyLong());
+            verify(stationRepository, times(1)).findById(anyLong());
+            assertThat(response.getStations()).hasSize(2)
+                    .extracting("name")
+                    .containsExactly("성수역","잠실역");
+        }
+
+        @DisplayName("구간 삭제중, 하행 종점이 제거될 경우 그 앞의 역이 종점이 된다.")
+        @Test
+        void removeSection_If_Remove_Last_Down_Station(){
+            //given
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(newDownStation));
+
+            //when
+            LineResponse response = lineService.deleteSection(1L, 3L);
+
+            //then
+            verify(lineRepository, times(1)).findById(anyLong());
+            verify(stationRepository, times(1)).findById(anyLong());
+            assertThat(response.getStations()).hasSize(2)
+                    .extracting("name")
+                    .containsExactly("강남역","성수역");
+        }
     }
 }
