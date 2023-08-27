@@ -81,28 +81,27 @@ public class Sections {
 
         stations.add(upStation);
 
-        Optional<Section> section = findSection(upStation);
+        Optional<Section> section = findDownSection(upStation);
 
         while (section.isPresent()) {
             downStation = section.get().getDownStation();
             stations.add(downStation);
-            section = findSection(downStation);
+            section = findDownSection(downStation);
         }
 
         return stations;
     }
 
-    private Optional<Section> findSection(Station station) {
+    private Optional<Section> findUpSection(Station station) {
         return sections.stream()
-                .filter(section -> section.getUpStation().equals(station))
+                .filter(section -> section.getDownStation().equals(station))
                 .findFirst();
     }
 
-    public void removeSection() {
-        if (sections.size() == 1) {
-            throw new SubwayException(CANNOT_REMOVE_SECTION);
-        }
-        sections.remove(sections.size() - 1);
+    private Optional<Section> findDownSection(Station station) {
+        return sections.stream()
+                .filter(section -> section.getUpStation().equals(station))
+                .findFirst();
     }
 
     private void validateAvailableSection(Section section) {
