@@ -165,7 +165,7 @@ public class Sections {
 
     private void validateRemovableStation(Optional<Section> upSectionOptional, Optional<Section> downSectionOptional) {
         if (sections.size() == 1) {
-            throw new SubwayException(CANNOT_REMOVE_SECTION);
+            throw new SubwayException(UNDER_MINIMUM_SECTION_SIZE);
         }
 
         if (upSectionOptional.isEmpty() && downSectionOptional.isEmpty()) {
