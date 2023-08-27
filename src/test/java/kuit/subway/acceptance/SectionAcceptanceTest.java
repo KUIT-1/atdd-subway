@@ -68,7 +68,7 @@ public class SectionAcceptanceTest extends AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 
-    @DisplayName("노선에 등록된 하행 종점역을 제거한다.")
+    @DisplayName("노선에 등록된 역 중 하나를 제거한다.")
     @Test
     void deleteSection(){
         //given
