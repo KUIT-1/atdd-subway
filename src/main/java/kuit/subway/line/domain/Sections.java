@@ -92,6 +92,36 @@ public class Sections {
         return stations;
     }
 
+    public void removeSection(Station station) {
+        validateRemovableStation();
+
+        Optional<Section> upSectionOptional = findUpSection(station);
+        Optional<Section> downSectionOptional = findDownSection(station);
+
+        if (upSectionOptional.isPresent() && downSectionOptional.isPresent()) {
+            Section upSection = upSectionOptional.get();
+            Section downSection = downSectionOptional.get();
+            Long distance = upSection.getDistance() + downSection.getDistance();
+
+            upSection.changeDistance(distance);
+            upSection.changeDownStation(downSection.getDownStation());
+            sections.remove(downSection);
+            return;
+        }
+
+        // 상행종점 제거
+        if (upSectionOptional.isPresent()) {
+            Section section = upSectionOptional.get();
+            sections.remove(section);
+            return;
+        }
+
+        // 하행종점 제거
+        Section section = downSectionOptional.get();
+        sections.remove(section);
+    }
+
+
     private Optional<Section> findUpSection(Station station) {
         return sections.stream()
                 .filter(section -> section.getDownStation().equals(station))
@@ -130,6 +160,12 @@ public class Sections {
     private void validateSectionDistance(Section section, Section existedSection) {
         if (section.getDistance() >= existedSection.getDistance()) {
             throw new SubwayException(EXCEED_DISTANCE);
+        }
+    }
+
+    private void validateRemovableStation() {
+        if (sections.size() == 1) {
+            throw new SubwayException(CANNOT_REMOVE_SECTION);
         }
     }
 }
