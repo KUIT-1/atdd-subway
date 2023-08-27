@@ -15,7 +15,7 @@ public class SectionAcceptanceFixtures {
         return post(request, BASE_URL, lineId);
     }
 
-    public static ExtractableResponse<Response> 구간_제거(Long lineId) {
-        return delete(BASE_URL, lineId);
+    public static ExtractableResponse<Response> 구간_제거(Long lineId, Long stationId) {
+        return delete(BASE_URL + "/{stationId}", lineId, stationId);
     }
 }

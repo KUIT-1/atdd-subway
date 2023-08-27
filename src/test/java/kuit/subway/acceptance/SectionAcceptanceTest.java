@@ -76,13 +76,15 @@ public class SectionAcceptanceTest extends AcceptanceTest {
         구간_생성(1L, 구간_생성_요청(10L, 2L, 3L));
 
         //when
-        ExtractableResponse<Response> response = 구간_제거(1L);
+        ExtractableResponse<Response> response = 구간_제거(1L, 3L);
         List<Object> stations = response.jsonPath().getList("stations.");
 
         //then
         assertAll(
                 () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
                 () -> assertThat(stations).hasSize(2)
+                        .extracting("name")
+                        .containsExactly("강남역", "성수역")
         );
     }
 
@@ -90,7 +92,7 @@ public class SectionAcceptanceTest extends AcceptanceTest {
     @Test
     void deleteSection_Throw_Exception_If_Section_Size_Equal_One(){
         //when
-        ExtractableResponse<Response> response = 구간_제거(1L);
+        ExtractableResponse<Response> response = 구간_제거(1L, 2L);
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
