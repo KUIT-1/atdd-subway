@@ -45,17 +45,13 @@ public class Line {
         this.sections.remove(section);
     }
 
-
-    private final static String DOWN = "down";
-    private final static String UP = "up";
-
     public void isSectionRegistrable(Long upStationId, Long downStationId) {
-        checkStationIsLastDownStation(upStationId, UP);
+        checkUpStationIsLastDownStation(upStationId);
         checkDownStationIsNonexistent(downStationId);
     }
 
     public void isSectionDeletable(Long downStationId){
-        checkStationIsLastDownStation(downStationId, DOWN);
+        checkDownStationIsLastDownStation(downStationId);
         isSingleSection();
     }
 
@@ -65,19 +61,19 @@ public class Line {
         }
     }
 
-    private void checkStationIsLastDownStation(Long stationId, String direction) {
+    private void checkUpStationIsLastDownStation(Long upStationId){
         Station lastDownStation = getLastDownStation();
-
-        if(Objects.equals(direction, UP)
-                & !Objects.equals(lastDownStation.getId(), stationId)){
+        if(!Objects.equals(lastDownStation.getId(), upStationId)){
             throw new LineException(ONLY_LAST_DOWNSTATION_REGISTER_ALLOWED);
-        }
-        if(Objects.equals(direction, DOWN)
-                & !Objects.equals(lastDownStation.getId(), stationId)){
-            throw new LineException(ONLY_LAST_SECTION_DELETION_ALLOWED);
         }
     }
 
+    private void checkDownStationIsLastDownStation(Long downStationId){
+        Station lastDownStation = getLastDownStation();
+        if(!Objects.equals(lastDownStation.getId(), downStationId)){
+            throw new LineException(ONLY_LAST_SECTION_DELETION_ALLOWED);
+        }
+    }
     private void checkDownStationIsNonexistent(Long downStationId) {
         boolean isExist = sections.hasStation(downStationId);
         if(isExist) throw new LineException(ALREADY_REGISTERED_STATION);
