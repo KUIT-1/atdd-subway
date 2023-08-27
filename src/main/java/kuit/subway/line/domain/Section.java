@@ -57,5 +57,9 @@ public class Section {
     public void changeDownStation(Station station) {
         this.downStation = station;
     }
+
+    public void changeDistance(Long distance) {
+        this.distance = distance;
+    }
 }
 
