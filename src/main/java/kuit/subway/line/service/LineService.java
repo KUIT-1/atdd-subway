@@ -85,11 +85,12 @@ public class LineService {
     }
 
     @Transactional
-    public LineResponse deleteSection(Long lineId) {
+    public LineResponse deleteSection(Long lineId, Long stationId) {
         Line line = lineRepository.findById(lineId)
                 .orElseThrow(() -> new SubwayException(NOT_EXISTED_LINE));
-
-        line.removeSection();
+        Station station = stationRepository.findById(stationId)
+                .orElseThrow(() -> new SubwayException(NOT_EXISTED_STATION));
+        line.removeSection(station);
 
         return LineResponse.of(line);
     }
