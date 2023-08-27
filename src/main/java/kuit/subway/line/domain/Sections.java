@@ -24,54 +24,61 @@ public class Sections {
         validateAvailableSection(section);
 
         if (!isFirstOrLastStation(section)) {
-            changeSection(section);
+            changeUpSection(section);
+            changeDownSection(section);
         }
         this.sections.add(section);
     }
 
     private boolean isFirstOrLastStation(Section section) {
         if (!sections.isEmpty()) {
-            return section.getUpStation().equals(findLastDownStation()) || section.getDownStation().equals(findFirstUpStation());
+            return section.getUpStation().equals(findLastSection().get().getDownStation())
+                    || section.getDownStation().equals(findFirstSection().get().getUpStation());
         }
         return true;
     }
 
-    private Station findFirstUpStation() {
-        Station station = sections.get(0).getUpStation();
-
-        for (Section section : sections) {
-            if (section.getDownStation().equals(station)) {
-                station = section.getUpStation();
-            }
-        }
-        return station;
+    private Optional<Section> findFirstSection() {
+        Optional<Section> firstSection = sections.stream().filter(section ->
+                        sections.stream().noneMatch(existedSection ->
+                                section.getUpStation().equals(existedSection.getDownStation())))
+                .findFirst();
+        return firstSection;
     }
 
-    private Station findLastDownStation() {
-        Station station = sections.get(0).getDownStation();
-
-        for (Section section : sections) {
-            if (section.getUpStation().equals(station)) {
-                station = section.getDownStation();
-            }
-        }
-        return station;
+    private Optional<Section> findLastSection() {
+        Optional<Section> lastSection = sections.stream().filter(section ->
+                        sections.stream().noneMatch(existedSection ->
+                                section.getDownStation().equals(existedSection.getUpStation())))
+                .findFirst();
+        return lastSection;
     }
 
     // 역 사이에 낀 경우
-    private void changeSection(Section section) {
+    private void changeUpSection(Section section) {
         sections.stream().filter(existedSection -> existedSection.getUpStation().equals(section.getUpStation()))
                 .findFirst()
                 .ifPresent(existedSection -> {
-                        validateSectionDistance(section, existedSection);
-                        existedSection.changeUpStation(section.getDownStation());
+                    validateSectionDistance(section, existedSection);
+                    existedSection.changeUpStation(section.getDownStation());
+                });
+    }
+
+    private void changeDownSection(Section section) {
+        sections.stream().filter(existedSection -> existedSection.getDownStation().equals(section.getDownStation()))
+                .findFirst()
+                .ifPresent(existedSection -> {
+                    validateSectionDistance(section, existedSection);
+                    existedSection.changeDownStation(section.getUpStation());
                 });
     }
 
     public List<Station> getStations() {
         List<Station> stations = new ArrayList<>();
-        Station upStation = findFirstUpStation();
+        Section firstSection = findFirstSection().get();
+        Station upStation = firstSection.getUpStation();
         Station downStation = null;
+
         stations.add(upStation);
 
         Optional<Section> section = findSection(upStation);
