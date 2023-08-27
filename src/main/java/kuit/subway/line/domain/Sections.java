@@ -93,10 +93,10 @@ public class Sections {
     }
 
     public void removeSection(Station station) {
-        validateRemovableStation();
-
         Optional<Section> upSectionOptional = findUpSection(station);
         Optional<Section> downSectionOptional = findDownSection(station);
+
+        validateRemovableStation(upSectionOptional, downSectionOptional);
 
         if (upSectionOptional.isPresent() && downSectionOptional.isPresent()) {
             Section upSection = upSectionOptional.get();
@@ -163,9 +163,13 @@ public class Sections {
         }
     }
 
-    private void validateRemovableStation() {
+    private void validateRemovableStation(Optional<Section> upSectionOptional, Optional<Section> downSectionOptional) {
         if (sections.size() == 1) {
             throw new SubwayException(CANNOT_REMOVE_SECTION);
+        }
+
+        if (upSectionOptional.isEmpty() && downSectionOptional.isEmpty()) {
+            throw new SubwayException(NOT_EXISTED_STATION_IN_SECTION);
         }
     }
 }
