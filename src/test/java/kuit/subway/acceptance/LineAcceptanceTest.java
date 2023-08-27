@@ -28,7 +28,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
     @Test
     void createLine(){
         //when
-        ExtractableResponse<Response> response = 노선_생성(노선_요청("경춘선", "grean", 10L, 2L, 1L));
+        ExtractableResponse<Response> response = 노선_생성(노선_요청("경춘선", "grean", 10L, 1L, 2L));
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value());
@@ -39,7 +39,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
     void createLine_Throw_Exception_If_Invalid_Request(){
         //when
         ExtractableResponse<Response> response =
-                노선_생성(노선_요청("A".repeat(11),"G".repeat(11) , -1L, 2L, 1L));
+                노선_생성(노선_요청("A".repeat(11),"G".repeat(11) , -1L, 1L, 2L));
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());

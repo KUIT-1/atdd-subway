@@ -5,13 +5,16 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
 import kuit.subway.global.exception.SubwayException;
 import kuit.subway.station.domain.Station;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static kuit.subway.global.exception.CustomExceptionStatus.*;
 
 @Embeddable
+@Slf4j
 public class Sections {
 
     @OneToMany(mappedBy = "line", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -19,23 +22,80 @@ public class Sections {
 
     public void addSection(Section section) {
         validateAvailableSection(section);
+
+        if (!isFirstOrLastStation(section)) {
+            changeUpSection(section);
+            changeDownSection(section);
+        }
         this.sections.add(section);
     }
 
-    // TODO 리팩토링 필수
+    private boolean isFirstOrLastStation(Section section) {
+        if (!sections.isEmpty()) {
+            return section.getUpStation().equals(findLastSection().get().getDownStation())
+                    || section.getDownStation().equals(findFirstSection().get().getUpStation());
+        }
+        return true;
+    }
+
+    private Optional<Section> findFirstSection() {
+        Optional<Section> firstSection = sections.stream().filter(section ->
+                        sections.stream().noneMatch(existedSection ->
+                                section.getUpStation().equals(existedSection.getDownStation())))
+                .findFirst();
+        return firstSection;
+    }
+
+    private Optional<Section> findLastSection() {
+        Optional<Section> lastSection = sections.stream().filter(section ->
+                        sections.stream().noneMatch(existedSection ->
+                                section.getDownStation().equals(existedSection.getUpStation())))
+                .findFirst();
+        return lastSection;
+    }
+
+    // 역 사이에 낀 경우
+    private void changeUpSection(Section section) {
+        sections.stream().filter(existedSection -> existedSection.getUpStation().equals(section.getUpStation()))
+                .findFirst()
+                .ifPresent(existedSection -> {
+                    validateSectionDistance(section, existedSection);
+                    existedSection.changeUpStation(section.getDownStation());
+                });
+    }
+
+    private void changeDownSection(Section section) {
+        sections.stream().filter(existedSection -> existedSection.getDownStation().equals(section.getDownStation()))
+                .findFirst()
+                .ifPresent(existedSection -> {
+                    validateSectionDistance(section, existedSection);
+                    existedSection.changeDownStation(section.getUpStation());
+                });
+    }
+
     public List<Station> getStations() {
         List<Station> stations = new ArrayList<>();
-        boolean isFirst = true;
-        for (Section section : sections) {
-            if (isFirst) {
-                stations.add(section.getUpStation());
-                stations.add(section.getDownStation());
-            } else {
-                stations.add(section.getDownStation());
-            }
-            isFirst = false;
+        Section firstSection = findFirstSection().get();
+        Station upStation = firstSection.getUpStation();
+        Station downStation = null;
+
+        stations.add(upStation);
+
+        Optional<Section> section = findSection(upStation);
+
+        while (section.isPresent()) {
+            downStation = section.get().getDownStation();
+            stations.add(downStation);
+            section = findSection(downStation);
         }
+
         return stations;
+    }
+
+    private Optional<Section> findSection(Station station) {
+        return sections.stream()
+                .filter(section -> section.getUpStation().equals(station))
+                .findFirst();
     }
 
     public void removeSection() {
@@ -46,29 +106,31 @@ public class Sections {
     }
 
     private void validateAvailableSection(Section section) {
-        // 처음 역을 만드는 경우
-        if (sections.size() == 0) {
+        if (sections.isEmpty()) {
             return;
         }
-        validateExistedDownStation(section);
-        validateCycleInDownStation(section);
+        validateDuplicatedSection(section);
     }
 
-    // 새로운 구간의 상행역은 등록되어있는 하행 종점역이어야 한다.
-    private void validateExistedDownStation(Section section) {
-        Section lastSection = sections.get(sections.size() - 1);
-        if (!lastSection.getDownStation().equals(section.getUpStation())) {
-            throw new SubwayException(INVALID_SECTION_NOT_EXISTED_DOWN_STATION);
+    private void validateDuplicatedSection(Section section) {
+        if (isExistedUpStation(section) && isExistedDownStation(section)) {
+            throw new SubwayException(EXISTED_STATION_IN_SECTIONS);
         }
     }
 
-    // 새로운 구간의 하행역은 해당 노선에 등록되어있는 역일 수 없다.
-    private void validateCycleInDownStation(Section section) {
-        boolean hasCycle = sections.stream().anyMatch(existedSection ->
-                existedSection.getUpStation().equals(section.getDownStation()) || existedSection.getDownStation().equals(section.getDownStation()));
+    private boolean isExistedUpStation(Section section) {
+        return sections.stream().anyMatch(existedSection ->
+                section.getUpStation().equals(existedSection.getUpStation()) || section.getUpStation().equals(existedSection.getDownStation()));
+    }
 
-        if (hasCycle) {
-            throw new SubwayException(INVALID_SECTION_CANNOT_CYCLE);
+    private boolean isExistedDownStation(Section section) {
+        return sections.stream().anyMatch(existedSection ->
+                section.getDownStation().equals(existedSection.getUpStation()) || section.getDownStation().equals(existedSection.getDownStation()));
+    }
+
+    private void validateSectionDistance(Section section, Section existedSection) {
+        if (section.getDistance() >= existedSection.getDistance()) {
+            throw new SubwayException(EXCEED_DISTANCE);
         }
     }
 }
