@@ -18,20 +18,18 @@ public class ShowLineResponse {
     private String color;
     private List<ShowStationResponse> stations = new ArrayList<>();
   
-    private ShowLineResponse(Long id, String name, Sections sectionList, String color){
+    private ShowLineResponse(Long id, String name, List<ShowStationResponse> stations, String color){
         this.id = id;
         this.name = name;
-        this.stations = fromSection(sectionList);
+        this.stations = stations;
         this.color = color;
     }
 
     public static ShowLineResponse from(Line line){
-        return new ShowLineResponse(line.getId(), line.getName(), line.getSections(), line.getColor());
+        List<Station> stations = line.getSections().getStationList();
+        List<ShowStationResponse> stationResponseList = stations.stream().map(ShowStationResponse::from).toList();
+
+        return new ShowLineResponse(line.getId(), line.getName(), stationResponseList, line.getColor());
     }
 
-    private List<ShowStationResponse> fromSection(Sections sectionList){
-        List<Station> stations = sectionList.getStationList();
-
-        return stations.stream().map(ShowStationResponse::from).toList();
-    }
 }
