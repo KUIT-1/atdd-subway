@@ -4,7 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kuit.subway.AcceptanceTest;
+import kuit.subway.acceptance.AcceptanceTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -15,7 +15,7 @@ import static kuit.subway.station.StationStep.PATH;
 import static kuit.subway.station.StationStep.지하철_역_생성_요청;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class StationTest extends AcceptanceTest {
+public class StationAcceptanceTest extends AcceptanceTest {
     private final String ID_PATH = "result.id";
     private final String NAME_PATH = "result.name";
   

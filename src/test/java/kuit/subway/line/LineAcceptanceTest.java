@@ -8,8 +8,6 @@ import kuit.subway.request.line.UpdateLineRequest;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
 import static kuit.subway.line.LineFixture.*;
 import static kuit.subway.line.LineStep.*;
 import static kuit.subway.station.StationFixture.*;
@@ -18,7 +16,7 @@ import static kuit.subway.utils.BaseResponseStatus.*;
 import static kuit.subway.utils.RestAssuredUtil.get요청;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class LineTest extends AcceptanceTest {
+public class LineAcceptanceTest extends AcceptanceTest {
     private static final String ID_PATH = "result.id";
     private static final String NAME_PATH = "result.name";
     private static final String RESPONSECODE = "responseCode";

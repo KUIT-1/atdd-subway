@@ -2,7 +2,7 @@ package kuit.subway.section;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kuit.subway.AcceptanceTest;
+import kuit.subway.acceptance.AcceptanceTest;
 import kuit.subway.request.section.DeleteSectionRequest;
 import kuit.subway.request.section.SectionRequest;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import static kuit.subway.station.StationStep.지하철_역_생성_요청;
 import static kuit.subway.utils.BaseResponseStatus.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SectionTest extends AcceptanceTest {
+public class SectionAcceptanceTest extends AcceptanceTest {
     private static final String ID_PATH = "result.id";
     private static final String RESPONSECODE = "responseCode";
     @Test
@@ -71,13 +71,13 @@ public class SectionTest extends AcceptanceTest {
     @Test
     void 구간_삭제_WHEN_마지막구간(){
         // given
-        지하철_2호선_생성_Fixture(성수역, 강남역);
+        지하철_2호선_생성_Fixture(강남역, 성수역);
         지하철_역_생성_요청(교대역);
         SectionRequest request = new SectionRequest(10L, 3L, 2L);
         지하철_구간_등록_요청("1", request);
 
         // when
-        DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(3L, 2L);
+        DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(3L);
         ExtractableResponse<Response> response = 지하철_구간_삭제_요청("1", deleteSectionRequest);
 
         // then
@@ -94,7 +94,8 @@ public class SectionTest extends AcceptanceTest {
         지하철_구간_등록_요청("1", request);
 
         // when
-        DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(2L, 1L);
+//        DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(2L, 1L);
+        DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(2L);
         ExtractableResponse<Response> response = 지하철_구간_삭제_요청("1", deleteSectionRequest);
 
         // then
@@ -108,7 +109,8 @@ public class SectionTest extends AcceptanceTest {
         지하철_2호선_생성_Fixture(성수역, 강남역);
 
         // when
-        DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(2L, 1L);
+//        DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(2L, 1L);
+        DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(2L);
         ExtractableResponse<Response> response = 지하철_구간_삭제_요청("1", deleteSectionRequest);
 
         // then
