@@ -10,7 +10,6 @@ import kuit.subway.request.line.CreateLineRequest;
 import kuit.subway.request.line.UpdateLineRequest;
 import kuit.subway.request.section.DeleteSectionRequest;
 import kuit.subway.request.section.SectionRequest;
-import kuit.subway.response.line.CreateLineResponse;
 import kuit.subway.response.line.ShowLineResponse;
 import kuit.subway.utils.exception.LineException;
 import kuit.subway.utils.exception.StationException;
@@ -28,12 +27,14 @@ public class LineService {
     private final LineRepository lineRepository;
     private final SectionRepository sectionRepository;
     private final StationRepository stationRepository;
-    private final StationService stationService;
 
     @Transactional
     public ShowLineResponse createLine(CreateLineRequest request) {
-        Station downStation = stationService.findById(request.getDownStationId());
-        Station upStation = stationService.findById(request.getUpStationId());
+        Station downStation = stationRepository.findById(request.getDownStationId())
+                .orElseThrow(() -> new StationException(NONE_STATION));
+        Station upStation = stationRepository.findById(request.getUpStationId())
+                .orElseThrow(() -> new StationException(NONE_STATION));
+
         checkDuplicateName(request.getName(), null);
 
         Line line = Line.builder()
