@@ -1,4 +1,4 @@
-package kuit.subway;
+package kuit.subway.acceptance;
 
 import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
@@ -25,7 +25,6 @@ public class AcceptanceTest {
 
     @BeforeEach
     public void setUp() {
-        // 개발 환경 포트와 인수테스트 환경 포트 분리
         RestAssured.port = port;
         databaseCleanup.execute();
     }

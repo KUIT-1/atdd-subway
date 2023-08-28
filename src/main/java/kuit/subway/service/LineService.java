@@ -1,12 +1,18 @@
 package kuit.subway.service;
 
 import kuit.subway.domain.Line;
+import kuit.subway.domain.Section;
 import kuit.subway.domain.Station;
 import kuit.subway.repository.LineRepository;
-import kuit.subway.request.line.LineRequest;
-import kuit.subway.response.line.CreateLineResponse;
+import kuit.subway.repository.SectionRepository;
+import kuit.subway.repository.StationRepository;
+import kuit.subway.request.line.CreateLineRequest;
+import kuit.subway.request.line.UpdateLineRequest;
+import kuit.subway.request.section.DeleteSectionRequest;
+import kuit.subway.request.section.SectionRequest;
 import kuit.subway.response.line.ShowLineResponse;
 import kuit.subway.utils.exception.LineException;
+import kuit.subway.utils.exception.StationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,26 +25,34 @@ import static kuit.subway.utils.BaseResponseStatus.*;
 @RequiredArgsConstructor
 public class LineService {
     private final LineRepository lineRepository;
-    private final StationService stationService;
+    private final SectionRepository sectionRepository;
+    private final StationRepository stationRepository;
 
     @Transactional
-    public CreateLineResponse createLine(LineRequest request) {
-        Station downStation = stationService.findById(request.getDownStationId());
-        Station upStation = stationService.findById(request.getUpStationId());
+    public ShowLineResponse createLine(CreateLineRequest request) {
+        Station downStation = stationRepository.findById(request.getDownStationId())
+                .orElseThrow(() -> new StationException(NONE_STATION));
+        Station upStation = stationRepository.findById(request.getUpStationId())
+                .orElseThrow(() -> new StationException(NONE_STATION));
 
-        checkDuplicateName(request.getName());
+        checkDuplicateName(request.getName(), null);
 
         Line line = Line.builder()
-                .downStation(downStation)
-                .upStation(upStation)
-                .distance(request.getDistance())
                 .name(request.getName())
                 .color(request.getColor())
                 .build();
 
         lineRepository.save(line);
 
-        return CreateLineResponse.from(line);
+        Section section = Section.builder()
+                .downStation(downStation)
+                .upStation(upStation)
+                .distance(request.getDistance())
+                .build();
+
+        section.addLine(line);
+        sectionRepository.save(section);
+        return ShowLineResponse.from(line);
     }
 
     @Transactional(readOnly = true)
@@ -57,21 +71,54 @@ public class LineService {
     }
 
     @Transactional
-    public ShowLineResponse updateLine(Long id, LineRequest request) {
+    public ShowLineResponse updateLine(Long id, UpdateLineRequest request) {
         Line line = findById(id);
-        Station downStation = stationService.findById(request.getDownStationId());
-        Station upStation = stationService.findById(request.getUpStationId());
+        checkDuplicateName(request.getName(), id);
+        checkDuplicateColor(request.getColor(), id);
 
-        checkDuplicateName(request.getName());
-
-        line.update(request, upStation, downStation);
+        line.update(request.getName(), request.getColor());
 
         return ShowLineResponse.from(line);
     }
 
     @Transactional
     public void deleteLine(Long id) {
+        if(!lineRepository.existsLineById(id))
+            throw new LineException(NONE_LINE);
         lineRepository.deleteById(id);
+    }
+
+    // requestBody를 바탕으로 Section을 생성한 후 Line에 추가한다.
+    @Transactional
+    public ShowLineResponse addSectionToLine(Long line_id, SectionRequest request) {
+        Line line = findById(line_id);
+
+        Station downStation = stationRepository.findById(request.getDownStationId())
+                .orElseThrow(() -> new StationException(NONE_STATION));
+
+        Station upStation = stationRepository.findById(request.getUpStationId())
+                .orElseThrow(() -> new StationException(NONE_STATION));
+
+        Section section = Section.builder()
+                .downStation(downStation)
+                .upStation(upStation)
+                .distance(request.getDistance())
+                .build();
+
+        section.addLine(line);
+        sectionRepository.save(section);
+
+        return ShowLineResponse.from(line);
+    }
+
+    @Transactional
+    public void deleteSection(Long line_id, DeleteSectionRequest request) {
+        Line line = findById(line_id);
+
+        Station station = stationRepository.findById(request.getStationId())
+                .orElseThrow(() -> new StationException(NONE_STATION));
+
+        line.deleteSectionByStation(station);
     }
 
     private Line findById(Long id) {
@@ -79,10 +126,20 @@ public class LineService {
                 .orElseThrow(() -> new LineException(NONE_LINE));
     }
 
-    private void checkDuplicateName(String name) {
-        if(lineRepository.existsLineByName(name))
-            throw new LineException(DUPLICATED_LINE);
+    private void checkDuplicateName(String name, Long line_id) {
+        if(!lineRepository.existsLineByName(name)) return;
+        if(line_id == null)
+            throw new LineException(DUPLICATED_LINENAME);
+        if(!lineRepository.findLineByName(name).getId().equals(line_id))
+            throw new LineException(DUPLICATED_LINENAME);
     }
 
+    private void checkDuplicateColor(String color, Long line_id) {
+        if(!lineRepository.existsLineByColor(color)) return;
+        if(line_id == null)
+            throw new LineException(DUPLICATED_LINECOLOR);
+        if(!lineRepository.findLineByColor(color).getId().equals(line_id))
+            throw new LineException(DUPLICATED_LINECOLOR);
+    }
 
 }

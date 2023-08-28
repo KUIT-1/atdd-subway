@@ -1,13 +1,9 @@
 package kuit.subway.domain;
 
 import jakarta.persistence.*;
-import kuit.subway.request.line.LineRequest;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
 @Getter
@@ -19,26 +15,32 @@ public class Line {
 
     private String color;
 
-    private Long distance;
-
     @Column(length = 20, nullable = false)
     private String name;
 
-    @ManyToOne
-    @JoinColumn(name = "up_station_id")
-    private Station upStation;
+    @Builder.Default
+    @Embedded
+    private Sections sections = new Sections();
 
-    @ManyToOne
-    @JoinColumn(name = "down_station_id")
-    private Station downStation;
+    public void update(String name, String color){
+        this.name = name;
+        this.color = color;
+    }
+
+    public void addSection(Section section) {
+        this.sections.add(section);
+    }
+
+    public void deleteSectionByStation(Station station) {
+        this.sections.deleteSection(station);
+    }
 
 
-    public void update(LineRequest request, Station upStation, Station downStation){
-        this.name = request.getName();
-        this.distance = request.getDistance();
-        this.color = request.getColor();
-        this.upStation = upStation;
-        this.downStation = downStation;
+
+
+    }
+
+
     }
 
 }
