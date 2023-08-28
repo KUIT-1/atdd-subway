@@ -26,7 +26,10 @@ public enum BaseResponseStatus{
     ONLY_LAST_SECTION_DELETION_ALLOWED(HttpStatus.BAD_REQUEST, 2105, "마지막 구간만 삭제할 수 있습니다."),
     CANNOT_DELETE_SECTION(HttpStatus.BAD_REQUEST, 2106, "구간을 삭제할 수 없습니다."),
     DUPLICATED_LINENAME(HttpStatus.CONFLICT,2107, "같은 이름의 노선이 존재합니다."),
-    DUPLICATED_LINECOLOR(HttpStatus.CONFLICT,2108, "같은 색깔의 노선이 존재합니다.");
+    DUPLICATED_LINECOLOR(HttpStatus.CONFLICT,2108, "같은 색깔의 노선이 존재합니다."),
+    EMPTY_LINE(HttpStatus.NOT_FOUND,2109, "빈 노선(구간 없음)입니다."), // 발생하면 안되는 오류. -> 구조적으로 문제 있다는 얘기
+    NONE_SECTION(HttpStatus.NOT_FOUND,2110, "해당 구간이 존재하지 않습니다.");
+
 
     private final HttpStatus httpStatus;
     private final int responseCode;
