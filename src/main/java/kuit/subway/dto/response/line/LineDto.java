@@ -1,6 +1,5 @@
 package kuit.subway.dto.response.line;
 
-import jakarta.persistence.Entity;
 import kuit.subway.domain.Station;
 import kuit.subway.dto.BaseTimeEntity;
 import kuit.subway.dto.response.section.SectionDto;
@@ -23,15 +22,18 @@ public class LineDto {
     private String name;
     private String color;
     private int distance;
-    private List<StationDto> stations;
+    private List<StationDto> stations = new ArrayList<>();
 
-    public static LineDto createLineDto(Long id, String name, String color, int distance, List<StationDto> stations) {
+    public static LineDto createLineDto(Long id, String name, String color, int distance) {
         return LineDto.builder()
                 .id(id)
                 .name(name)
                 .color(color)
                 .distance(distance)
-                .stations(stations)
                 .build();
+    }
+
+    public void addStationDto(StationDto stationDto) {
+        this.stations.add(stationDto);
     }
 }

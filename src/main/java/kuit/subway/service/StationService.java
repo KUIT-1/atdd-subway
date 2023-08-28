@@ -1,16 +1,13 @@
 package kuit.subway.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import kuit.subway.domain.Station;
 import kuit.subway.dto.request.station.StationCreateRequest;
 import kuit.subway.dto.response.station.StationCreateResponse;
 import kuit.subway.dto.response.station.StationDeleteResponse;
 import kuit.subway.dto.response.station.StationDto;
-import kuit.subway.exception.notfound.NotFoundException;
-import kuit.subway.exception.notfound.NotFoundStationException;
+import kuit.subway.exception.notfound.station.NotFoundStationException;
 import kuit.subway.repository.StationRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,7 +24,7 @@ public class StationService {
 
     @Transactional
     public StationCreateResponse addStation(StationCreateRequest res) {
-        Station station = Station.createStation(res.getName(), LocalDateTime.now(), LocalDateTime.now());
+        Station station = Station.createStation(res.getName());
         stationRepository.save(station);
 
         return new StationCreateResponse("지하철 역 추가 완료", station.getId());

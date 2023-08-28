@@ -21,8 +21,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @DisplayName("지하철 구간 인수 테스트")
 public class SectionAcceptanceTest extends AcceptanceTest {
 
-    @DisplayName("지하철 구간 등록 후 201 OK와 변경된 노선의 결과를 반환한다.")
     @Test
+    @DisplayName("지하철 구간 등록 후 201 OK와 변경된 노선의 결과를 반환한다.")
     void createSection() {
 
         // given
@@ -32,9 +32,9 @@ public class SectionAcceptanceTest extends AcceptanceTest {
         Long lineId = 지하철_노선_등록("와우선", "green", 10, station1Id,  station2Id).jsonPath().getLong("id");
 
         // when
-        ExtractableResponse<Response> failedRes1 = 지하철_구간_등록(lineId, station3Id, station2Id);
-        ExtractableResponse<Response> failedRes2 = 지하철_구간_등록(lineId, station2Id, station2Id);
-        ExtractableResponse<Response> successRes = 지하철_구간_등록(lineId, station2Id, station3Id);
+        ExtractableResponse<Response> failedRes1 = 지하철_구간_등록(lineId, station3Id, station2Id, 1);
+        ExtractableResponse<Response> failedRes2 = 지하철_구간_등록(lineId, station2Id, station2Id, 1);
+        ExtractableResponse<Response> successRes = 지하철_구간_등록(lineId, station2Id, station3Id, 1);
 
         // then
         assertAll(
@@ -46,8 +46,8 @@ public class SectionAcceptanceTest extends AcceptanceTest {
 
     }
 
-    @DisplayName("지하철 구간 삭제 후 200 OK와 변경된 노선의 결과를 반환한다.")
     @Test
+    @DisplayName("지하철 구간 삭제 후 200 OK와 변경된 노선의 결과를 반환한다.")
     void deleteSection() {
 
         // given
@@ -57,7 +57,7 @@ public class SectionAcceptanceTest extends AcceptanceTest {
 
         Long lineId = 지하철_노선_등록("와우선", "green", 10, station1Id,  station2Id).jsonPath().getLong("id");
 
-        지하철_구간_등록(lineId, station2Id, station3Id);
+        지하철_구간_등록(lineId, station2Id, station3Id, 1);
 
         // when
         ExtractableResponse<Response> failedRes1 = 지하철_구간_삭제(lineId, station2Id);

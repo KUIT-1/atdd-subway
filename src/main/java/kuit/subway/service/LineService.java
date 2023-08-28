@@ -1,27 +1,27 @@
 package kuit.subway.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import kuit.subway.domain.Line;
 import kuit.subway.domain.Section;
 import kuit.subway.domain.Sections;
 import kuit.subway.domain.Station;
 import kuit.subway.dto.request.line.LineCreateRequest;
+import kuit.subway.dto.request.line.LineUpdateRequest;
 import kuit.subway.dto.response.line.LineCreateResponse;
 import kuit.subway.dto.response.line.LineDeleteResponse;
 import kuit.subway.dto.response.line.LineDto;
 import kuit.subway.dto.response.line.LineUpdateResponse;
 import kuit.subway.dto.response.station.StationDto;
-import kuit.subway.exception.badrequest.InvalidLineStationException;
-import kuit.subway.exception.notfound.NotFoundLineException;
-import kuit.subway.exception.notfound.NotFoundStationException;
+import kuit.subway.exception.badrequest.station.InvalidLineStationException;
+import kuit.subway.exception.notfound.line.NotFoundLineException;
+import kuit.subway.exception.notfound.station.NotFoundStationException;
 import kuit.subway.repository.LineRepository;
 import kuit.subway.repository.StationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -50,9 +50,7 @@ public class LineService {
         Line line = Line.createLine(res.getName(), res.getColor(), res.getDistance());
 
         // 노선에는 구간 형태로 추가해줘야한다.
-        Sections sections = new Sections();
-        sections.addSection(Section.createSection(line, upStation, downStation));
-        line.addSection(sections);
+        line.addSection(Section.createSection(line, upStation, downStation, 1));
         lineRepository.save(line);
 
         return new LineCreateResponse("지하철 노선 생성 완료", line.getId());
@@ -62,21 +60,39 @@ public class LineService {
 
         // 존재하지 않는 노선을 조회했을 때 예외처리
         Line line = validateLineExist(id);
+        List<StationDto> stationDtoList = getStationDtoList(line.getSections().getOrderSections());
 
-        return LineDto.createLineDto(line.getId(), line.getName(), line.getColor(), line.getDistance(), line.getSections().getStationDtoList());
+        LineDto lineDto = LineDto.createLineDto(line.getId(), line.getName(), line.getColor(), line.getDistance());
+        for (StationDto stationDto : stationDtoList) {
+            lineDto.addStationDto(stationDto);
+        }
+        return lineDto;
     }
 
     public List<LineDto> findAllLines() {
 
         List<Line> findLines = lineRepository.findAll();
-        List<LineDto> result = findLines.stream()
-                .map(line -> LineDto.createLineDto(line.getId(), line.getName(), line.getColor(), line.getDistance(), line.getSections().getStationDtoList()))
-                .collect(Collectors.toList());
+        List<LineDto> result = new ArrayList<>();
+
+        for (Line line : findLines) {
+            LineDto lineDto = LineDto.createLineDto(line.getId(), line.getName(), line.getColor(), line.getDistance());
+            List<StationDto> stationDtoList = getStationDtoList(line.getSections().getOrderSections());
+
+            for (StationDto stationDto : stationDtoList) {
+                lineDto.addStationDto(stationDto);
+            }
+
+            result.add(lineDto);
+        }
         return result;
     }
 
+//    public List<StationDto> findPath() {
+//
+//    }
+
     @Transactional
-    public LineUpdateResponse updateLine(Long id, LineCreateRequest req) {
+    public LineUpdateResponse updateLine(Long id, LineUpdateRequest req) {
         // 존재하지 않는 노선을 수정하려 했을때 예외처리
         Line line = validateLineExist(id);
 
@@ -94,13 +110,18 @@ public class LineService {
         // 모든 예외조건 패스할 시, request 대로 노선 수정
         line.updateLine(req.getName(), req.getColor(), req.getDistance(), upStation, downStation);
 
-        return LineUpdateResponse.createLineUpdateResponse(
+        LineUpdateResponse res = LineUpdateResponse.createLineUpdateResponse(
                 line.getId(),
                 req.getName(),
                 req.getColor(),
-                req.getDistance(),
-                line.getSections().getStationDtoList()
+                req.getDistance()
         );
+
+        List<StationDto> stationDtoList = getStationDtoList(line.getSections().getOrderSections());
+        for (StationDto stationDto : stationDtoList) {
+            res.addStationDto(stationDto);
+        }
+        return res;
     }
 
     @Transactional
@@ -112,6 +133,35 @@ public class LineService {
         lineRepository.delete(line);
         return new LineDeleteResponse("지하철 노선 삭제 완료", line.getId());
     }
+
+    private List<StationDto> getStationDtoList(List<Section> sections) {
+
+            List<StationDto> result = new ArrayList<>();
+            Long nextUpStationId;
+
+            // 맨 처음 첫 구간은 상행, 하행 둘 다 삽입
+            Station upStation = sections.get(0).getUpStation();
+            result.add(StationDto.createStationDto(upStation.getId(), upStation.getName()));
+
+            Station downStation = sections.get(0).getDownStation();
+            result.add(StationDto.createStationDto(downStation.getId(), downStation.getName()));
+
+            nextUpStationId = downStation.getId();
+
+            for (int i = 0; i < sections.size() - 1; i++) {
+                Long finalNextUpStationId = nextUpStationId;
+                Section findSection = sections.stream()
+                        .filter(section -> section.getUpStation().getId().equals(finalNextUpStationId))
+                        .findFirst().get();
+                System.out.println(findSection.getDownStation().getId());
+                downStation = findSection.getDownStation();
+                result.add(StationDto.createStationDto(downStation.getId(), downStation.getName()));
+                nextUpStationId = downStation.getId();
+            }
+
+            return result;
+    }
+
     // 존재하는 역인지 판별해주는 함수
     private Station validateStationExist(Long id) {
         return stationRepository.findById(id)
