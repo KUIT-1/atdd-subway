@@ -26,9 +26,9 @@ public class LineController {
     private final LineService lineService;
 
     @PostMapping
-    public BaseResponseEntity<CreateLineResponse> createLine(
+    public BaseResponseEntity<ShowLineResponse> createLine(
                 @Validated @RequestBody CreateLineRequest request){
-        CreateLineResponse response = lineService.createLine(request);
+        ShowLineResponse response = lineService.createLine(request);
         return new BaseResponseEntity<>(CREATED_SUCCESS, response);
     }
 

@@ -78,10 +78,11 @@ public class Sections {
     public List<Station> getStationList() {
         List<Station> stations = new ArrayList<>();
 
-        sections.stream().map(
+        sections.forEach(
                 section -> stations.add(section.getUpStation()));
 
         stations.add(getLastSection().getDownStation());
+
         return stations;
     }
 
@@ -90,6 +91,31 @@ public class Sections {
                 .anyMatch(section -> section.getUpStation().getId().equals(stationId)
                         || section.getDownStation().getId().equals(stationId)
         );
+    }
+
+    public void deleteSection(Station station) {
+        isSectionDeletable(station.getId());
+        removeStation(station);
+    }
+
+    private void isSectionDeletable(Long stationId){
+        checkStationIsLastStation(stationId);
+        isSingleSection();
+    }
+
+    private void checkStationIsLastStation(Long stationId){
+        Station lastDownStation = getLastSection().getDownStation();
+        if(!Objects.equals(lastDownStation.getId(), stationId)){
+            System.out.println(lastDownStation.getId());
+            System.out.println(stationId);
+            throw new LineException(ONLY_LAST_SECTION_DELETION_ALLOWED);
+        }
+    }
+
+    private void isSingleSection() {
+        if(sections.size() <= 1){
+            throw new LineException(CANNOT_DELETE_SECTION);
+        }
     }
 
 }

@@ -31,7 +31,7 @@ public class LineService {
     private final StationService stationService;
 
     @Transactional
-    public CreateLineResponse createLine(CreateLineRequest request) {
+    public ShowLineResponse createLine(CreateLineRequest request) {
         Station downStation = stationService.findById(request.getDownStationId());
         Station upStation = stationService.findById(request.getUpStationId());
         checkDuplicateName(request.getName(), null);
@@ -51,7 +51,7 @@ public class LineService {
 
         section.addLine(line);
         sectionRepository.save(section);
-        return CreateLineResponse.from(line);
+        return ShowLineResponse.from(line);
     }
 
     @Transactional(readOnly = true)
@@ -105,6 +105,7 @@ public class LineService {
                 .build();
 
         section.addLine(line);
+        sectionRepository.save(section);
 
         return ShowLineResponse.from(line);
     }
@@ -113,11 +114,10 @@ public class LineService {
     public void deleteSection(Long line_id, DeleteSectionRequest request) {
         Line line = findById(line_id);
 
-        line.isSectionDeletable(request.getDownStationId());
+        Station station = stationRepository.findById(request.getStationId())
+                .orElseThrow(() -> new StationException(NONE_STATION));
 
-        Section section = sectionRepository.findByLineIdAndStationsId(line_id, request.getUpStationId(), request.getDownStationId());
-        line.deleteSection(section);
-        sectionRepository.deleteById(section.getId());
+        line.deleteSectionByStation(station);
     }
 
     private Line findById(Long id) {
