@@ -78,4 +78,14 @@ public class RestAssuredUtils {
                 .then().log().all()
                 .extract();
     }
+
+    public static ExtractableResponse<Response> deleteStationInSection(String path, Long stationId, Object... pathParams) {
+        return RestAssured
+                .given().log().all()
+                .contentType(ContentType.JSON)
+                .queryParams("stationId", stationId)
+                .when().delete(path, pathParams)
+                .then().log().all()
+                .extract();
+    }
 }
