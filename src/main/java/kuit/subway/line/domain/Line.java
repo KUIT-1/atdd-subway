@@ -61,4 +61,8 @@ public class Line extends BaseTimeEntity {
     public List<Station> getStations() {
         return sections.getStations();
     }
+
+    public List<Section> getSections() {
+        return sections.getSections();
+    }
 }
