@@ -19,13 +19,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static kuit.subway.global.exception.CustomExceptionStatus.EXCEED_DISTANCE;
-import static kuit.subway.global.exception.CustomExceptionStatus.EXISTED_STATION_IN_SECTIONS;
+import static kuit.subway.global.exception.CustomExceptionStatus.*;
 import static kuit.subway.utils.fixtures.LineFixtures.노선_변경_요청;
 import static kuit.subway.utils.fixtures.LineFixtures.노선_요청;
 import static kuit.subway.utils.fixtures.SectionFixtures.구간_생성_요청;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -246,6 +244,102 @@ class LineServiceTest {
                     .isInstanceOf(SubwayException.class)
                     .extracting("status")
                     .isEqualTo(EXCEED_DISTANCE);
+        }
+
+        @DisplayName("구간 삭제중, 중간역이 제거될 경우 재배치한다.")
+        @Test
+        void removeSection(){
+            //given
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(downStation));
+
+            //when
+            LineResponse response = lineService.deleteSection(1L, 2L);
+
+            //then
+            verify(lineRepository, times(1)).findById(anyLong());
+            verify(stationRepository, times(1)).findById(anyLong());
+            assertThat(response.getStations()).hasSize(2)
+                            .extracting("name")
+                            .containsExactly("강남역","잠실역");
+        }
+
+        @DisplayName("구간 삭제중, 상행 종점이 제거될 경우 다음 역이 종점이 된다.")
+        @Test
+        void removeSection_If_Remove_First_Up_Station(){
+            //given
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(upStation));
+
+            //when
+            LineResponse response = lineService.deleteSection(1L, 1L);
+
+            //then
+            verify(lineRepository, times(1)).findById(anyLong());
+            verify(stationRepository, times(1)).findById(anyLong());
+            assertThat(response.getStations()).hasSize(2)
+                    .extracting("name")
+                    .containsExactly("성수역","잠실역");
+        }
+
+        @DisplayName("구간 삭제중, 하행 종점이 제거될 경우 그 앞의 역이 종점이 된다.")
+        @Test
+        void removeSection_If_Remove_Last_Down_Station(){
+            //given
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(newDownStation));
+
+            //when
+            LineResponse response = lineService.deleteSection(1L, 3L);
+
+            //then
+            verify(lineRepository, times(1)).findById(anyLong());
+            verify(stationRepository, times(1)).findById(anyLong());
+            assertThat(response.getStations()).hasSize(2)
+                    .extracting("name")
+                    .containsExactly("강남역","성수역");
+        }
+
+        @DisplayName("노선에 등록되어 있지 않은 역은 제거가 불가능하다.")
+        @Test
+        void removeSection_Throw_Exception_If_Not_Existed_Station() {
+            newDownStation = Station.builder().id(4L).name("잠실새내역").build();
+
+            //given
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(newDownStation));
+
+            //when & then
+            assertThatThrownBy(() -> lineService.deleteSection(1L, 4L))
+                    .isInstanceOf(SubwayException.class)
+                    .extracting("status")
+                    .isEqualTo(NOT_EXISTED_STATION_IN_SECTION);
+        }
+
+        @DisplayName("노선에 등록되어 있지 않은 역은 제거가 불가능하다.")
+        @Test
+        void removeSection_Throw_Exception_If_Only_One_Section() {
+            //given
+            given(lineRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(line));
+            given(stationRepository.findById(anyLong()))
+                    .willReturn(Optional.ofNullable(newDownStation));
+
+            lineService.deleteSection(1L, 3L);
+
+            //when & then
+            assertThatThrownBy(() -> lineService.deleteSection(1L, 2L))
+                    .isInstanceOf(SubwayException.class)
+                    .extracting("status")
+                    .isEqualTo(UNDER_MINIMUM_SECTION_SIZE);
         }
     }
 }

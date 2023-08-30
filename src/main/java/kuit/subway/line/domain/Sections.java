@@ -81,28 +81,57 @@ public class Sections {
 
         stations.add(upStation);
 
-        Optional<Section> section = findSection(upStation);
+        Optional<Section> section = findDownSection(upStation);
 
         while (section.isPresent()) {
             downStation = section.get().getDownStation();
             stations.add(downStation);
-            section = findSection(downStation);
+            section = findDownSection(downStation);
         }
 
         return stations;
     }
 
-    private Optional<Section> findSection(Station station) {
+    public void removeSection(Station station) {
+        Optional<Section> upSectionOptional = findUpSection(station);
+        Optional<Section> downSectionOptional = findDownSection(station);
+
+        validateRemovableStation(upSectionOptional, downSectionOptional);
+
+        if (upSectionOptional.isPresent() && downSectionOptional.isPresent()) {
+            Section upSection = upSectionOptional.get();
+            Section downSection = downSectionOptional.get();
+            Long distance = upSection.getDistance() + downSection.getDistance();
+
+            upSection.changeDistance(distance);
+            upSection.changeDownStation(downSection.getDownStation());
+            sections.remove(downSection);
+            return;
+        }
+
+        // 상행종점 제거
+        if (upSectionOptional.isPresent()) {
+            Section section = upSectionOptional.get();
+            sections.remove(section);
+            return;
+        }
+
+        // 하행종점 제거
+        Section section = downSectionOptional.get();
+        sections.remove(section);
+    }
+
+
+    private Optional<Section> findUpSection(Station station) {
         return sections.stream()
-                .filter(section -> section.getUpStation().equals(station))
+                .filter(section -> section.getDownStation().equals(station))
                 .findFirst();
     }
 
-    public void removeSection() {
-        if (sections.size() == 1) {
-            throw new SubwayException(CANNOT_REMOVE_SECTION);
-        }
-        sections.remove(sections.size() - 1);
+    private Optional<Section> findDownSection(Station station) {
+        return sections.stream()
+                .filter(section -> section.getUpStation().equals(station))
+                .findFirst();
     }
 
     private void validateAvailableSection(Section section) {
@@ -131,6 +160,16 @@ public class Sections {
     private void validateSectionDistance(Section section, Section existedSection) {
         if (section.getDistance() >= existedSection.getDistance()) {
             throw new SubwayException(EXCEED_DISTANCE);
+        }
+    }
+
+    private void validateRemovableStation(Optional<Section> upSectionOptional, Optional<Section> downSectionOptional) {
+        if (sections.size() == 1) {
+            throw new SubwayException(UNDER_MINIMUM_SECTION_SIZE);
+        }
+
+        if (upSectionOptional.isEmpty() && downSectionOptional.isEmpty()) {
+            throw new SubwayException(NOT_EXISTED_STATION_IN_SECTION);
         }
     }
 }

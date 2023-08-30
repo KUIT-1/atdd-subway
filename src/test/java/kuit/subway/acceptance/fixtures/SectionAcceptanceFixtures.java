@@ -4,8 +4,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kuit.subway.line.dto.request.SectionRequest;
 
-import static kuit.subway.utils.RestAssuredUtils.delete;
-import static kuit.subway.utils.RestAssuredUtils.post;
+import static kuit.subway.utils.RestAssuredUtils.*;
 
 public class SectionAcceptanceFixtures {
 
@@ -15,7 +14,7 @@ public class SectionAcceptanceFixtures {
         return post(request, BASE_URL, lineId);
     }
 
-    public static ExtractableResponse<Response> 구간_제거(Long lineId) {
-        return delete(BASE_URL, lineId);
+    public static ExtractableResponse<Response> 구간_제거(Long lineId, Long stationId) {
+        return deleteStationInSection(BASE_URL, stationId, lineId);
     }
 }
