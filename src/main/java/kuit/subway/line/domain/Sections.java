@@ -5,6 +5,10 @@ import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
 import kuit.subway.global.exception.SubwayException;
 import kuit.subway.station.domain.Station;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -14,6 +18,9 @@ import java.util.Optional;
 import static kuit.subway.global.exception.CustomExceptionStatus.*;
 
 @Embeddable
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @Slf4j
 public class Sections {
 
@@ -171,5 +178,11 @@ public class Sections {
         if (upSectionOptional.isEmpty() && downSectionOptional.isEmpty()) {
             throw new SubwayException(NOT_EXISTED_STATION_IN_SECTION);
         }
+    }
+
+    public Long getTotalDistance() {
+        return sections.stream()
+                .mapToLong(Section::getDistance)
+                .sum();
     }
 }
