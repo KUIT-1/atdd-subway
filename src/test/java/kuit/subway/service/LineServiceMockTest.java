@@ -149,6 +149,33 @@ public class LineServiceMockTest {
                         .containsExactly("성수역", "강남역", "교대역");
             }
 
+            @Test
+            @DisplayName("상행종점역의 상행에 구간 추가")
+            void addSectionFromLastUpStation() {
+                /*  given
+                    2호선 : 성수역 - 강남역
+                    추가할 구간 : 뚝섬역 - 성수역
+                */
+                when(lineRepository.findById(1L)).thenReturn(Optional.of(이호선));
+                when(stationRepository.findById(1L)).thenReturn(Optional.of(성수역));
+                when(stationRepository.findById(4L)).thenReturn(Optional.of(뚝섬역));
+
+                Section 강남_교대_구간 = SectionFixture.create_구간(강남역, 교대역);
+
+                given(sectionRepository.save(any(Section.class))).willReturn(강남_교대_구간);
+
+                SectionRequest request = new SectionRequest(10L, 1L, 4L);
+//
+                // when
+                ShowLineResponse response = lineService.addSectionToLine(1L, request);
+                // then
+                assertEquals("2호선", response.getName());
+
+                assertThat(response.getStations())
+                        .extracting("name")
+                        .containsExactly("뚝섬역", "성수역", "강남역");
+            }
+        }
 
     }
 }
