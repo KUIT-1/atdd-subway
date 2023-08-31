@@ -18,7 +18,7 @@ import org.jgrapht.graph.WeightedMultigraph;
 import java.util.List;
 import java.util.Optional;
 
-import static kuit.subway.global.exception.CustomExceptionStatus.NOT_EXISTED_PATH;
+import static kuit.subway.global.exception.CustomExceptionStatus.*;
 
 @Builder
 @Getter
@@ -32,6 +32,8 @@ public class SubwayMap {
     public Sections findPath(Station sourceStation, Station targetStation) {
         WeightedMultigraph<Station, SectionEdge> graph = generateSubwayMap();
         DijkstraShortestPath<Station, SectionEdge> dijkstraShortestPath = new DijkstraShortestPath<>(graph);
+        validateDijkstraShortestPath(dijkstraShortestPath, sourceStation, targetStation);
+
         Optional<GraphPath<Station, SectionEdge>> pathOptional = Optional.ofNullable(dijkstraShortestPath.getPath(sourceStation, targetStation));
 
         if (pathOptional.isEmpty()) {
@@ -69,5 +71,13 @@ public class SubwayMap {
                     graph.addEdge(section.getUpStation(), section.getDownStation(), edge);
                     graph.setEdgeWeight(edge, section.getDistance());
                 });
+    }
+
+    private void validateDijkstraShortestPath(DijkstraShortestPath<Station, SectionEdge> dijkstraShortestPath, Station sourceStation, Station targetStation) {
+        try {
+            dijkstraShortestPath.getPath(sourceStation, targetStation);
+        } catch (IllegalArgumentException e) {
+            throw new SubwayException(INVALID_GRAPH);
+        }
     }
 }
