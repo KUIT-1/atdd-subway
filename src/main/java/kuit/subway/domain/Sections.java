@@ -30,6 +30,15 @@ public class Sections {
             return;
         }
         isSectionRegistrable(section.getUpStation().getId(), section.getDownStation().getId());
+
+        if(!checkAnyStationIsTerminalStation(section.getUpStation().getId(), section.getDownStation().getId())){
+            Optional<Section> upStation = findNextSection(section.getUpStation());
+            upStation.ifPresent(value -> value.changeUpStation(section.getDownStation()));
+
+            Optional<Section> downStation = findPreviousSection(section.getDownStation());
+            downStation.ifPresent(value -> value.changeDownStation(section.getUpStation()));
+        }
+
         this.sections.add(section);
     }
 
@@ -49,20 +58,16 @@ public class Sections {
 
     private void isSectionRegistrable(Long upStationId, Long downStationId) {
         areBothStationsRegistered(upStationId, downStationId);
-        checkAnyStationIsTerminalStation(upStationId, downStationId);
     }
 
 
-    private void checkAnyStationIsTerminalStation(Long upStationId, Long downStationId){
+    private boolean checkAnyStationIsTerminalStation(Long upStationId, Long downStationId){
         Station lastDownStation = getLastSection().get().getDownStation();
         Station firstUpStation = getFirstSection().get().getUpStation();
         boolean upStationIsLastDown = Objects.equals(lastDownStation.getId(), upStationId);
         boolean downStationIsFirstUp = Objects.equals(firstUpStation.getId(), downStationId);
 
-
-        if(!upStationIsLastDown && !downStationIsFirstUp){
-            throw new LineException(ONLY_TERMINAL_STATION_REGISTER_ALLOWED);
-        }
+        return upStationIsLastDown || downStationIsFirstUp;
     }
 
     private void areBothStationsRegistered(Long upStationId, Long downStationId) {
@@ -116,6 +121,12 @@ public class Sections {
     private Optional<Section> findNextSection(Station station){
         return sections.stream().filter(
                         section -> section.getUpStation().getId().equals(station.getId()))
+                .findFirst();
+    }
+
+    private Optional<Section> findPreviousSection(Station station){
+        return sections.stream().filter(
+                        section -> section.getDownStation().getId().equals(station.getId()))
                 .findFirst();
     }
 

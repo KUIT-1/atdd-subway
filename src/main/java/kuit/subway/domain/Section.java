@@ -31,4 +31,12 @@ public class Section {
         this.line = line;
         line.addSection(this);
     }
+
+    public void changeDownStation(Station station) {
+        this.downStation = station;
+    }
+
+    public void changeUpStation(Station station) {
+        this.upStation = station;
+    }
 }
