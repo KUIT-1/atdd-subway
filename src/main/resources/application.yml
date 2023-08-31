@@ -23,3 +23,9 @@ spring:
       enabled: true
       settings:
         web-allow-others: true
+
+security:
+  jwt:
+    token:
+      secret-key: testtesttest
+      expire-length: 86400
