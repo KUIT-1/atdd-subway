@@ -108,7 +108,7 @@ public class Sections {
         Station downStation;
         stations.add(upStation);
 
-        Optional<Section> nextSection = findNextSection(upStation);
+        Optional<Section> nextSection = Optional.of(firstSection);
         while(nextSection.isPresent()){
             downStation = nextSection.get().getDownStation();
             stations.add(downStation);
