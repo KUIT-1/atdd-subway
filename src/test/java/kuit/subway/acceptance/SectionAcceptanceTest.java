@@ -1,17 +1,16 @@
-package kuit.subway.section;
+package kuit.subway.acceptance;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kuit.subway.acceptance.AcceptanceTest;
 import kuit.subway.request.section.DeleteSectionRequest;
 import kuit.subway.request.section.SectionRequest;
 import org.junit.jupiter.api.Test;
 
-import static kuit.subway.line.LineFixture.지하철_2호선_생성_Fixture;
-import static kuit.subway.section.SectionStep.지하철_구간_등록_요청;
-import static kuit.subway.section.SectionStep.지하철_구간_삭제_요청;
-import static kuit.subway.station.StationFixture.*;
-import static kuit.subway.station.StationStep.지하철_역_생성_요청;
+import static kuit.subway.acceptance.fixtures.LineFixture.지하철_2호선_생성_요청;
+import static kuit.subway.acceptance.fixtures.SectionStep.지하철_구간_등록_요청;
+import static kuit.subway.acceptance.fixtures.SectionStep.지하철_구간_삭제_요청;
+import static kuit.subway.acceptance.fixtures.StationFixture.*;
+import static kuit.subway.acceptance.fixtures.StationStep.지하철_역_생성_요청;
 import static kuit.subway.utils.BaseResponseStatus.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -21,7 +20,7 @@ public class SectionAcceptanceTest extends AcceptanceTest {
     @Test
     void 노선에_구간_등록_요청_테스트() {
         // given
-        지하철_2호선_생성_Fixture(성수역, 강남역);
+        지하철_2호선_생성_요청(성수역, 강남역);
         지하철_역_생성_요청(교대역);
 
         // when
@@ -37,7 +36,7 @@ public class SectionAcceptanceTest extends AcceptanceTest {
     @Test
     void 노선에_구간_등록_요청_테스트_WHEN_상행역_오류() {
         // given
-        지하철_2호선_생성_Fixture(성수역, 강남역);
+        지하철_2호선_생성_요청(성수역, 강남역);
         지하철_역_생성_요청(교대역);
 
         /* when
@@ -48,13 +47,13 @@ public class SectionAcceptanceTest extends AcceptanceTest {
 
         // then
         assertEquals(400, response.statusCode());
-        assertEquals(ONLY_LAST_DOWNSTATION_REGISTER_ALLOWED.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
+        assertEquals(ONLY_TERMINAL_STATION_REGISTER_ALLOWED.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
     }
 
     @Test
     void 노선에_구간_등록_요청_테스트_WHEN_존재하는_역() {
         // given
-        지하철_2호선_생성_Fixture(성수역, 강남역);
+        지하철_2호선_생성_요청(성수역, 강남역);
 
         /* when
            새로운 구간의 하행역이 해당 노선에 등록되어있는 역인 경우 등록 불가
@@ -71,7 +70,7 @@ public class SectionAcceptanceTest extends AcceptanceTest {
     @Test
     void 구간_삭제_WHEN_마지막구간(){
         // given
-        지하철_2호선_생성_Fixture(강남역, 성수역);
+        지하철_2호선_생성_요청(강남역, 성수역);
         지하철_역_생성_요청(교대역);
         SectionRequest request = new SectionRequest(10L, 3L, 2L);
         지하철_구간_등록_요청("1", request);
@@ -88,7 +87,7 @@ public class SectionAcceptanceTest extends AcceptanceTest {
     @Test
     void 구간_삭제_WHEN_중간구간(){
         // given
-        지하철_2호선_생성_Fixture(성수역, 강남역);
+        지하철_2호선_생성_요청(성수역, 강남역);
         지하철_역_생성_요청(교대역);
         SectionRequest request = new SectionRequest(10L, 3L, 2L);
         지하철_구간_등록_요청("1", request);
@@ -106,7 +105,7 @@ public class SectionAcceptanceTest extends AcceptanceTest {
     @Test
     void 구간_삭제_WHEN_싱글구간(){
         // given
-        지하철_2호선_생성_Fixture(성수역, 강남역);
+        지하철_2호선_생성_요청(성수역, 강남역);
 
         // when
 //        DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(2L, 1L);

@@ -1,8 +1,7 @@
-package kuit.subway.section;
+package kuit.subway.acceptance.fixtures;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kuit.subway.line.LineStep;
 import kuit.subway.utils.RestAssuredUtil;
 
 import java.util.HashMap;
