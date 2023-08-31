@@ -29,8 +29,9 @@ public enum CustomExceptionStatus implements ExceptionStatus {
     NOT_EXISTED_STATION_IN_SECTION(HttpStatus.NOT_FOUND, "노선에 등록되어 있지 않은 역입니다."),
 
     // path excetpion
+    INVALID_GRAPH(HttpStatus.BAD_REQUEST, "해당 역이 그래프에 포함되어 있지 않습니다."),
     NOT_EXISTED_PATH(HttpStatus.BAD_REQUEST, "출발역과 도착역이 연결되어있지 않습니다."),
-    DUPLICATED_PATH_REQUEST(HttpStatus.BAD_REQUEST, "출발역과 도착역이 같을 수 없습니다.")
+    DUPLICATED_PATH_REQUEST(HttpStatus.BAD_REQUEST, "출발역과 도착역이 같을 수 없습니다."),
     ;
 
     private final HttpStatus httpStatus;
