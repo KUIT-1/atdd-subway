@@ -128,4 +128,44 @@ class PathServiceTest {
                 .extracting("status")
                 .isEqualTo(NOT_EXISTED_STATION);
     }
+
+    @DisplayName("출발역이 전체 지하철 노선에 포함되지 않는 경우 예외가 발생한다.")
+    @Test
+    void findPath_Throw_Exception_If_Source_Not_Contained_In_SubwayMap() {
+        //given
+        Station notConnectedStation = Station.builder().id(3L).name("연결되지 않은 역").build();
+
+        given(stationRepository.findById(1L))
+                .willReturn(Optional.ofNullable(upStation));
+        given(stationRepository.findById(3L))
+                .willReturn(Optional.ofNullable(notConnectedStation));
+        given(lineRepository.findAll())
+                .willReturn(List.of(line));
+
+        //when & then
+        assertThatThrownBy(() -> pathService.findPath(3L, 1L))
+                .isInstanceOf(SubwayException.class)
+                .extracting("status")
+                .isEqualTo(INVALID_GRAPH);
+    }
+
+    @DisplayName("도착역이 전체 지하철 노선에 포함되지 않는 경우 예외가 발생한다.")
+    @Test
+    void findPath_Throw_Exception_If_Target_Not_Contained_In_SubwayMap() {
+        //given
+        Station notConnectedStation = Station.builder().id(3L).name("연결되지 않은 역").build();
+
+        given(stationRepository.findById(1L))
+                .willReturn(Optional.ofNullable(upStation));
+        given(stationRepository.findById(3L))
+                .willReturn(Optional.ofNullable(notConnectedStation));
+        given(lineRepository.findAll())
+                .willReturn(List.of(line));
+
+        //when & then
+        assertThatThrownBy(() -> pathService.findPath(1L, 3L))
+                .isInstanceOf(SubwayException.class)
+                .extracting("status")
+                .isEqualTo(INVALID_GRAPH);
+    }
 }

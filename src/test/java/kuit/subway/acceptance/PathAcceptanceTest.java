@@ -11,6 +11,8 @@ import java.util.List;
 
 import static kuit.subway.acceptance.fixtures.LineAcceptanceFixtures.*;
 import static kuit.subway.acceptance.fixtures.PathAcceptanceFixtures.경로_조회;
+import static kuit.subway.acceptance.fixtures.StationAcceptanceFixtures.지하철역_생성;
+import static kuit.subway.utils.fixtures.StationFixtures.지하철역_생성_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -57,6 +59,18 @@ public class PathAcceptanceTest extends AcceptanceTest {
     void showPath_Throw_Exception_If_Not_Connect_Path(){
         //when
         ExtractableResponse<Response> response = 경로_조회(1L, 5L);
+
+        //then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+
+    @DisplayName("출발역, 도착역중 하나가 전체 지하철 노선에 존재하지 않는 경우 예외가 발생한다.")
+    @Test
+    void showPath_Throw_Exception(){
+        지하철역_생성(지하철역_생성_요청("잘못된 역"));
+
+        //when
+        ExtractableResponse<Response> response = 경로_조회(1L, 7L);
 
         //then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
