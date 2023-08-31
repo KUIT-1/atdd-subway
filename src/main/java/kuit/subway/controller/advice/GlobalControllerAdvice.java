@@ -31,7 +31,6 @@ public class GlobalControllerAdvice {
     }
 
     @ExceptionHandler(DomainException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
     public BaseResponseEntity<?> handleDomainException(DomainException ex) {
         return new BaseResponseEntity<>(ex.getStatus());
     }
