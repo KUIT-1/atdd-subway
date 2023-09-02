@@ -2,6 +2,8 @@ package kuit.subway.acceptance.fixtures;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import kuit.subway.domain.Section;
+import kuit.subway.domain.Station;
 import kuit.subway.utils.RestAssuredUtil;
 
 import java.util.HashMap;
@@ -26,6 +28,14 @@ public class SectionStep {
         if(!pathParam.isEmpty())
             pathParam.clear();
         pathParam.put("id", id);
+    }
+
+    public static Section create_구간(Station 하행역, Station 상행역, String 구간) {
+        return Section.builder()
+                .downStation(하행역)
+                .upStation(상행역)
+                .distance(Long.valueOf(구간))
+                .build();
     }
 
 }

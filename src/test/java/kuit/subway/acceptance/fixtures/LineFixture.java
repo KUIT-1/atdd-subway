@@ -19,9 +19,12 @@ public class LineFixture {
     public static final String 신분당선이름 = "신분당선";
     public static final String TEN = "10";
 
-    public static final Line 이호선_Fixture = Line.builder()
-            .color(GREEN)
-            .name(이호선이름)
-            .build();
+    public static Line create_이호선(){
+        return Line.builder()
+                .id(1L)
+                .color(GREEN)
+                .name(이호선이름)
+                .build();
+    }
 
 }
