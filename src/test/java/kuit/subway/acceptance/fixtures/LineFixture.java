@@ -19,28 +19,9 @@ public class LineFixture {
     public static final String 신분당선이름 = "신분당선";
     public static final String TEN = "10";
 
-    public static ExtractableResponse<Response> 지하철_2호선_생성_요청(String upStationName, String downStationName){
-        return 지하철_노선_생성_Fixture(GREEN, TEN, 이호선이름, downStationName, upStationName);
-    }
-
-    public static ExtractableResponse<Response> 지하철_7호선_생성_요청(String upStationName, String downStationName){
-        return 지하철_노선_생성_Fixture(DARKGREEN, TEN, 칠호선이름, downStationName, upStationName);
-    }
-
-    private static ExtractableResponse<Response> 지하철_노선_생성_Fixture(String color, String distance, String lineName, String upStationName, String downStationName){
-        Long upId = 지하철_역_생성_요청(upStationName).jsonPath().getLong(ID_PATH);
-        Long downId = 지하철_역_생성_요청(downStationName).jsonPath().getLong(ID_PATH);
-        Map<String, String> body = 지하철_노선_바디_생성(color, distance, lineName, Long.toString(downId), Long.toString(upId));
-        return 지하철_노선_생성_요청(body);
-    }
-
-    public static Line create_이호선(){
-        return Line.builder()
-                .id(1L)
-                .color(GREEN)
-                .name(이호선이름)
-                .build();
-    }
-
+    public static final Line 이호선_Fixture = Line.builder()
+            .color(GREEN)
+            .name(이호선이름)
+            .build();
 
 }
