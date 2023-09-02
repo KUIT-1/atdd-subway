@@ -6,7 +6,7 @@ import kuit.subway.request.section.DeleteSectionRequest;
 import kuit.subway.request.section.SectionRequest;
 import org.junit.jupiter.api.Test;
 
-import static kuit.subway.acceptance.fixtures.LineFixture.지하철_2호선_생성_요청;
+import static kuit.subway.acceptance.fixtures.LineStep.지하철_2호선_생성_요청;
 import static kuit.subway.acceptance.fixtures.SectionStep.지하철_구간_등록_요청;
 import static kuit.subway.acceptance.fixtures.SectionStep.지하철_구간_삭제_요청;
 import static kuit.subway.acceptance.fixtures.StationFixture.*;

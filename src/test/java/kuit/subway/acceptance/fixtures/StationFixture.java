@@ -11,41 +11,17 @@ public class StationFixture {
     public static final String 어린이대공원역 = "어린이대공원역";
     public static final String 뚝섬역 = "뚝섬역";
 
-
     // Mock...
-    public static Station create_성수역(){
-        return Station.builder()
-                .id(1L)
-                .name(성수역)
-                .build();
-    }
+    public static final StationInfo 성수역INFO = new StationInfo(1L, 성수역);
+    public static final StationInfo 강남역INFO = new StationInfo(2L, 강남역);
+    public static final StationInfo 건대역INFO = new StationInfo(3L, 건대역);
+    public static final StationInfo 교대역INFO = new StationInfo(4L, 교대역);
+    public static final StationInfo 뚝섬역INFO = new StationInfo(5L, 뚝섬역);
 
-    public static Station create_강남역(){
-        return Station.builder()
-                .id(2L)
-                .name(강남역)
-                .build();
-    }
+    private record StationInfo(Long id, String name) {}
 
-    public static Station create_교대역(){
-        return Station.builder()
-                .id(3L)
-                .name(교대역)
-                .build();
-    }
-
-    public static Station create_뚝섬역() {
-        return Station.builder()
-                .id(4L)
-                .name(뚝섬역)
-                .build();
-    }
-
-    public static Station create_건대역() {
-        return Station.builder()
-                .id(5L)
-                .name(건대역)
-                .build();
+    public static Station create_역(StationInfo info){
+        return new Station(info.id(), info.name());
     }
 
 }

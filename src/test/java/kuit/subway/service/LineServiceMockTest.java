@@ -1,7 +1,8 @@
 package kuit.subway.service;
 
 import kuit.subway.acceptance.fixtures.LineFixture;
-import kuit.subway.acceptance.fixtures.SectionFixture;
+import kuit.subway.acceptance.fixtures.SectionStep;
+import kuit.subway.acceptance.fixtures.StationFixture;
 import kuit.subway.domain.Line;
 import kuit.subway.domain.Section;
 import kuit.subway.domain.Station;
@@ -11,7 +12,6 @@ import kuit.subway.repository.StationRepository;
 import kuit.subway.request.line.CreateLineRequest;
 import kuit.subway.request.section.SectionRequest;
 import kuit.subway.response.line.ShowLineResponse;
-import kuit.subway.acceptance.fixtures.StationFixture;
 import kuit.subway.utils.exception.LineException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +25,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static kuit.subway.utils.BaseResponseStatus.*;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -56,12 +57,11 @@ public class LineServiceMockTest {
 
         @BeforeEach
         void setUp() {
-            성수역 = StationFixture.create_성수역(); // 1L
-            강남역 = StationFixture.create_강남역(); // 2L
+            성수역 = StationFixture.create_역(StationFixture.성수역INFO);
+            강남역 = StationFixture.create_역(StationFixture.강남역INFO);
+            이호선 = LineFixture.create_이호선();
 
-            이호선 = LineFixture.create_이호선(); // 1L
-
-            이호선첫구간 = SectionFixture.create_구간(강남역, 성수역);
+            이호선첫구간 = SectionStep.create_구간(강남역, 성수역, LineFixture.TEN);
         }
 
         @Nested
@@ -116,10 +116,9 @@ public class LineServiceMockTest {
             @BeforeEach
             void setUp() {
                 이호선.addSection(이호선첫구간);
-                // Enum 수용
-                교대역 = StationFixture.create_교대역(); // 3L
-                뚝섬역 = StationFixture.create_뚝섬역(); // 4L
-                건대역 = StationFixture.create_건대역(); // 5L
+                교대역 = StationFixture.create_역(StationFixture.교대역INFO);
+                뚝섬역 = StationFixture.create_역(StationFixture.뚝섬역INFO);
+                건대역 = StationFixture.create_역(StationFixture.건대역INFO);
             }
 
 
