@@ -31,16 +31,36 @@ public class Sections {
         }
         isSectionRegistrable(section.getUpStation().getId(), section.getDownStation().getId());
 
-        if(!checkAnyStationIsTerminalStation(section.getUpStation().getId(), section.getDownStation().getId())){
-            Optional<Section> upStation = findNextSection(section.getUpStation());
-            upStation.ifPresent(value -> value.changeUpStation(section.getDownStation()));
-
-            Optional<Section> downStation = findPreviousSection(section.getDownStation());
-            downStation.ifPresent(value -> value.changeDownStation(section.getUpStation()));
+        if(!checkAnyStationIsTerminalStation(section.getUpStation(), section.getDownStation())){
+            boolean updated = updateNextSection(section);
+            if(!updated) updatePreviousSection(section);
         }
 
         this.sections.add(section);
     }
+
+    private void updatePreviousSection(Section section) {
+        Optional<Section> downStation = findPreviousSection(section.getDownStation());
+        if(downStation.isPresent()){
+            if(downStation.get().getDistance() <= section.getDistance())
+                throw new LineException(INVALID_DISTANCE);
+            downStation.get().setDownStation(section.getUpStation());
+            downStation.get().setDistance(downStation.get().getDistance() - section.getDistance());
+        }
+    }
+
+    private boolean updateNextSection(Section section) {
+        Optional<Section> upStation = findNextSection(section.getUpStation());
+        if(upStation.isPresent()){
+            if(upStation.get().getDistance() <= section.getDistance())
+                throw new LineException(INVALID_DISTANCE);
+            upStation.get().setUpStation(section.getDownStation());
+            upStation.get().setDistance(upStation.get().getDistance() - section.getDistance());
+            return true;
+        }
+        return false;
+    }
+
 
     // TODO : 중간구간 추가 시 엄청 바뀔..! distance 등등.. 수정되어야 함.
     public void removeStation(Station station) {
@@ -57,23 +77,24 @@ public class Sections {
     }
 
     private void isSectionRegistrable(Long upStationId, Long downStationId) {
-        areBothStationsRegistered(upStationId, downStationId);
+        areStationsRegistered(upStationId, downStationId);
     }
 
 
-    private boolean checkAnyStationIsTerminalStation(Long upStationId, Long downStationId){
+    private boolean checkAnyStationIsTerminalStation(Station upStation, Station downStation){
         Station lastDownStation = getLastSection().get().getDownStation();
         Station firstUpStation = getFirstSection().get().getUpStation();
-        boolean upStationIsLastDown = Objects.equals(lastDownStation.getId(), upStationId);
-        boolean downStationIsFirstUp = Objects.equals(firstUpStation.getId(), downStationId);
+        boolean upStationIsLastDown = Objects.equals(lastDownStation.getId(), upStation.getId());
+        boolean downStationIsFirstUp = Objects.equals(firstUpStation.getId(), downStation.getId());
 
         return upStationIsLastDown || downStationIsFirstUp;
     }
 
-    private void areBothStationsRegistered(Long upStationId, Long downStationId) {
+    private void areStationsRegistered(Long upStationId, Long downStationId) {
         boolean downIsExist = hasStation(downStationId);
         boolean upIsExist = hasStation(upStationId);
         if(downIsExist && upIsExist) throw new LineException(ALREADY_REGISTERED_SECTION);
+        else if(!downIsExist && !upIsExist) throw new LineException(NEITHER_STATIONS_NOT_REGISTERED);
     }
 
     private Optional<Section> getFirstSection() {
@@ -150,8 +171,6 @@ public class Sections {
     private void checkStationIsLastStation(Long stationId){
         Station lastDownStation = getLastSection().get().getDownStation();
         if(!Objects.equals(lastDownStation.getId(), stationId)){
-            System.out.println(lastDownStation.getId());
-            System.out.println(stationId);
             throw new LineException(ONLY_LAST_SECTION_DELETION_ALLOWED);
         }
     }

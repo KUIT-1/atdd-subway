@@ -32,11 +32,15 @@ public class Section {
         line.addSection(this);
     }
 
-    public void changeDownStation(Station station) {
+    public void setDownStation(Station station) {
         this.downStation = station;
     }
 
-    public void changeUpStation(Station station) {
+    public void setUpStation(Station station) {
         this.upStation = station;
+    }
+
+    public void setDistance(Long distance) {
+        this.distance = distance;
     }
 }
