@@ -22,10 +22,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Objects;
 import java.util.Optional;
 
-import static kuit.subway.utils.BaseResponseStatus.DUPLICATED_LINENAME;
+import static kuit.subway.utils.BaseResponseStatus.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -109,7 +108,7 @@ public class LineServiceMockTest {
 
         @Nested
         @DisplayName("구간 있는 노선에 구간 추가")
-        class addLineTest{
+        class addSectionTest {
             private Station 교대역;
             private Station 뚝섬역;
             private Station 건대역;
@@ -117,72 +116,138 @@ public class LineServiceMockTest {
             @BeforeEach
             void setUp() {
                 이호선.addSection(이호선첫구간);
+                // Enum 수용
                 교대역 = StationFixture.create_교대역(); // 3L
                 뚝섬역 = StationFixture.create_뚝섬역(); // 4L
                 건대역 = StationFixture.create_건대역(); // 5L
             }
 
-            @Test
-            @DisplayName("하행종점역의 하행에 구간 추가")
-            void addSectionFromLastDownStation() {
+
+            @Nested
+            @DisplayName("성공 케이스")
+            class success {
+                @Test
+                @DisplayName("하행종점역의 하행에 구간 추가")
+                void addSectionFromLastDownStation() {
                 /*  given
                     2호선 : 성수역 - 강남역
                     추가할 구간 : 강남역 - 교대역(id:3)
                 */
-                when(lineRepository.findById(1L)).thenReturn(Optional.of(이호선));
-                when(stationRepository.findById(2L)).thenReturn(Optional.of(강남역));
-                when(stationRepository.findById(3L)).thenReturn(Optional.of(교대역));
+                    when(lineRepository.findById(1L)).thenReturn(Optional.of(이호선));
+                    when(stationRepository.findById(2L)).thenReturn(Optional.of(강남역));
+                    when(stationRepository.findById(3L)).thenReturn(Optional.of(교대역));
 
-                SectionRequest request = new SectionRequest(10L, 3L, 2L);
+                    SectionRequest request = new SectionRequest(10L, 3L, 2L);
 
-                // when
-                ShowLineResponse response = lineService.addSectionToLine(1L, request);
-                // then
-                assertThat(response.getStations())
-                        .extracting("name")
-                        .containsExactly("성수역", "강남역", "교대역");
-            }
+                    // when
+                    ShowLineResponse response = lineService.addSectionToLine(1L, request);
+                    // then
+                    assertThat(response.getStations())
+                            .extracting("name")
+                            .containsExactly("성수역", "강남역", "교대역");
+                }
 
-            @Test
-            @DisplayName("상행종점역의 상행에 구간 추가")
-            void addSectionFromLastUpStation() {
+                @Test
+                @DisplayName("상행종점역의 상행에 구간 추가")
+                void addSectionFromLastUpStation() {
                 /*  given
                     2호선 : 성수역 - 강남역
                     추가할 구간 : 뚝섬역 - 성수역
                 */
-                when(lineRepository.findById(1L)).thenReturn(Optional.of(이호선));
-                when(stationRepository.findById(1L)).thenReturn(Optional.of(성수역));
-                when(stationRepository.findById(4L)).thenReturn(Optional.of(뚝섬역));
+                    when(lineRepository.findById(1L)).thenReturn(Optional.of(이호선));
+                    when(stationRepository.findById(1L)).thenReturn(Optional.of(성수역));
+                    when(stationRepository.findById(4L)).thenReturn(Optional.of(뚝섬역));
 
-                SectionRequest request = new SectionRequest(10L, 1L, 4L);
+                    SectionRequest request = new SectionRequest(10L, 1L, 4L);
 
-                // when
-                ShowLineResponse response = lineService.addSectionToLine(1L, request);
-                // then
-                assertThat(response.getStations())
-                        .extracting("name")
-                        .containsExactly("뚝섬역", "성수역", "강남역");
-            }
+                    // when
+                    ShowLineResponse response = lineService.addSectionToLine(1L, request);
+                    // then
+                    assertThat(response.getStations())
+                            .extracting("name")
+                            .containsExactly("뚝섬역", "성수역", "강남역");
+                }
 
-            @Test
-            @DisplayName("노선 중간에 구간 추가")
-            void addSectionAtMiddle() {
+                @Test
+                @DisplayName("노선 중간에 구간 추가")
+                void addSectionAtMiddle() {
                 /*  given
                     2호선 : 성수역 - 강남역
                     추가할 구간 : 성수역 - 건대역
                 */
-                when(lineRepository.findById(1L)).thenReturn(Optional.of(이호선));
-                when(stationRepository.findById(1L)).thenReturn(Optional.of(성수역));
-                when(stationRepository.findById(5L)).thenReturn(Optional.of(건대역));
+                    when(lineRepository.findById(1L)).thenReturn(Optional.of(이호선));
+                    when(stationRepository.findById(1L)).thenReturn(Optional.of(성수역));
+                    when(stationRepository.findById(5L)).thenReturn(Optional.of(건대역));
 
-                SectionRequest request = new SectionRequest(10L, 5L, 1L);
+                    SectionRequest request = new SectionRequest(9L, 5L, 1L);
 
-                // when
-                ShowLineResponse response = lineService.addSectionToLine(1L, request);
-                // then
-                assertThat(response.getStations())
-                        .extracting("name")
-                        .containsExactly("성수역", "건대역", "강남역");
+                    // when
+                    ShowLineResponse response = lineService.addSectionToLine(1L, request);
+                    // then
+                    assertThat(response.getStations())
+                            .extracting("name")
+                            .containsExactly("성수역", "건대역", "강남역");
+                }
+            }
+
+            @Nested
+            @DisplayName("예외 케이스")
+            class fail{
+                @Test
+                @DisplayName("상행역과 하행역 둘 다 포함되어있지 않을 때 추가 불가")
+                void absenceOfBothStations(){
+                    // given
+                    when(lineRepository.findById(1L)).thenReturn(Optional.of(이호선));
+                    when(stationRepository.findById(3L)).thenReturn(Optional.of(교대역));
+                    when(stationRepository.findById(5L)).thenReturn(Optional.of(건대역));
+
+                    SectionRequest request = new SectionRequest(10L, 5L, 3L);
+
+                    // when
+                    // then
+                    assertThatThrownBy(()->lineService.addSectionToLine(1L, request))
+                            .isInstanceOf(LineException.class)
+                            .extracting("status")
+                            .isEqualTo(NEITHER_STATIONS_NOT_REGISTERED);
+                }
+
+                @Test
+                @DisplayName("상행역과 하행역 둘 다 등록되어있을 때 추가 불가")
+                void already_Registered_Section(){
+                    // given
+                    when(lineRepository.findById(1L)).thenReturn(Optional.of(이호선));
+                    when(stationRepository.findById(2L)).thenReturn(Optional.of(강남역));
+                    when(stationRepository.findById(1L)).thenReturn(Optional.of(성수역));
+
+                    SectionRequest request = new SectionRequest(10L, 2L, 1L);
+
+                    // when
+                    // then
+                    assertThatThrownBy(()->lineService.addSectionToLine(1L, request))
+                            .isInstanceOf(LineException.class)
+                            .extracting("status")
+                            .isEqualTo(ALREADY_REGISTERED_SECTION);
+                }
+
+                @Test
+                @DisplayName("기존 역 사이 길이보다 크거나 같으면 추가 불가")
+                void invalid_distance(){
+                    // given
+                    when(lineRepository.findById(1L)).thenReturn(Optional.of(이호선));
+                    when(stationRepository.findById(1L)).thenReturn(Optional.of(성수역));
+                    when(stationRepository.findById(5L)).thenReturn(Optional.of(건대역));
+
+                    SectionRequest request = new SectionRequest(10L, 5L, 1L);
+
+                    // when
+                    // then
+                    assertThatThrownBy(()->lineService.addSectionToLine(1L, request))
+                            .isInstanceOf(LineException.class)
+                            .extracting("status")
+                            .isEqualTo(INVALID_DISTANCE);
+
+                }
+
             }
         }
 
