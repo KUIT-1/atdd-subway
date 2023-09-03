@@ -189,7 +189,6 @@ public class SectionAcceptanceTest extends AcceptanceTest {
                 지하철_2호선_생성_요청(성수역, 강남역);
 
                 // when
-//        DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(2L, 1L);
                 DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(2L);
                 ExtractableResponse<Response> response = 지하철_구간_삭제_요청("1", deleteSectionRequest);
 

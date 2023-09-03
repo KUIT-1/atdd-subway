@@ -8,15 +8,21 @@ import kuit.subway.domain.Station;
 import kuit.subway.repository.LineRepository;
 import kuit.subway.repository.SectionRepository;
 import kuit.subway.repository.StationRepository;
+import kuit.subway.request.section.DeleteSectionRequest;
 import kuit.subway.request.section.SectionRequest;
 import kuit.subway.response.line.ShowLineResponse;
+import kuit.subway.utils.exception.LineException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import static kuit.subway.utils.BaseResponseStatus.CANNOT_DELETE_SECTION;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 // Transactional을 통해 변경 사항 롤백
 @SpringBootTest
@@ -62,6 +68,7 @@ public class LineServiceTest {
         sectionRepository.save(이호선첫구간);
     }
     @Test
+    @DisplayName("구간 추가")
     @Transactional
     void addSectionToLine() {
         // given
@@ -73,5 +80,44 @@ public class LineServiceTest {
         assertThat(response.getStations())
                 .extracting("name")
                 .containsExactly("성수역", "건대역", "강남역");
+    }
+
+    @Nested
+    @DisplayName("구간 삭제 테스트")
+    class DeleteSection{
+        @Nested
+        @DisplayName("성공")
+        class Success{
+            @BeforeEach
+            void setUp(){
+                SectionRequest request = new SectionRequest(3L, 건대역.getId(), 성수역.getId());
+                lineService.addSectionToLine(이호선.getId(), request);
+            }
+
+            @Test
+            @DisplayName("하행종점역 삭제")
+            @Transactional
+            void deleteSection_WHEN_종점역() {
+
+            }
+        }
+
+        @Nested
+        @DisplayName("실패")
+        class Fail{
+            @Test
+            @DisplayName("싱글 구간 삭제 불가")
+            @Transactional
+            void deleteSection_WHEN_싱글구간() {
+                // given
+                DeleteSectionRequest request = new DeleteSectionRequest(강남역.getId());
+
+                // when, then
+                assertThatThrownBy(()->lineService.deleteSection(이호선.getId(), request))
+                        .isInstanceOf(LineException.class)
+                        .extracting("status")
+                        .isEqualTo(CANNOT_DELETE_SECTION);
+            }
+        }
     }
 }
