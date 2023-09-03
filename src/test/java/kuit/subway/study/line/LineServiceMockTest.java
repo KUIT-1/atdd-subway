@@ -5,10 +5,10 @@ import kuit.subway.domain.Section;
 import kuit.subway.domain.Station;
 import kuit.subway.dto.request.line.LineCreateRequest;
 import kuit.subway.dto.request.line.LineUpdateRequest;
-import kuit.subway.dto.response.line.LineCreateResponse;
-import kuit.subway.dto.response.line.LineDeleteResponse;
-import kuit.subway.dto.response.line.LineDto;
-import kuit.subway.dto.response.line.LineUpdateResponse;
+import kuit.subway.dto.request.line.PathReadRequest;
+import kuit.subway.dto.request.section.SectionCreateRequest;
+import kuit.subway.dto.response.line.*;
+import kuit.subway.dto.response.station.StationReadResponse;
 import kuit.subway.exception.badrequest.station.InvalidLineStationException;
 import kuit.subway.exception.notfound.line.NotFoundLineException;
 import kuit.subway.exception.notfound.station.NotFoundStationException;
@@ -32,6 +32,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -55,11 +56,13 @@ public class LineServiceMockTest {
 
         Station upStation;
         Station downStation;
+        Station notExistStation;
 
         @BeforeEach
         void setUp() {
             upStation = Station.createStation("강남역");
             downStation = Station.createStation("수서역");
+
         }
 
         @Nested
@@ -73,9 +76,9 @@ public class LineServiceMockTest {
                 given(stationRepository.findById(2L)).willReturn(Optional.of(downStation));
 
                 Line line = Line.createLine("와우선", "green", 20);
-                line.addSection(Section.createSection(line, upStation, downStation, 1));
+                line.addSection(Section.createSection(line, upStation, downStation, 5));
 
-                LineCreateRequest req = new LineCreateRequest("와우선", "green", 20, 1L, 2L);
+                LineCreateRequest req = new LineCreateRequest("와우선", "green", 20, 1L, 2L, 5);
 
                 given(lineRepository.save(line)).willReturn(line);
                 given(lineRepository.findById(line.getId())).willReturn(Optional.of(line));
@@ -104,10 +107,9 @@ public class LineServiceMockTest {
                 given(stationRepository.findById(3L)).willReturn(Optional.ofNullable(null));
 
                 Line line = Line.createLine("와우선", "green", 20);
-                line.addSection(Section.createSection(line, upStation, downStation, 1));
 
                 // when
-                LineCreateRequest req = new LineCreateRequest("와우선", "green", 20, 1L, 3L);
+                LineCreateRequest req = new LineCreateRequest("와우선", "green", 20, 1L, 3L, 5);
 
                 // then
                 assertThatThrownBy(() -> lineService.addLine(req)).isInstanceOf(NotFoundStationException.class);
@@ -121,10 +123,10 @@ public class LineServiceMockTest {
                 given(stationRepository.findById(1L)).willReturn(Optional.ofNullable(upStation));
 
                 Line line = Line.createLine("와우선", "green", 20);
-                line.addSection(Section.createSection(line, upStation, downStation, 1));
+
 
                 // when
-                LineCreateRequest req = new LineCreateRequest("와우선", "green", 20, 1L, 1L);
+                LineCreateRequest req = new LineCreateRequest("와우선", "green", 20, 1L, 1L, 5);
 
                 // then
                 assertThatThrownBy(() -> lineService.addLine(req)).isInstanceOf(InvalidLineStationException.class);
@@ -155,16 +157,13 @@ public class LineServiceMockTest {
             @DisplayName("식별자로 노선 조회")
             void findLineByIdSuccess() {
                 // given
-                Station upStation = Station.createStation("강남역");
-                Station downStation = Station.createStation("수서역");
-
                 Line line = Line.createLine("와우선", "green", 20);
-                line.addSection(Section.createSection(line, upStation, downStation, 1));
+                line.addSection(Section.createSection(line, upStation, downStation, 5));
 
                 given(lineRepository.findById(1L)).willReturn(Optional.of(line));
 
                 // when
-                LineDto findLine = lineService.findLineById(1L);
+                LineReadResponse findLine = lineService.findLineById(1L);
 
                 // then
                 assertThat(findLine).isNotNull();
@@ -222,7 +221,7 @@ public class LineServiceMockTest {
                 given(lineRepository.findAll()).willReturn(lines);
 
                 // when
-                List<LineDto> allLines = lineService.findAllLines();
+                List<LineReadResponse> allLines = lineService.findAllLines();
 
                 // then
                 assertThat(allLines).isNotNull();
@@ -261,7 +260,7 @@ public class LineServiceMockTest {
                 given(lineRepository.findById(line.getId())).willReturn(Optional.of(line));
 
                 // when
-                LineUpdateRequest req = new LineUpdateRequest("경춘선", "blue", 15, 2L, 1L);
+                LineUpdateRequest req = new LineUpdateRequest("경춘선", "blue", 15, 2L, 1L, 7);
                 LineUpdateResponse res = lineService.updateLine(line.getId(), req);
 
                 // then
@@ -341,6 +340,85 @@ public class LineServiceMockTest {
             }
         }
 
+
+    }
+
+    @Nested
+    @DisplayName("노선 내 경로 조회 Mock 테스트")
+    class FindPath {
+        Station station1;
+        Station station2;
+        Station station3;
+
+        @BeforeEach
+        void setUp() {
+            station1 = Station.createStation("강남역");
+            station2 = Station.createStation("수서역");
+            station3 = Station.createStation("논현역");
+        }
+
+        @Nested
+        @DisplayName("정상 케이스")
+        class SuccessCase {
+
+            @Test
+            @DisplayName("출발역 id와 도착역 id로 요청하면 출발역, 도착역까지의 경로에 있는 역 목록, 그리고 경로 구간의 총 거리가 검색된다.")
+            void findLineSuccess() {
+
+                Station station1 = Station.createStation("강남역");
+                Station station2 = Station.createStation("수서역");
+                Station station3 = Station.createStation("논현역");
+                // given
+                given(stationRepository.findById(1L)).willReturn(Optional.of(station1));
+                given(stationRepository.findById(2L)).willReturn(Optional.of(station2));
+                given(stationRepository.findById(3L)).willReturn(Optional.of(station3));
+
+                Line line = Line.createLine("와우선", "green", 20);
+                given(lineRepository.save(line)).willReturn(line);
+                given(lineRepository.findById(1L)).willReturn(Optional.of(line));
+
+                // when
+                lineService.addSection(1L, new SectionCreateRequest(1L, 2L, 10));
+                lineService.addSection(1L, new SectionCreateRequest(2L, 3L, 10));
+                PathReadRequest req = new PathReadRequest(1L, 3L);
+                PathReadResponse res = lineService.findPath(line.getId(), req);
+
+                StationReadResponse stationRes1 = res.getStations().get(0);
+                StationReadResponse stationRes2 = res.getStations().get(1);
+                StationReadResponse stationRes3 = res.getStations().get(2);
+
+                // then
+                assertThat(res).isNotNull();
+                assertThat(res.getStations()).containsExactly(stationRes1, stationRes2, stationRes3);
+                assertEquals(20.0, res.getTotalDistance());
+                verify(lineRepository, times(1)).findById(anyLong());
+                verify(stationRepository, times(3)).findById(anyLong());
+            }
+        }
+
+        @Nested
+        @DisplayName("비정상 케이스")
+        class FailedCase {
+
+            @Test
+            @DisplayName("출발역과 도착역이 같은 경우")
+            void findLineFail1() {
+
+            }
+
+            @Test
+            @DisplayName("출발역과 도착역이 연결이 되어 있지 않은 경우")
+            void findLineFail2() {
+
+            }
+
+            @Test
+            @DisplayName("존재하지 않은 출발역이나 도착역을 조회할 경우")
+            void findLineFail3() {
+
+            }
+
+        }
 
     }
 

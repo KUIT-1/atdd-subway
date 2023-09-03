@@ -1,33 +1,30 @@
-package kuit.subway.dto.response.section;
+package kuit.subway.dto.response.line;
 
 import kuit.subway.domain.Line;
 import kuit.subway.dto.response.station.StationReadResponse;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Builder
-@AllArgsConstructor
-public class SectionCreateResponse {
+public class LineReadResponse {
     private Long id;
-    private String message;
     private String name;
     private String color;
+    private int distance;
 
     @Builder.Default
     private List<StationReadResponse> stations = new ArrayList<>();
 
-    public static SectionCreateResponse of(Line line) {
-        return SectionCreateResponse.builder()
+    public static LineReadResponse of(Line line) {
+        return LineReadResponse.builder()
                 .id(line.getId())
-                .message("지하철 구간 추가 완료")
                 .name(line.getName())
                 .color(line.getColor())
                 .stations(line.getStations())
+                .distance(line.getDistance())
                 .build();
     }
 }

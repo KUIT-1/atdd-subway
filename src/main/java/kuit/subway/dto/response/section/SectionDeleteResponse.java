@@ -2,17 +2,14 @@ package kuit.subway.dto.response.section;
 
 import kuit.subway.domain.Line;
 import kuit.subway.dto.response.station.StationReadResponse;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
 @Builder
-@AllArgsConstructor
-public class SectionCreateResponse {
+public class SectionDeleteResponse {
     private Long id;
     private String message;
     private String name;
@@ -21,10 +18,10 @@ public class SectionCreateResponse {
     @Builder.Default
     private List<StationReadResponse> stations = new ArrayList<>();
 
-    public static SectionCreateResponse of(Line line) {
-        return SectionCreateResponse.builder()
+    public static SectionDeleteResponse of(Line line) {
+        return SectionDeleteResponse.builder()
                 .id(line.getId())
-                .message("지하철 구간 추가 완료")
+                .message("지하철 구간 삭제 완료")
                 .name(line.getName())
                 .color(line.getColor())
                 .stations(line.getStations())

@@ -2,13 +2,8 @@ package kuit.subway.domain;
 
 import jakarta.persistence.*;
 import kuit.subway.dto.BaseTimeEntity;
-import kuit.subway.dto.response.station.StationDto;
 import lombok.*;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static jakarta.persistence.FetchType.LAZY;
 
 @Entity
 @Getter
@@ -25,13 +20,12 @@ public class Station extends BaseTimeEntity {
     @Column(length = 20, nullable = false)
     private String name;
 
+
     public static Station createStation(String name) {
         return Station.builder()
                 .name(name)
                 .build();
     }
-
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Station)) {

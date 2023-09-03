@@ -1,6 +1,7 @@
 package kuit.subway.dto.response.line;
 
-import kuit.subway.dto.response.station.StationDto;
+import kuit.subway.domain.Line;
+import kuit.subway.dto.response.station.StationReadResponse;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -8,25 +9,22 @@ import java.util.List;
 
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-@AllArgsConstructor
 public class LineUpdateResponse {
     private Long id;
     private String name;
     private String color;
     private int distance;
-    private List<StationDto> stations = new ArrayList<>();
 
-    public static LineUpdateResponse createLineUpdateResponse(Long id, String name, String color, int distance) {
+    @Builder.Default
+    private List<StationReadResponse> stations = new ArrayList<>();
+
+    public static LineUpdateResponse of(Line line) {
         return LineUpdateResponse.builder()
-                .id(id)
-                .name(name)
-                .color(color)
-                .distance(distance)
+                .id(line.getId())
+                .name(line.getName())
+                .color(line.getColor())
+                .distance(line.getDistance())
+                .stations(line.getSections().getOrderStations())
                 .build();
-    }
-
-    public void addStationDto(StationDto dto) {
-        this.stations.add(dto);
     }
 }
