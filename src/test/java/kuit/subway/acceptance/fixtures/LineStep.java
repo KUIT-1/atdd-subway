@@ -58,11 +58,11 @@ public class LineStep {
     }
 
     public static ExtractableResponse<Response> 지하철_2호선_생성_요청(String upStationName, String downStationName){
-        return 지하철_노선_생성_Fixture(GREEN, TEN, 이호선이름, downStationName, upStationName);
+        return 지하철_노선_생성_Fixture(GREEN, TEN, 이호선이름, upStationName, downStationName);
     }
 
     public static ExtractableResponse<Response> 지하철_7호선_생성_요청(String upStationName, String downStationName){
-        return 지하철_노선_생성_Fixture(DARKGREEN, TEN, 칠호선이름, downStationName, upStationName);
+        return 지하철_노선_생성_Fixture(DARKGREEN, TEN, 칠호선이름, upStationName, downStationName);
     }
 
     private static ExtractableResponse<Response> 지하철_노선_생성_Fixture(String color, String distance, String lineName, String upStationName, String downStationName){
