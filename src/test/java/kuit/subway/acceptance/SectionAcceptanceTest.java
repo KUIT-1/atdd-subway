@@ -178,6 +178,22 @@ public class SectionAcceptanceTest extends AcceptanceTest {
                 assertEquals(204, response.statusCode());
             }
 
+            @Test
+            void 구간_삭제_WHEN_상행종점역(){
+                // given
+                지하철_2호선_생성_요청(성수역, 강남역);
+                지하철_역_생성_요청(교대역);
+                SectionRequest request = new SectionRequest(10L, 3L, 2L);
+                지하철_구간_등록_요청("1", request);
+
+                // when
+                DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(1L);
+                ExtractableResponse<Response> response = 지하철_구간_삭제_요청("1", deleteSectionRequest);
+
+                // then
+                assertEquals(204, response.statusCode());
+            }
+
         }
 
         @Nested
