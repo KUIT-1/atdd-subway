@@ -108,6 +108,21 @@ public class SectionAcceptanceTest extends AcceptanceTest {
                         "새로운 구간의 하행역 id 필요",
                         "새로운 구간의 상행역 id 필요");
 
+            @DisplayName("자연수가 아닌 값으로 요청")
+            @Test
+            void 요청값_not_positive() {
+                // given
+                SectionRequest request = new SectionRequest(-1L, -3L, 0L);
+                // when
+                ExtractableResponse<Response> response = 지하철_구간_등록_요청("1", request);
+                // then
+                assertEquals(400, response.statusCode());
+
+                Map<String, String> messages = response.jsonPath().getMap("messages");
+                assertThat(messages.get("distance")).isEqualTo("0보다 커야 합니다");
+                assertThat(messages.get("downStationId")).isEqualTo("0보다 커야 합니다");
+                assertThat(messages.get("upStationId")).isEqualTo("0보다 커야 합니다");
+            }
     }
 
 
