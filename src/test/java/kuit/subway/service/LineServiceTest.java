@@ -11,6 +11,7 @@ import kuit.subway.repository.StationRepository;
 import kuit.subway.request.section.DeleteSectionRequest;
 import kuit.subway.request.section.SectionRequest;
 import kuit.subway.response.line.ShowLineResponse;
+import kuit.subway.response.station.ShowStationResponse;
 import kuit.subway.utils.exception.LineException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,9 +21,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static kuit.subway.utils.BaseResponseStatus.CANNOT_DELETE_SECTION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 // Transactional을 통해 변경 사항 롤백
 @SpringBootTest
@@ -94,10 +98,30 @@ public class LineServiceTest {
                 lineService.addSectionToLine(이호선.getId(), request);
             }
 
+            private List<String> getStationsName() {
+                return lineService.getLine(이호선.getId()).getStations().stream()
+                        .map(ShowStationResponse::getName)
+                        .toList();
+            }
+
             @Test
             @DisplayName("하행종점역 삭제")
             @Transactional
-            void deleteSection_WHEN_종점역() {
+            void deleteSection_WHEN_하행종점역() {
+                // given
+                DeleteSectionRequest request = new DeleteSectionRequest(강남역.getId());
+
+                // when
+                lineService.deleteSection(이호선.getId(), request);
+
+                // then
+                List<String> stationsName = getStationsName();
+
+                assertEquals(2, stationsName.size());
+                assertEquals(성수역.getName(), stationsName.get(0));
+                assertEquals(건대역.getName(), stationsName.get(1));
+            }
+
 
             }
         }
