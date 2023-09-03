@@ -139,6 +139,24 @@ public class LineServiceTest {
                 assertEquals(건대역.getName(), stationsName.get(0));
                 assertEquals(강남역.getName(), stationsName.get(1));
             }
+
+            @Test
+            @DisplayName("중간역 삭제")
+            @Transactional
+            void deleteSection_WHEN_중간역() {
+                // given
+                DeleteSectionRequest request = new DeleteSectionRequest(건대역.getId());
+
+                // when
+                lineService.deleteSection(이호선.getId(), request);
+
+                // then
+                List<String> stationsName = getStationsName();
+
+                assertEquals(2, stationsName.size());
+                assertEquals(성수역.getName(), stationsName.get(0));
+                assertEquals(강남역.getName(), stationsName.get(1));
+            }
         }
 
         @Nested
