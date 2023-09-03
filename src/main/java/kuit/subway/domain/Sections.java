@@ -62,19 +62,23 @@ public class Sections {
     }
 
 
-    // TODO : 중간구간 추가 시 엄청 바뀔..! distance 등등.. 수정되어야 함.
     public void removeStation(Station station) {
-        Optional<Section> section = Optional.ofNullable(findSectionByDownStation(station)
-                .orElseThrow(() -> new LineException(NONE_SECTION)));
-        if(section.isPresent())
-            sections.remove(section.get());
+        Optional<Section> sectionByDownStation = findPreviousSection(station);
+        Optional<Section> sectionByUpStation = findNextSection(station);
+
+        if(sectionByDownStation.isPresent() && sectionByUpStation.isPresent()){
+            Section AtoB = sectionByDownStation.get();
+            Section BtoC = sectionByUpStation.get();
+
+            AtoB.setDownStation(BtoC.getDownStation());
+            AtoB.setDistance(AtoB.getDistance() + BtoC.getDistance());
+        }
+
+        if(sectionByUpStation.isPresent())
+            this.sections.remove(sectionByUpStation.get());
+        else sectionByDownStation.ifPresent(section -> this.sections.remove(section));
     }
 
-    private Optional<Section> findSectionByDownStation(Station station) {
-        return sections.stream().filter(
-                section -> section.getDownStation().getId().equals(station.getId()))
-                .findFirst();
-    }
 
     private void isSectionRegistrable(Long upStationId, Long downStationId) {
         areStationsRegistered(upStationId, downStationId);
@@ -164,15 +168,12 @@ public class Sections {
     }
 
     private void isSectionDeletable(Long stationId){
-        checkStationIsLastStation(stationId);
         isSingleSection();
+        checkStationIsRegisteredStation(stationId);
     }
-
-    private void checkStationIsLastStation(Long stationId){
-        Station lastDownStation = getLastSection().get().getDownStation();
-        if(!Objects.equals(lastDownStation.getId(), stationId)){
-            throw new LineException(ONLY_LAST_SECTION_DELETION_ALLOWED);
-        }
+    private void checkStationIsRegisteredStation(Long stationId){
+        boolean IsExist = hasStation(stationId);
+        if(!IsExist) throw new LineException(STATION_NOT_REGISTERED);
     }
 
     private void isSingleSection() {
