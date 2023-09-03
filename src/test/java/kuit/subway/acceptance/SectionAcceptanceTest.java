@@ -43,13 +43,11 @@ public class SectionAcceptanceTest extends AcceptanceTest {
         지하철_역_생성_요청(뚝섬역);
 
         /* when
-           새로운 구간의 상행역이 해당 노선에 등록되어있는 하행 종점역이 아닌 경우
            기존 노선의 상행종점역에 상행역 추가
          */
         SectionRequest request = new SectionRequest(5L, 1L, 3L);
         ExtractableResponse<Response> response = 지하철_구간_등록_요청("1", request);
 
-        // then
         // then - 성공
         assertEquals(200, response.statusCode());
         assertThat(response.jsonPath().getList("result.stations"))
@@ -73,11 +71,31 @@ public class SectionAcceptanceTest extends AcceptanceTest {
         assertEquals(ALREADY_REGISTERED_SECTION.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
     }
 
+    @Test
+    @DisplayName("노선 중간에 구간 추가")
+    void 노선_중간에_구간_추가() {
+        // given
+        지하철_2호선_생성_요청(성수역, 강남역);
+        Long id = 지하철_역_생성_요청(건대역).jsonPath().getLong(ID_PATH);
+
+        /* when
+           새로운 구간의 하행역이 해당 노선에 등록되어있는 역인 경우 등록 불가
+         */
+        SectionRequest request = new SectionRequest(3L, id, 1L);
+        ExtractableResponse<Response> response = 지하철_구간_등록_요청("1", request);
+
+        // then
+        assertEquals(200, response.statusCode());
+        assertThat(response.jsonPath().getList("result.stations"))
+                .extracting("name")
+                .containsExactly("성수역", "건대역", "강남역");
+    }
+
 
     @Test
     void 구간_삭제_WHEN_마지막구간(){
         // given
-        지하철_2호선_생성_요청(강남역, 성수역);
+        지하철_2호선_생성_요청(성수역, 강남역);
         지하철_역_생성_요청(교대역);
         SectionRequest request = new SectionRequest(10L, 3L, 2L);
         지하철_구간_등록_요청("1", request);
