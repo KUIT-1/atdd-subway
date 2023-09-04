@@ -97,10 +97,6 @@ public class Sections {
     }
 
     private Optional<Section> getFirstSection() {
-        if(this.sections.isEmpty()){
-            throw new StationException(NONE_STATION);
-        }
-
         return sections.stream()
                 .filter(section -> sections.stream()
                         .noneMatch(section1 -> section1.getDownStation().getId()
@@ -109,10 +105,6 @@ public class Sections {
     }
 
     private Optional<Section> getLastSection() {
-        if(this.sections.isEmpty()){
-            throw new LineException(EMPTY_LINE);
-        }
-
         return sections.stream()
                 .filter(section -> sections.stream()
                         .noneMatch(section1 -> section1.getUpStation().getId()
@@ -123,7 +115,7 @@ public class Sections {
     public List<Station> getStations() {
         List<Station> stations = new ArrayList<>();
 
-        Section firstSection = getFirstSection().get(); // EMPTY_LINE : getFirstSection에서 예외처리
+        Section firstSection = getFirstSection().get();
         Station upStation = firstSection.getUpStation();
         Station downStation;
         stations.add(upStation);
