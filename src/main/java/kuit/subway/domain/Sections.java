@@ -120,7 +120,7 @@ public class Sections {
                 .findFirst();
     }
 
-    public List<Station> getStationList() {
+    public List<Station> getStations() {
         List<Station> stations = new ArrayList<>();
 
         Section firstSection = getFirstSection().get(); // EMPTY_LINE : getFirstSection에서 예외처리
