@@ -90,10 +90,10 @@ public class Sections {
     }
 
     private void areStationsRegistered(Long upStationId, Long downStationId) {
-        boolean downIsExist = hasStation(downStationId);
-        boolean upIsExist = hasStation(upStationId);
-        if(downIsExist && upIsExist) throw new LineException(ALREADY_REGISTERED_SECTION);
-        else if(!downIsExist && !upIsExist) throw new LineException(NEITHER_STATIONS_NOT_REGISTERED);
+        boolean isDownExist = hasStation(downStationId);
+        boolean isUpExist = hasStation(upStationId);
+        if(isDownExist && isUpExist) throw new LineException(ALREADY_REGISTERED_SECTION);
+        else if(!isDownExist && !isUpExist) throw new LineException(NEITHER_STATIONS_NOT_REGISTERED);
     }
 
     private Optional<Section> getFirstSection() {
