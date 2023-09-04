@@ -4,7 +4,6 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.OneToMany;
 import kuit.subway.utils.exception.LineException;
-import kuit.subway.utils.exception.StationException;
 import lombok.*;
 
 import java.util.ArrayList;
@@ -32,8 +31,8 @@ public class Sections {
         isSectionRegistrable(section.getUpStation().getId(), section.getDownStation().getId());
 
         if(!checkAnyStationIsTerminalStation(section.getUpStation(), section.getDownStation())){
-            boolean updated = updateNextSection(section);
-            if(!updated) updatePreviousSection(section);
+            updateNextSection(section);
+            updatePreviousSection(section);
         }
 
         this.sections.add(section);
@@ -49,16 +48,14 @@ public class Sections {
         }
     }
 
-    private boolean updateNextSection(Section section) {
+    private void updateNextSection(Section section) {
         Optional<Section> upStation = findNextSection(section.getUpStation());
         if(upStation.isPresent()){
             if(upStation.get().getDistance() <= section.getDistance())
                 throw new LineException(INVALID_DISTANCE);
             upStation.get().changeUpStation(section.getDownStation());
             upStation.get().changeDistance(upStation.get().getDistance() - section.getDistance());
-            return true;
         }
-        return false;
     }
 
 
