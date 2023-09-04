@@ -168,8 +168,8 @@ public class LineServiceMockTest {
                 }
 
                 @Test
-                @DisplayName("노선 중간에 구간 추가")
-                void addSectionAtMiddle() {
+                @DisplayName("노선 중간에 구간 추가 - 상행역이 존재")
+                void addSectionAtMiddleUp() {
                 /*  given
                     2호선 : 성수역 - 강남역
                     추가할 구간 : 성수역 - 건대역
@@ -179,6 +179,27 @@ public class LineServiceMockTest {
                     when(stationRepository.findById(5L)).thenReturn(Optional.of(건대역));
 
                     SectionRequest request = new SectionRequest(9L, 5L, 1L);
+
+                    // when
+                    ShowLineResponse response = lineService.addSectionToLine(1L, request);
+                    // then
+                    assertThat(response.getStations())
+                            .extracting("name")
+                            .containsExactly("성수역", "건대역", "강남역");
+                }
+
+                @Test
+                @DisplayName("노선 중간에 구간 추가 - 하행역이 존재")
+                void addSectionAtMiddleDown() {
+                /*  given
+                    2호선 : 성수역 - 강남역
+                    추가할 구간 : 건대역 - 강남역
+                */
+                    when(lineRepository.findById(1L)).thenReturn(Optional.of(이호선));
+                    when(stationRepository.findById(2L)).thenReturn(Optional.of(강남역));
+                    when(stationRepository.findById(5L)).thenReturn(Optional.of(건대역));
+
+                    SectionRequest request = new SectionRequest(9L, 2L, 5L);
 
                     // when
                     ShowLineResponse response = lineService.addSectionToLine(1L, request);
