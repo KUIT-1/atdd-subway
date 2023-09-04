@@ -64,10 +64,9 @@ public class Sections {
 
     // TODO : 중간구간 추가 시 엄청 바뀔..! distance 등등.. 수정되어야 함.
     public void removeStation(Station station) {
-        Optional<Section> section = Optional.ofNullable(findSectionByDownStation(station)
-                .orElseThrow(() -> new LineException(NONE_SECTION)));
-        if(section.isPresent())
-            sections.remove(section.get());
+        Section section = findSectionByDownStation(station)
+                .orElseThrow(() -> new LineException(NONE_SECTION));
+        sections.remove(section);
     }
 
     private Optional<Section> findSectionByDownStation(Station station) {
