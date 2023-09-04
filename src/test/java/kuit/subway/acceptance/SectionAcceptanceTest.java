@@ -161,7 +161,6 @@ public class SectionAcceptanceTest extends AcceptanceTest {
                 // then
                 assertEquals(204, response.statusCode());
             }
-
             @Test
             void 구간_삭제_WHEN_중간구간(){
                 // given
