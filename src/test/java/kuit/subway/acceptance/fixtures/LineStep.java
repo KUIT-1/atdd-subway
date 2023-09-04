@@ -1,14 +1,14 @@
-package kuit.subway.line;
+package kuit.subway.acceptance.fixtures;
 
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import static kuit.subway.acceptance.fixtures.StationStep.지하철_역_생성_요청;
 import static kuit.subway.utils.RestAssuredUtil.*;
+import static kuit.subway.acceptance.fixtures.LineFixture.*;
 
 public class LineStep {
     public static final String PATH = "/lines";
@@ -27,17 +27,17 @@ public class LineStep {
 
     public static ExtractableResponse<Response> 지하철_노선_조회_요청(String id){
         makePathParamById(id);
-        return get요청(LineStep.PATH + "/{id}", pathParam);
+        return get요청(PATH + "/{id}", pathParam);
     }
 
     public static ExtractableResponse<Response> 지하철_노선_수정_요청(String id, Object body){
         makePathParamById(id);
-        return post요청(LineStep.PATH + "/{id}", pathParam, body);
+        return post요청(PATH + "/{id}", pathParam, body);
     }
 
     public static ExtractableResponse<Response> 지하철_노선_삭제_요청(String id){
         makePathParamById(id);
-        return delete요청(LineStep.PATH + "/{id}", pathParam);
+        return delete요청(PATH + "/{id}", pathParam);
     }
 
     public static Map<String, String> 지하철_노선_바디_생성
@@ -55,6 +55,21 @@ public class LineStep {
         if(!pathParam.isEmpty())
             pathParam.clear();
         pathParam.put("id", id);
+    }
+
+    public static ExtractableResponse<Response> 지하철_2호선_생성_요청(String upStationName, String downStationName){
+        return 지하철_노선_생성_Fixture(GREEN, TEN, 이호선이름, upStationName, downStationName);
+    }
+
+    public static ExtractableResponse<Response> 지하철_7호선_생성_요청(String upStationName, String downStationName){
+        return 지하철_노선_생성_Fixture(DARKGREEN, TEN, 칠호선이름, upStationName, downStationName);
+    }
+
+    private static ExtractableResponse<Response> 지하철_노선_생성_Fixture(String color, String distance, String lineName, String upStationName, String downStationName){
+        Long upId = 지하철_역_생성_요청(upStationName).jsonPath().getLong(ID_PATH);
+        Long downId = 지하철_역_생성_요청(downStationName).jsonPath().getLong(ID_PATH);
+        Map<String, String> body = 지하철_노선_바디_생성(color, distance, lineName, Long.toString(downId), Long.toString(upId));
+        return 지하철_노선_생성_요청(body);
     }
 
 }

@@ -1,4 +1,4 @@
-package kuit.subway.station;
+package kuit.subway.acceptance.fixtures;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;

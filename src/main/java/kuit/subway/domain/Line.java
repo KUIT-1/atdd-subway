@@ -35,12 +35,4 @@ public class Line {
         this.sections.deleteSection(station);
     }
 
-
-
-
-    }
-
-
-    }
-
 }

@@ -1,17 +1,17 @@
-package kuit.subway.line;
+package kuit.subway.acceptance;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
-import kuit.subway.acceptance.AcceptanceTest;
+import kuit.subway.acceptance.fixtures.LineStep;
 import kuit.subway.request.line.CreateLineRequest;
 import kuit.subway.request.line.UpdateLineRequest;
 
 import org.junit.jupiter.api.Test;
 
-import static kuit.subway.line.LineFixture.*;
-import static kuit.subway.line.LineStep.*;
-import static kuit.subway.station.StationFixture.*;
-import static kuit.subway.station.StationStep.지하철_역_생성_요청;
+import static kuit.subway.acceptance.fixtures.LineFixture.*;
+import static kuit.subway.acceptance.fixtures.LineStep.*;
+import static kuit.subway.acceptance.fixtures.StationFixture.*;
+import static kuit.subway.acceptance.fixtures.StationStep.지하철_역_생성_요청;
 import static kuit.subway.utils.BaseResponseStatus.*;
 import static kuit.subway.utils.RestAssuredUtil.get요청;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -28,7 +28,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
         Long downId = 지하철_역_생성_요청(강남역).jsonPath().getLong(ID_PATH);
 
         // when
-        CreateLineRequest request = new CreateLineRequest(GREEN, 10L, 이호선, downId, upId);
+        CreateLineRequest request = new CreateLineRequest(GREEN, 10L, 이호선이름, downId, upId);
         ExtractableResponse<Response> response = 지하철_노선_생성_요청(request);
 
         // then
@@ -40,14 +40,14 @@ public class LineAcceptanceTest extends AcceptanceTest {
     @Test
     void 지하철_노선_조회_테스트() {
         // given
-        Long id = 지하철_2호선_생성_Fixture(성수역, 강남역).jsonPath().getLong(ID_PATH);
+        Long id = 지하철_2호선_생성_요청(성수역, 강남역).jsonPath().getLong(ID_PATH);
 
         // when
         ExtractableResponse<Response> response = 지하철_노선_조회_요청(Long.toString(id));
 
         // then
         assertEquals(200, response.statusCode());
-        assertEquals(이호선, response.jsonPath().get(NAME_PATH));
+        assertEquals(이호선이름, response.jsonPath().get(NAME_PATH));
         assertEquals(SUCCESS.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
     }
 
@@ -65,8 +65,8 @@ public class LineAcceptanceTest extends AcceptanceTest {
     @Test
     void 지하철_노선_목록_조회_테스트() {
         // given
-        지하철_2호선_생성_Fixture(성수역, 강남역);
-        지하철_7호선_생성_Fixture(건대역, 어린이대공원역);
+        지하철_2호선_생성_요청(성수역, 강남역);
+        지하철_7호선_생성_요청(건대역, 어린이대공원역);
 
         // when
         ExtractableResponse<Response> response = get요청(LineStep.PATH);
@@ -90,22 +90,22 @@ public class LineAcceptanceTest extends AcceptanceTest {
     @Test
     void 지하철_노선_수정_테스트(){
         // given
-        Long id = 지하철_2호선_생성_Fixture(성수역, 강남역).jsonPath().getLong(ID_PATH);
+        Long id = 지하철_2호선_생성_요청(성수역, 강남역).jsonPath().getLong(ID_PATH);
         지하철_역_생성_요청(건대역);
-        UpdateLineRequest request = new UpdateLineRequest(GREEN, 신분당선);
+        UpdateLineRequest request = new UpdateLineRequest(GREEN, 신분당선이름);
 
         // when
         ExtractableResponse<Response> response = 지하철_노선_수정_요청(Long.toString(id), request);
 
         // then
         assertEquals(200, response.statusCode());
-        assertEquals(신분당선, response.jsonPath().get(NAME_PATH));
+        assertEquals(신분당선이름, response.jsonPath().get(NAME_PATH));
         assertEquals(SUCCESS.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
     }
 
     @Test
     void 없는_지하철_노선_수정_테스트(){
-        UpdateLineRequest request = new UpdateLineRequest(GREEN, 신분당선);
+        UpdateLineRequest request = new UpdateLineRequest(GREEN, 신분당선이름);
 
         // when
         ExtractableResponse<Response> response = 지하철_노선_수정_요청("1", request);
@@ -120,10 +120,10 @@ public class LineAcceptanceTest extends AcceptanceTest {
     @Test
     void 지하철_노선_수정_테스트_WHEN_중복된_이름으로_수정(){
         // given
-        Long id = 지하철_2호선_생성_Fixture(성수역, 강남역).jsonPath().getLong(ID_PATH);
-        지하철_7호선_생성_Fixture(건대역, 어린이대공원역);
+        Long id = 지하철_2호선_생성_요청(성수역, 강남역).jsonPath().getLong(ID_PATH);
+        지하철_7호선_생성_요청(건대역, 어린이대공원역);
 
-        UpdateLineRequest request = new UpdateLineRequest(GREEN, 칠호선);
+        UpdateLineRequest request = new UpdateLineRequest(GREEN, 칠호선이름);
 
         // when
         ExtractableResponse<Response> response = 지하철_노선_수정_요청(Long.toString(id), request);
@@ -136,9 +136,9 @@ public class LineAcceptanceTest extends AcceptanceTest {
     @Test
     void 지하철_노선_수정_테스트_WHEN_중복된_색으로_수정(){
         // given
-        Long id = 지하철_2호선_생성_Fixture(성수역, 강남역).jsonPath().getLong(ID_PATH);
-        지하철_7호선_생성_Fixture(건대역, 어린이대공원역);
-        UpdateLineRequest request = new UpdateLineRequest(DARKGREEN, 이호선);
+        Long id = 지하철_2호선_생성_요청(성수역, 강남역).jsonPath().getLong(ID_PATH);
+        지하철_7호선_생성_요청(건대역, 어린이대공원역);
+        UpdateLineRequest request = new UpdateLineRequest(DARKGREEN, 이호선이름);
 
         // when
         ExtractableResponse<Response> response = 지하철_노선_수정_요청(Long.toString(id), request);
@@ -152,7 +152,7 @@ public class LineAcceptanceTest extends AcceptanceTest {
     @Test
     void 지하철_노선_삭제_테스트() {
         // given
-        Long id = 지하철_2호선_생성_Fixture(성수역, 강남역).jsonPath().getLong(ID_PATH);
+        Long id = 지하철_2호선_생성_요청(성수역, 강남역).jsonPath().getLong(ID_PATH);
 
         // when
         ExtractableResponse<Response> response = 지하철_노선_삭제_요청(Long.toString(id));

@@ -1,4 +1,4 @@
-package kuit.subway.station;
+package kuit.subway.acceptance;
 
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -11,8 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static kuit.subway.station.StationStep.PATH;
-import static kuit.subway.station.StationStep.지하철_역_생성_요청;
+import static kuit.subway.acceptance.fixtures.StationStep.PATH;
+import static kuit.subway.acceptance.fixtures.StationStep.지하철_역_생성_요청;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class StationAcceptanceTest extends AcceptanceTest {

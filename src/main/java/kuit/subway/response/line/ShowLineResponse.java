@@ -2,8 +2,6 @@ package kuit.subway.response.line;
 
 
 import kuit.subway.domain.Line;
-import kuit.subway.domain.Section;
-import kuit.subway.domain.Sections;
 import kuit.subway.domain.Station;
 import kuit.subway.response.station.ShowStationResponse;
 import lombok.Getter;
@@ -26,7 +24,7 @@ public class ShowLineResponse {
     }
 
     public static ShowLineResponse from(Line line){
-        List<Station> stations = line.getSections().getStationList();
+        List<Station> stations = line.getSections().getStations();
         List<ShowStationResponse> stationResponseList = stations.stream().map(ShowStationResponse::from).toList();
 
         return new ShowLineResponse(line.getId(), line.getName(), stationResponseList, line.getColor());
