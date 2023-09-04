@@ -44,8 +44,8 @@ public class Sections {
         if(downStation.isPresent()){
             if(downStation.get().getDistance() <= section.getDistance())
                 throw new LineException(INVALID_DISTANCE);
-            downStation.get().setDownStation(section.getUpStation());
-            downStation.get().setDistance(downStation.get().getDistance() - section.getDistance());
+            downStation.get().changeDownStation(section.getUpStation());
+            downStation.get().changeDistance(downStation.get().getDistance() - section.getDistance());
         }
     }
 
@@ -54,8 +54,8 @@ public class Sections {
         if(upStation.isPresent()){
             if(upStation.get().getDistance() <= section.getDistance())
                 throw new LineException(INVALID_DISTANCE);
-            upStation.get().setUpStation(section.getDownStation());
-            upStation.get().setDistance(upStation.get().getDistance() - section.getDistance());
+            upStation.get().changeUpStation(section.getDownStation());
+            upStation.get().changeDistance(upStation.get().getDistance() - section.getDistance());
             return true;
         }
         return false;
