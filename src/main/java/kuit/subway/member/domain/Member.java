@@ -23,7 +23,7 @@ public class Member{
     @Column(name = "member_id")
     private Long id;
 
-    @Column(length = 16, nullable = false)
+    @Column(length = 30, nullable = false)
     private String email;
 
     @Column(nullable = false)

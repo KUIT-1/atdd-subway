@@ -16,8 +16,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MemberCreateRequest {
 
-    @NotBlank(message = "아이디를 입력해주세요.")
-    @Pattern(regexp = "^[a-z0-9]{4,16}", message = "이름은 4-16자의 영어, 또는 숫자로 입력해주세요.")
+    @NotBlank(message = "이메일 입력해주세요.")
+    @Pattern(regexp = "\\w+@\\w+\\.\\w+(\\.\\w+)?", message = "이메일 형식이 올바르지 않습니다.")
     private String email;
 
     @NotBlank(message = "비밀번호를 입력해주세요.")
