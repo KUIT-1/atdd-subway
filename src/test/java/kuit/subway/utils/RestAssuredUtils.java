@@ -43,6 +43,17 @@ public class RestAssuredUtils {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> getPath(String path, Long sourceStationId, Long targetStationId) {
+        return RestAssured
+                .given().log().all()
+                .queryParams("sourceStationId", sourceStationId)
+                .queryParams("targetStationId", targetStationId)
+                .contentType(ContentType.JSON)
+                .when().get(path)
+                .then().log().all()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> patch(Object requestBody, String path) {
         return RestAssured
                 .given().log().all().body(requestBody)

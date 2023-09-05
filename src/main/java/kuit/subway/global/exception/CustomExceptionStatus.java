@@ -27,6 +27,11 @@ public enum CustomExceptionStatus implements ExceptionStatus {
     EXCEED_DISTANCE(HttpStatus.BAD_REQUEST, "추가되는 역 사이의 거리는, 기존 역 사이 길이보다 크거나 같을 수 없습니다."),
     UNDER_MINIMUM_SECTION_SIZE(HttpStatus.BAD_REQUEST, "상행 종점역과 하행 종점역만 있는 경우, 구간을 삭제할 수 없습니다."),
     NOT_EXISTED_STATION_IN_SECTION(HttpStatus.NOT_FOUND, "노선에 등록되어 있지 않은 역입니다."),
+
+    // path excetpion
+    INVALID_GRAPH(HttpStatus.BAD_REQUEST, "해당 역이 그래프에 포함되어 있지 않습니다."),
+    NOT_EXISTED_PATH(HttpStatus.BAD_REQUEST, "출발역과 도착역이 연결되어있지 않습니다."),
+    DUPLICATED_PATH_REQUEST(HttpStatus.BAD_REQUEST, "출발역과 도착역이 같을 수 없습니다."),
     ;
 
     private final HttpStatus httpStatus;
