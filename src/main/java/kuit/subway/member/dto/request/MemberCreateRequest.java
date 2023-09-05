@@ -24,7 +24,6 @@ public class MemberCreateRequest {
     @Pattern(regexp = "^(?=.*[~!@#$%^&*()_+])[A-Za-z0-9~!@#$%^&*()_+]{8,}", message = "특수문자 포함 8자 이상 입력해야 합니다.")
     private String password;
 
-    @NotBlank(message = "나이를 입력해주세요.")
     @Positive
     private Integer age;
 
