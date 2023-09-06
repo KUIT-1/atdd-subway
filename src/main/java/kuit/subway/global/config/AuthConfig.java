@@ -1,4 +1,4 @@
-package kuit.subway.config;
+package kuit.subway.global.config;
 
 import kuit.subway.auth.AuthenticationPrincipalArgumentResolver;
 import kuit.subway.auth.LoginInterceptor;
@@ -22,9 +22,8 @@ public class AuthConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loginInterceptor)
-                .addPathPatterns("/~/**") // /~/ 아래의 path에는 모두 interceptor 적용
-                .excludePathPatterns("/members") // /members는 제외
-                .excludePathPatterns("/"); // 아래와 같이 chain 형식으로 계속 add 및 exclude 가능
+                .addPathPatterns("/members/**")
+                .excludePathPatterns("/members");
     }
 
     // ArgumentResolver 등록
