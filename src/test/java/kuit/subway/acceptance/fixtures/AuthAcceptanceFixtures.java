@@ -3,8 +3,10 @@ package kuit.subway.acceptance.fixtures;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kuit.subway.auth.dto.request.LoginRequest;
+import kuit.subway.auth.dto.response.TokenResponse;
 
 import static kuit.subway.utils.RestAssuredUtils.post;
+import static kuit.subway.utils.fixtures.AuthFixtures.로그인_요청;
 
 public class AuthAcceptanceFixtures {
 
@@ -12,5 +14,10 @@ public class AuthAcceptanceFixtures {
 
     public static ExtractableResponse<Response> 자체_로그인(LoginRequest request) {
         return post(request, BASE_PATH);
+    }
+
+    public static String 로그인_토큰_생성(String email, String password) {
+        ExtractableResponse<Response> response = 자체_로그인(로그인_요청(email, password));
+        return response.as(TokenResponse.class).getAccessToken();
     }
 }
