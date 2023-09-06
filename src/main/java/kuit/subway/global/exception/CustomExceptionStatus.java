@@ -35,7 +35,8 @@ public enum CustomExceptionStatus implements ExceptionStatus {
 
     // member exception
     NOT_EXISTED_MEMBER(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
-    DUPLICATED_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
+    DUPLICATED_EMAIL(HttpStatus.NOT_FOUND, "이미 존재하는 이메일입니다."),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "잘못된 비밀번호 입니다."),
 
     // jwt exception
     EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 AccessToken 입니다."),
