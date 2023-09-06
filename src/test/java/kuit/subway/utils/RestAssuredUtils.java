@@ -34,6 +34,16 @@ public class RestAssuredUtils {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> getMyInfo(String path, String accessToken) {
+        return RestAssured
+                .given().log().all()
+                .auth().oauth2(accessToken)
+                .contentType(ContentType.JSON)
+                .when().get(path)
+                .then().log().all()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> get(String path, Object... pathParams) {
         return RestAssured
                 .given().log().all()
