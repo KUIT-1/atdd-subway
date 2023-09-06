@@ -1,9 +1,13 @@
 package kuit.subway.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
+import kuit.subway.global.exception.SubwayException;
 import lombok.NoArgsConstructor;
 
 import java.util.Enumeration;
+
+import static kuit.subway.global.exception.CustomExceptionStatus.INVALID_TOKEN_HEADER;
+import static kuit.subway.global.exception.CustomExceptionStatus.INVALID_TOKEN_TYPE;
 
 @NoArgsConstructor
 public class AuthorizationExtractor {
@@ -22,16 +26,12 @@ public class AuthorizationExtractor {
                 return extractToken;
             }
         }
-        // TODO : 예외 처리
-//        throw new InvalidBearerException();
-        // 임시
-        return "";
+        throw new SubwayException(INVALID_TOKEN_TYPE);
     }
 
     private static void validateExtractToken(String extractToken) {
         if (extractToken.isBlank()) {
-            // TODO : 예외 처리
-//            throw new BlankTokenException();
+            throw new SubwayException(INVALID_TOKEN_HEADER);
         }
     }
 }
