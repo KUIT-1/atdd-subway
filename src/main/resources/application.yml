@@ -27,5 +27,5 @@ spring:
 security:
   jwt:
     token:
-      secret-key: testtesttest
+      secret-key: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
       expire-length: 86400
