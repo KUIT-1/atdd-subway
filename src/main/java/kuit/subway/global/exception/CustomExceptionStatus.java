@@ -41,6 +41,8 @@ public enum CustomExceptionStatus implements ExceptionStatus {
     // jwt exception
     EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 AccessToken 입니다."),
     INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "잘못된 AccessToken 입니다."),
+    INVALID_TOKEN_TYPE(HttpStatus.UNAUTHORIZED, "Bearer 토큰 타입이 아닙니다."),
+    INVALID_TOKEN_HEADER(HttpStatus.UNAUTHORIZED, "잘못된 토큰을 통해 요청하였습니다."),
     ;
 
     private final HttpStatus httpStatus;
