@@ -44,6 +44,16 @@ public class RestAssuredUtils {
                 .extract();
     }
 
+    public static ExtractableResponse<Response> getGithubLogin(String path, String code) {
+        return RestAssured
+                .given().log().all()
+                .queryParams("code", code)
+                .contentType(ContentType.JSON)
+                .when().get(path)
+                .then().log().all()
+                .extract();
+    }
+
     public static ExtractableResponse<Response> get(String path, Object... pathParams) {
         return RestAssured
                 .given().log().all()
