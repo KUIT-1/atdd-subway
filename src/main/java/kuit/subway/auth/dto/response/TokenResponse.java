@@ -13,12 +13,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class TokenResponse {
 
-    private Long memberId;
+    private String email;
     private String accessToken;
 
     public static TokenResponse of(Member member, String accessToken) {
         return TokenResponse.builder()
-                .memberId(member.getId())
+                .email(member.getEmail())
                 .accessToken(accessToken)
                 .build();
     }
