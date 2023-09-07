@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class GithubOAuthProvider {
 
-    private static final String TOKEN_TYPE = " Bearer ";
+    private static final String TOKEN_TYPE = "Bearer ";
 
     private final GithubTokenClient githubTokenClient;
     private final GithubUserInfoClient githubUserInfoClient;
