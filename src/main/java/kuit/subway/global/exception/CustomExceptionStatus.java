@@ -28,10 +28,21 @@ public enum CustomExceptionStatus implements ExceptionStatus {
     UNDER_MINIMUM_SECTION_SIZE(HttpStatus.BAD_REQUEST, "상행 종점역과 하행 종점역만 있는 경우, 구간을 삭제할 수 없습니다."),
     NOT_EXISTED_STATION_IN_SECTION(HttpStatus.NOT_FOUND, "노선에 등록되어 있지 않은 역입니다."),
 
-    // path excetpion
+    // path exception
     INVALID_GRAPH(HttpStatus.BAD_REQUEST, "해당 역이 그래프에 포함되어 있지 않습니다."),
     NOT_EXISTED_PATH(HttpStatus.BAD_REQUEST, "출발역과 도착역이 연결되어있지 않습니다."),
     DUPLICATED_PATH_REQUEST(HttpStatus.BAD_REQUEST, "출발역과 도착역이 같을 수 없습니다."),
+
+    // member exception
+    NOT_EXISTED_MEMBER(HttpStatus.NOT_FOUND, "존재하지 않는 회원입니다."),
+    DUPLICATED_EMAIL(HttpStatus.NOT_FOUND, "이미 존재하는 이메일입니다."),
+    INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "잘못된 비밀번호 입니다."),
+
+    // jwt exception
+    EXPIRED_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "만료된 AccessToken 입니다."),
+    INVALID_ACCESS_TOKEN(HttpStatus.UNAUTHORIZED, "잘못된 AccessToken 입니다."),
+    INVALID_TOKEN_TYPE(HttpStatus.UNAUTHORIZED, "Bearer 토큰 타입이 아닙니다."),
+    INVALID_TOKEN_HEADER(HttpStatus.UNAUTHORIZED, "잘못된 토큰을 통해 요청하였습니다."),
     ;
 
     private final HttpStatus httpStatus;
