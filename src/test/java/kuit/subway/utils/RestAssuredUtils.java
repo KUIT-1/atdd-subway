@@ -4,6 +4,7 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
+import kuit.subway.auth.dto.response.TokenResponse;
 
 public class RestAssuredUtils {
 
@@ -52,6 +53,18 @@ public class RestAssuredUtils {
                 .when().get(path)
                 .then().log().all()
                 .extract();
+    }
+
+    public static String getGithubLoginToken(String path, String code) {
+        return RestAssured
+                .given().log().all()
+                .queryParams("code", code)
+                .contentType(ContentType.JSON)
+                .when().get(path)
+                .then().log().all()
+                .extract()
+                .as(TokenResponse.class)
+                .getAccessToken();
     }
 
     public static ExtractableResponse<Response> get(String path, Object... pathParams) {
