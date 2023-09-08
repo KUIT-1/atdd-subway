@@ -1,5 +1,6 @@
 package kuit.subway.auth.service.github;
 
+import kuit.subway.auth.service.github.userinfo.GithubUserInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;

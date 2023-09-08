@@ -2,11 +2,13 @@ package kuit.subway.auth.service.github;
 
 import kuit.subway.auth.dto.request.OAuthTokenRequest;
 import kuit.subway.auth.dto.response.OAuthTokenResponse;
+import kuit.subway.auth.service.OAuthProvider;
+import kuit.subway.auth.service.github.userinfo.GithubUserInfo;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-public class GithubOAuthProvider {
+public class GithubOAuthProvider implements OAuthProvider {
 
     private static final String TOKEN_TYPE = "Bearer ";
 
