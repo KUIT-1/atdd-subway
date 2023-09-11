@@ -9,8 +9,7 @@ import kuit.subway.dto.request.section.SectionDeleteRequest;
 import kuit.subway.repository.LineRepository;
 import kuit.subway.repository.StationRepository;
 import kuit.subway.service.LineService;
-import kuit.subway.utils.fixtures.SectionFixtures;
-import kuit.subway.utils.steps.SectionStep;
+import kuit.subway.utils.fixture.SectionFixture;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -64,14 +63,14 @@ public class SectionServiceTest {
         void addSectionFirstUpStation() {
 
             // given
-            SectionCreateRequest req = SectionStep.지하철_구간_생성_요청(station3.getId(), station1.getId(), 5);
+            SectionCreateRequest req = SectionFixture.지하철_구간_생성_요청(station3.getId(), station1.getId(), 5);
             lineService.addSection(line.getId(), req);
 
             // when
-            List<Section> orderSections = line.getSections().getOrderSections();
+            List<Station> orderStations = line.getStations();
 
             // then
-            assertEquals(station3.getId(), orderSections.get(0).getUpStation().getId());
+            assertEquals(station3.getId(), orderStations.get(0).getId());
 
         }
 
@@ -80,14 +79,14 @@ public class SectionServiceTest {
         void addSectionLastDownStation() {
 
             // given
-            SectionCreateRequest req = SectionStep.지하철_구간_생성_요청(station2.getId(), station3.getId(), 5);
+            SectionCreateRequest req = SectionFixture.지하철_구간_생성_요청(station2.getId(), station3.getId(), 5);
             lineService.addSection(line.getId(), req);
 
             // when
-            List<Section> orderSections = line.getSections().getOrderSections();
+            List<Station> orderStations = line.getStations();
 
             // then
-            assertEquals(station3.getId(), orderSections.get(orderSections.size() - 1).getDownStation().getId());
+            assertEquals(station3.getId(), orderStations.get(orderStations.size() - 1).getId());
 
         }
 
@@ -96,16 +95,16 @@ public class SectionServiceTest {
         void addSectionBetweenStationsUpExist() {
 
             // given
-            SectionCreateRequest req = SectionStep.지하철_구간_생성_요청(station1.getId(), station3.getId(), 5);
+            SectionCreateRequest req = SectionFixture.지하철_구간_생성_요청(station1.getId(), station3.getId(), 5);
             lineService.addSection(line.getId(), req);
 
             // when
-            List<Section> orderSections = line.getSections().getOrderSections();
+            List<Station> orderStations = line.getStations();
 
             // then
-            assertEquals(station3.getId(), orderSections.get(0).getDownStation().getId());
-            assertEquals(station2.getId(), orderSections.get(1).getDownStation().getId());
-            assertEquals(2, orderSections.size());
+            assertEquals(station3.getId(), orderStations.get(1).getId());
+            assertEquals(station2.getId(), orderStations.get(2).getId());
+            assertEquals(3, orderStations.size());
         }
 
         @Test
@@ -113,16 +112,16 @@ public class SectionServiceTest {
         void addSectionBetweenStationsDownExist() {
 
             // given
-            SectionCreateRequest req = SectionStep.지하철_구간_생성_요청(station3.getId(), station2.getId(), 5);
+            SectionCreateRequest req = SectionFixture.지하철_구간_생성_요청(station3.getId(), station2.getId(), 5);
             lineService.addSection(line.getId(), req);
 
             // when
-            List<Section> orderSections = line.getSections().getOrderSections();
+            List<Station> orderStations = line.getStations();
 
             // then
-            assertEquals(station3.getId(), orderSections.get(0).getDownStation().getId());
-            assertEquals(station2.getId(), orderSections.get(1).getDownStation().getId());
-            assertEquals(2, orderSections.size());
+            assertEquals(station3.getId(), orderStations.get(1).getId());
+            assertEquals(station2.getId(), orderStations.get(2).getId());
+            assertEquals(3, orderStations.size());
         }
 
         @Test
@@ -130,16 +129,16 @@ public class SectionServiceTest {
         void addSectionReturnAsSorted() {
 
             // given
-            SectionCreateRequest req = SectionStep.지하철_구간_생성_요청(station3.getId(), station2.getId(), 5);
+            SectionCreateRequest req = SectionFixture.지하철_구간_생성_요청(station3.getId(), station2.getId(), 5);
             lineService.addSection(line.getId(), req);
 
             // when
-            List<Section> orderSections = line.getSections().getOrderSections();
+            List<Station> orderStations = line.getStations();
 
             // then
-            assertEquals(station1.getId(), orderSections.get(0).getUpStation().getId());
-            assertEquals(station3.getId(), orderSections.get(0).getDownStation().getId());
-            assertEquals(station2.getId(), orderSections.get(1).getDownStation().getId());
+            assertEquals(station1.getId(), orderStations.get(0).getId());
+            assertEquals(station3.getId(), orderStations.get(1).getId());
+            assertEquals(station2.getId(), orderStations.get(2).getId());
         }
     }
 
@@ -174,14 +173,14 @@ public class SectionServiceTest {
         void deleteLastStation() {
 
             // given
-            SectionDeleteRequest req = SectionStep.지하철_구간_삭제_요청(station3.getId());
+            SectionDeleteRequest req = SectionFixture.지하철_구간_삭제_요청(station3.getId());
             lineService.deleteSection(line.getId(), req);
 
             // when
-            List<Section> orderSections = line.getSections().getOrderSections();
+            List<Station> orderStations = line.getStations();
 
             // then
-            assertEquals(station2.getId(), orderSections.get(orderSections.size() - 1).getDownStation().getId());
+            assertEquals(station2.getId(), orderStations.get(orderStations.size() - 1).getId());
 
         }
 
@@ -190,14 +189,14 @@ public class SectionServiceTest {
         void deleteFirstStation() {
 
             // given
-            SectionDeleteRequest req = SectionStep.지하철_구간_삭제_요청(station1.getId());
+            SectionDeleteRequest req = SectionFixture.지하철_구간_삭제_요청(station1.getId());
             lineService.deleteSection(line.getId(), req);
 
             // when
-            List<Section> orderSections = line.getSections().getOrderSections();
+            List<Station> orderStations = line.getStations();
 
             // then
-            assertEquals(station2.getId(), orderSections.get(0).getUpStation().getId());
+            assertEquals(station2.getId(), orderStations.get(0).getId());
 
         }
 
@@ -206,16 +205,17 @@ public class SectionServiceTest {
         void deleteBetweenStation() {
 
             // given
-            SectionDeleteRequest req = SectionStep.지하철_구간_삭제_요청(station2.getId());
+            SectionDeleteRequest req = SectionFixture.지하철_구간_삭제_요청(station2.getId());
             lineService.deleteSection(line.getId(), req);
 
             // when
-            List<Section> orderSections = line.getSections().getOrderSections();
+            List<Station> orderStations = line.getStations();
+            Section firstSection = line.getFirstSection();
 
             // then
-            assertEquals(station1.getId(), orderSections.get(0).getUpStation().getId());
-            assertEquals(station3.getId(), orderSections.get(0).getDownStation().getId());
-            assertEquals(20, orderSections.get(0).getDistance());
+            assertEquals(station1.getId(), orderStations.get(0).getId());
+            assertEquals(station3.getId(), orderStations.get(1).getId());
+            assertEquals(20, firstSection.getDistance());
 
         }
 

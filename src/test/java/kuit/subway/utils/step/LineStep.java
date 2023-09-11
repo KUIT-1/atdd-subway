@@ -1,18 +1,15 @@
-package kuit.subway.utils.fixtures;
+package kuit.subway.utils.step;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kuit.subway.dto.request.line.LineCreateRequest;
 import kuit.subway.dto.request.line.LineUpdateRequest;
-import kuit.subway.dto.request.station.StationCreateRequest;
+import kuit.subway.dto.request.line.PathReadRequest;
 
 import static kuit.subway.study.common.CommonRestAssured.*;
-import static kuit.subway.utils.fixtures.StationFixtures.STATION_PATH;
-import static kuit.subway.utils.fixtures.StationFixtures.지하철_역_등록;
-import static kuit.subway.utils.steps.LineStep.지하철_노선_생성_요청;
-import static kuit.subway.utils.steps.LineStep.지하철_노선_수정_요청;
+import static kuit.subway.utils.fixture.LineFixture.*;
 
-public class LineFixtures {
+public class LineStep {
 
     public static final String LINE_PATH = "/lines";
 
@@ -30,13 +27,18 @@ public class LineFixtures {
         return get(LINE_PATH);
     }
 
-    public static ExtractableResponse<Response> 지하철_노선_수정(Long lineId, String name, String color, int lineDistance, Long upStationId, Long downStationId, int sectionDistance) {
-        LineUpdateRequest req = 지하철_노선_수정_요청(name, color, lineDistance, upStationId, downStationId, sectionDistance);
+    public static ExtractableResponse<Response> 지하철_노선_수정(Long lineId, String name, String color, int lineDistance) {
+        LineUpdateRequest req = 지하철_노선_수정_요청(name, color, lineDistance);
         return put(LINE_PATH + "/" + lineId, req);
     }
 
     public static ExtractableResponse<Response> 지하철_노선_삭제(Long id) {
         return delete(LINE_PATH + "/" + id);
     }
+    public static ExtractableResponse<Response> 지하철_노선_경로_조회(Long startStationId, Long endStationId) {
+        PathReadRequest req = 지하철_경로_조회_요청(startStationId, endStationId);
+        return post(LINE_PATH + "/path", req);
+    }
+
 
 }

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import kuit.subway.dto.BaseTimeEntity;
 import lombok.*;
 
+import java.util.Objects;
+
 
 @Entity
 @Getter
@@ -26,6 +28,13 @@ public class Station extends BaseTimeEntity {
                 .name(name)
                 .build();
     }
+
+    public static Station createStationWithId(Long id, String name) {
+        return Station.builder()
+                .id(id)
+                .name(name)
+                .build();
+    }
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Station)) {
@@ -34,5 +43,4 @@ public class Station extends BaseTimeEntity {
         Station station = (Station) o;
         return station.getId().equals(id) && station.getName().equals(name);
     }
-
 }
