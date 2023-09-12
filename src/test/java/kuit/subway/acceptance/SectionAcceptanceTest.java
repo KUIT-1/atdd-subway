@@ -161,12 +161,6 @@ public class SectionAcceptanceTest extends AcceptanceTest {
                 // then
                 assertEquals(204, response.statusCode());
             }
-        }
-
-        @Nested
-        @DisplayName("실패")
-        class Fail{
-            // TODO 일단은 중간역 삭제 안됨.
             @Test
             void 구간_삭제_WHEN_중간구간(){
                 // given
@@ -180,17 +174,36 @@ public class SectionAcceptanceTest extends AcceptanceTest {
                 ExtractableResponse<Response> response = 지하철_구간_삭제_요청("1", deleteSectionRequest);
 
                 // then
-                assertEquals(400, response.statusCode());
-                assertEquals(ONLY_LAST_SECTION_DELETION_ALLOWED.getResponseCode(), response.jsonPath().getLong(RESPONSECODE));
+                assertEquals(204, response.statusCode());
             }
 
+            @Test
+            void 구간_삭제_WHEN_상행종점역(){
+                // given
+                지하철_2호선_생성_요청(성수역, 강남역);
+                지하철_역_생성_요청(교대역);
+                SectionRequest request = new SectionRequest(10L, 3L, 2L);
+                지하철_구간_등록_요청("1", request);
+
+                // when
+                DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(1L);
+                ExtractableResponse<Response> response = 지하철_구간_삭제_요청("1", deleteSectionRequest);
+
+                // then
+                assertEquals(204, response.statusCode());
+            }
+
+        }
+
+        @Nested
+        @DisplayName("실패")
+        class Fail{
             @Test
             void 구간_삭제_WHEN_싱글구간(){
                 // given
                 지하철_2호선_생성_요청(성수역, 강남역);
 
                 // when
-//        DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(2L, 1L);
                 DeleteSectionRequest deleteSectionRequest = new DeleteSectionRequest(2L);
                 ExtractableResponse<Response> response = 지하철_구간_삭제_요청("1", deleteSectionRequest);
 

@@ -31,7 +31,8 @@ public enum BaseResponseStatus{
     NONE_SECTION(HttpStatus.NOT_FOUND,2110, "해당 구간이 존재하지 않습니다."),
     ALREADY_REGISTERED_SECTION(HttpStatus.BAD_REQUEST, 2111, "해당 구간이 이미 해당 노선에 등록되어 있습니다."),
     NEITHER_STATIONS_NOT_REGISTERED(HttpStatus.BAD_REQUEST, 2112, "상행역과 하행역 중 하나는 등록되어 있어야 합니다."),
-    INVALID_DISTANCE(HttpStatus.BAD_REQUEST, 2113, "추가하려는 구간의 거리가 기존 역 사이의 거리보다 작아야 합니다.");
+    INVALID_DISTANCE(HttpStatus.BAD_REQUEST, 2113, "추가하려는 구간의 거리가 기존 역 사이의 거리보다 작아야 합니다."),
+    STATION_NOT_REGISTERED(HttpStatus.BAD_REQUEST, 2114, "해당 노선에 등록되어있지 않은 역입니다.");
 
 
     private final HttpStatus httpStatus;

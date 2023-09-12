@@ -1,5 +1,6 @@
 package kuit.subway.request.section;
 
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -11,5 +12,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DeleteSectionRequest {
     @Positive
+    @NotNull
     private Long stationId;
 }
