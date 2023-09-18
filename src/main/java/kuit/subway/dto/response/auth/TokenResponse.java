@@ -1,4 +1,4 @@
-package kuit.subway.dto.request.line;
+package kuit.subway.dto.response.auth;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PathReadRequest {
-
-    private Long startStationId;
-    private Long endStationId;
+public class TokenResponse {
+    private String accessToken;
 }

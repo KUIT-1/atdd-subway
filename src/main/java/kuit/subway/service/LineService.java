@@ -6,12 +6,10 @@ import kuit.subway.domain.Section;
 import kuit.subway.domain.Station;
 import kuit.subway.dto.request.line.LineCreateRequest;
 import kuit.subway.dto.request.line.LineUpdateRequest;
-import kuit.subway.dto.request.line.PathReadRequest;
 import kuit.subway.dto.request.section.SectionCreateRequest;
 import kuit.subway.dto.request.section.SectionDeleteRequest;
+import kuit.subway.dto.response.line.LineReadResponse;
 import kuit.subway.dto.response.line.*;
-import kuit.subway.dto.response.section.SectionCreateResponse;
-import kuit.subway.dto.response.section.SectionDeleteResponse;
 import kuit.subway.exception.badrequest.line.InvalidPathSameStationException;
 import kuit.subway.exception.badrequest.station.InvalidLineStationException;
 import kuit.subway.exception.notfound.line.NotFoundLineException;
@@ -20,15 +18,10 @@ import kuit.subway.repository.LineRepository;
 import kuit.subway.repository.SectionRepository;
 import kuit.subway.repository.StationRepository;
 import lombok.RequiredArgsConstructor;
-import org.jgrapht.GraphPath;
-import org.jgrapht.graph.DefaultWeightedEdge;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -81,7 +74,7 @@ public class LineService {
     }
 
     @Transactional
-    public LineUpdateResponse updateLine(Long id, LineUpdateRequest req) {
+    public LineReadResponse updateLine(Long id, LineUpdateRequest req) {
         // 존재하지 않는 노선을 수정하려 했을때 예외처리
         Line line = validateLineExist(id);
         // 상행역과 하행역이 같으면 예외처리
@@ -89,7 +82,7 @@ public class LineService {
         // 모든 예외조건 패스할 시, request 대로 노선 수정
         line.updateLine(req.getName(), req.getColor(), req.getLineDistance());
 
-        return LineUpdateResponse.of(line);
+        return LineReadResponse.of(line);
     }
 
     @Transactional
@@ -97,11 +90,12 @@ public class LineService {
 
         // 존재하지 않는 노선을 삭제하려고 할시, 예외처리
         Line line = validateLineExist(id);
+        lineRepository.delete(line);
         return LineDeleteResponse.of(line);
     }
 
     @Transactional
-    public SectionCreateResponse addSection(Long lineId, SectionCreateRequest req) {
+    public LineReadResponse addSection(Long lineId, SectionCreateRequest req) {
 
         Long upStationId = req.getUpStationId();
         Long downStationId = req.getDownStationId();
@@ -117,11 +111,11 @@ public class LineService {
         // 노선에는 구간 형태로 추가해줘야한다.
         line.addSection(Section.createSection(line, upStation, downStation, req.getDistance()));
 
-        return SectionCreateResponse.of(line);
+        return LineReadResponse.of(line);
     }
 
     @Transactional
-    public SectionDeleteResponse deleteSection(Long lineId, SectionDeleteRequest req) {
+    public LineReadResponse deleteSection(Long lineId, SectionDeleteRequest req) {
 
         Long deleteStationId = req.getDeleteStationId();
 
@@ -133,17 +127,17 @@ public class LineService {
 
         // 노선의 구간 삭제
         line.deleteSection(station);
-        return SectionDeleteResponse.of(line);
+        return LineReadResponse.of(line);
     }
 
-    public PathReadResponse findPath(PathReadRequest req) {
+    public PathReadResponse findPath(Long startStationId, Long endStationId) {
 
         // 존재하지 않는 역을 경로 조회 요청으로 사용시 예외발생
-        Station startStation = validateStationExist(req.getStartStationId());
-        Station endStation = validateStationExist(req.getEndStationId());
+        Station startStation = validateStationExist(startStationId);
+        Station endStation = validateStationExist(endStationId);
 
         // 출발역과 도착역이 같을 때 예외발생
-        validateFindPathSameStations(req.getStartStationId(), req.getEndStationId());
+        validateFindPathSameStations(startStationId, endStationId);
 
         // 경로 조회 -> 모든 노선들이 하나의 그래프 형태로 되어 있어야 한다
         List<Line> lines = lineRepository.findAll();
@@ -155,8 +149,9 @@ public class LineService {
 //        List<Section> mergedSectionList = new ArrayList<>(set);
 
         Graph graph = new Graph(lines);
+        graph.initPath();
 
-        return graph.shortestPath(startStation, endStation);
+        return graph.getShortestPath(startStation, endStation);
     }
 
     // 존재하는 역인지 판별해주는 함수
