@@ -26,10 +26,8 @@ public class Member{
     @Column(length = 30, nullable = false)
     private String email;
 
-    @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
     private Integer age;
 
     public void update(Member member) {

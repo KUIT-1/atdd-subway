@@ -7,9 +7,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
-import static kuit.subway.acceptance.fixtures.AuthAcceptanceFixtures.로그인_토큰_생성;
+import static kuit.subway.acceptance.fixtures.AuthAcceptanceFixtures.깃허브_로그인_토큰_발급;
+import static kuit.subway.acceptance.fixtures.AuthAcceptanceFixtures.자체_로그인_토큰_발급;
 import static kuit.subway.acceptance.fixtures.MemberAcceptanceFixtures.내_정보_조회;
 import static kuit.subway.acceptance.fixtures.MemberAcceptanceFixtures.회원가입;
+import static kuit.subway.utils.fixtures.AuthFixtures.깃허브유저;
 import static kuit.subway.utils.fixtures.MemberFixtures.회원가입_요청;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -42,7 +44,7 @@ public class MemberAcceptanceTest extends AcceptanceTest {
         //given
         MemberCreateRequest signUpRequest = 회원가입_요청("test@test.com", "12345678!", 26);
         회원가입(signUpRequest);
-        String accessToken = 로그인_토큰_생성(signUpRequest.getEmail(), signUpRequest.getPassword());
+        String accessToken = 자체_로그인_토큰_발급(signUpRequest.getEmail(), signUpRequest.getPassword());
 
         //when
         ExtractableResponse<Response> response = 내_정보_조회(accessToken);
@@ -53,5 +55,23 @@ public class MemberAcceptanceTest extends AcceptanceTest {
                 () -> assertThat(response.jsonPath().getString("email")).isEqualTo(signUpRequest.getEmail()),
                 () -> assertThat(response.jsonPath().getInt("age")).isEqualTo(signUpRequest.getAge())
         );
+    }
+
+    @DisplayName("Github 로그인을 통해 내 정보를 조회한다.")
+    @Test
+    void showMyInfo_With_Github_Login(){
+        //given
+        String accessToken = 깃허브_로그인_토큰_발급(깃허브유저.getCode());
+        System.out.println("accessToken = " + accessToken);
+
+        //when
+        ExtractableResponse<Response> response = 내_정보_조회(accessToken);
+
+        //then
+        assertAll(
+                () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+                () -> assertThat(response.jsonPath().getString("email")).isEqualTo(깃허브유저.getEmail())
+        );
+
     }
 }

@@ -3,6 +3,7 @@ package kuit.subway.auth.service;
 import kuit.subway.auth.JwtTokenProvider;
 import kuit.subway.auth.dto.request.LoginRequest;
 import kuit.subway.auth.dto.response.TokenResponse;
+import kuit.subway.auth.service.github.userinfo.OAuthUserInfo;
 import kuit.subway.global.exception.SubwayException;
 import kuit.subway.member.domain.Member;
 import kuit.subway.member.repository.MemberRepository;
@@ -20,11 +21,20 @@ public class AuthService {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final MemberRepository memberRepository;
+    private final OAuthProvider oAuthProvider;
 
     public TokenResponse login(LoginRequest request) {
         Member member = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new SubwayException(NOT_EXISTED_MEMBER));
         validatePassword(member, request.getPassword());
+        String accessToken = jwtTokenProvider.createToken(member.getId());
+        return TokenResponse.of(member, accessToken);
+    }
+
+    public TokenResponse githubLogin(String code) {
+        OAuthUserInfo userInfo = oAuthProvider.getUserInfo(code);
+        Member member = memberRepository.findByEmail(userInfo.getEmail())
+                .orElseGet(() -> memberRepository.save(userInfo.toMember()));
         String accessToken = jwtTokenProvider.createToken(member.getId());
         return TokenResponse.of(member, accessToken);
     }
