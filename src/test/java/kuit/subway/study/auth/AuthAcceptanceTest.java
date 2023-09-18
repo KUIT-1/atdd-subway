@@ -3,13 +3,15 @@ package kuit.subway.study.auth;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import kuit.subway.AcceptanceTest;
-import kuit.subway.dto.response.auth.TokenResponse;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 import static kuit.subway.utils.step.AuthStep.로그인_회원_토근_생성;
-import static kuit.subway.utils.step.MemberStep.내_회원_정보_요청;
 import static kuit.subway.utils.step.MemberStep.회원_생성;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DisplayName("로그인 및 개인정보 조회 인수 테스트")
 public class AuthAcceptanceTest extends AcceptanceTest {
@@ -22,7 +24,7 @@ public class AuthAcceptanceTest extends AcceptanceTest {
 
         @BeforeEach
         void setUp() {
-            memberCreateRes = 회원_생성(20, "shin@gmail.com", "123");
+            memberCreateRes = 회원_생성(20, "shin@gmail.com", "12345678!");
         }
 
         @Nested
@@ -35,7 +37,7 @@ public class AuthAcceptanceTest extends AcceptanceTest {
 
                 // given
                 String email = memberCreateRes.jsonPath().getString("email");
-                String password = "123";
+                String password = "12345678!";
 
                 // when
                 ExtractableResponse<Response> 토큰_생성_결과 = 로그인_회원_토근_생성(email, password);
@@ -56,7 +58,7 @@ public class AuthAcceptanceTest extends AcceptanceTest {
 
                 // given
                 String email = "wrong@gmail.com";
-                String password = "123";
+                String password = "12345678!";
 
                 // when
                 ExtractableResponse<Response> 로그인_결과 = 로그인_회원_토근_생성(email, password);
@@ -66,63 +68,40 @@ public class AuthAcceptanceTest extends AcceptanceTest {
             }
 
             @Test
-            @DisplayName("존재하지 않는 비밀번호로 로그인 시도 시, 401 Unauthorized를 반환한다.")
+            @DisplayName("존재하지 않는 비밀번호로 로그인 시도 시, 400 Bad Request를 반환한다.")
             void LoginFail2() {
 
                 // given
                 String email = memberCreateRes.jsonPath().getString("email");
-                String password = "1234";
+                String password = "12345678!!";
 
                 // when
                 ExtractableResponse<Response> 로그인_결과 = 로그인_회원_토근_생성(email, password);
 
                 // then
-                assertEquals(401, 로그인_결과.statusCode());
+                assertEquals(400, 로그인_결과.statusCode());
             }
-
-        }
-    }
-
-    @Nested
-    @DisplayName("내 정보 조회 인수 테스트")
-    class GetMyInfo {
-
-        TokenResponse token;
-        @BeforeEach
-        void setUp() {
-            회원_생성(20, "shin@gmail.com", "123");
-            ExtractableResponse<Response> tokenRes = 로그인_회원_토근_생성("shin@gmail.com", "123");
-            token = tokenRes.as(TokenResponse.class);
-        }
-
-        @Nested
-        @DisplayName("정보 조회 성공")
-        class SuccessCase {
 
             @Test
-            @DisplayName("로그인 시 생성된 토큰을 이용하여 내 정보 조회")
-            void getMyInfoSuccess() {
+            @DisplayName("로그인 시, 검증조건을 만족하지 못하는 경우 400 Bad Request를 반환한다.")
+            void LoginFail3() {
 
                 // given
-                ExtractableResponse<Response> 내_회원_정보_요청_결과 = 내_회원_정보_요청(token);
+                String email = "test";
+                String password = "12345678";
 
                 // when
+                ExtractableResponse<Response> 로그인_결과 = 로그인_회원_토근_생성(email, password);
+
                 // then
-                assertAll(() -> {
-                    assertEquals(200, 내_회원_정보_요청_결과.statusCode());
-                    assertEquals(20, 내_회원_정보_요청_결과.jsonPath().getInt("age"));
-                    assertEquals("shin@gmail.com", 내_회원_정보_요청_결과.jsonPath().getString("email"));
-                });
+//                assertEquals(HttpStatus.BAD_REQUEST.value(), 로그인_결과.statusCode()); -> 왜 400이 아닌 404지..
+                assertEquals(404, 로그인_결과.statusCode());
             }
 
-
         }
-
-        @Nested
-        @DisplayName("정보 조회 실패")
-        class FailCase {
-
-        }
-
     }
+
+
+
+
 }

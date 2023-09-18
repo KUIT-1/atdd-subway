@@ -15,7 +15,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @RequiredArgsConstructor
 public class AuthenticationPrincipalArgumentResolver implements HandlerMethodArgumentResolver {
 
-    private final AuthService authService;
     private final JwtTokenProvider jwtTokenProvider;
 
     // LoginUserId 어노테이션이 붙은 파라미터를 가져온다.
@@ -31,6 +30,7 @@ public class AuthenticationPrincipalArgumentResolver implements HandlerMethodArg
         HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
         // Hint : Authorization Extractor, JwtTokenProvider 이용
         String token = AuthorizationExtractor.extractAccessToken(request);
-        return authService.findLoginMemberByToken(token);
+        Long memberId = Long.parseLong(jwtTokenProvider.getPayload(token));
+        return memberId;
     }
 }

@@ -1,5 +1,6 @@
 package kuit.subway.controller;
 
+import jakarta.validation.Valid;
 import kuit.subway.auth.LoginUserId;
 import kuit.subway.domain.Member;
 import kuit.subway.dto.request.line.LineCreateRequest;
@@ -13,6 +14,7 @@ import kuit.subway.service.LineService;
 import kuit.subway.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -25,7 +27,7 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping()
-    public ResponseEntity<MemberResponse> createMember(@RequestBody MemberRequest request) {
+    public ResponseEntity<MemberResponse> createMember(@Valid @RequestBody MemberRequest request) {
         MemberResponse res = memberService.createMember(request);
         return ResponseEntity.created(URI.create("/members/" + res.getId()))
                 .body(res);
@@ -49,9 +51,9 @@ public class MemberController {
     public ResponseEntity<MemberResponse> deleteMember(@PathVariable("id") Long memberId) {
         return ResponseEntity.ok(memberService.deleteMember(memberId));
     }
-
     @GetMapping("/myinfo")
-    public ResponseEntity<MemberResponse> findMyMemberInfo(@LoginUserId MemberResponse memberResponse) {
-        return ResponseEntity.ok(memberResponse);
+    public ResponseEntity<MemberResponse> findMyMemberInfo(@LoginUserId Long memberId) {
+        MemberResponse response = memberService.findMyInfo(memberId);
+        return ResponseEntity.ok(response);
     }
 }

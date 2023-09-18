@@ -1,16 +1,13 @@
 package kuit.subway.controller;
 
-import kuit.subway.domain.Member;
-import kuit.subway.dto.request.auth.TokenRequest;
+import jakarta.validation.Valid;
+import kuit.subway.dto.request.auth.LoginRequest;
+import kuit.subway.dto.request.github.GithubTokenRequest;
 import kuit.subway.dto.response.auth.TokenResponse;
-import kuit.subway.dto.response.member.MemberResponse;
 import kuit.subway.service.AuthService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.net.URI;
@@ -21,10 +18,16 @@ import java.net.URI;
 public class AuthController {
     private final AuthService authService;
 
-    @PostMapping("/token")
-    public ResponseEntity<TokenResponse> login(@RequestBody TokenRequest request) {
+    @PostMapping("/login/token")
+    public ResponseEntity<TokenResponse> login(@Valid @RequestBody LoginRequest request) {
         TokenResponse tokenResponse = authService.createToken(request);
-        return ResponseEntity.created(URI.create("/token")).body(tokenResponse);
+        return ResponseEntity.created(URI.create("/login/token")).body(tokenResponse);
+    }
+
+    @GetMapping("/login/github")
+    public ResponseEntity<TokenResponse> loginWithGithub(@RequestParam String code) {
+        TokenResponse tokenResponse = authService.createTokenFromGithub(code);
+        return ResponseEntity.created(URI.create("/login/github")).body(tokenResponse);
     }
 
 }
